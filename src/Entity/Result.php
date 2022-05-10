@@ -28,6 +28,14 @@ class Result
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $token;
 
+    #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'results')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $survey;
+
+    #[ORM\ManyToOne(targetEntity: Candidate::class, inversedBy: 'results')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $candidate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +97,30 @@ class Result
     public function setToken(?string $token): self
     {
         $this->token = $token;
+
+        return $this;
+    }
+
+    public function getSurvey(): ?Survey
+    {
+        return $this->survey;
+    }
+
+    public function setSurvey(?Survey $survey): self
+    {
+        $this->survey = $survey;
+
+        return $this;
+    }
+
+    public function getCandidate(): ?Candidate
+    {
+        return $this->candidate;
+    }
+
+    public function setCandidate(?Candidate $candidate): self
+    {
+        $this->candidate = $candidate;
 
         return $this;
     }

@@ -31,6 +31,10 @@ class Question
     #[ORM\Column(type: 'string', length: 200)]
     private $choice5;
 
+    #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'questions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $Survey;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -104,6 +108,18 @@ class Question
     public function setChoice5(string $choice5): self
     {
         $this->choice5 = $choice5;
+
+        return $this;
+    }
+
+    public function getSurvey(): ?Survey
+    {
+        return $this->Survey;
+    }
+
+    public function setSurvey(?Survey $Survey): self
+    {
+        $this->Survey = $Survey;
 
         return $this;
     }

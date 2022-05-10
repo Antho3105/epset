@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CourseRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
@@ -24,6 +26,22 @@ class Course
 
     #[ORM\Column(type: 'string', length: 100)]
     private $title;
+
+    #[ORM\OneToMany(mappedBy: 'Course', targetEntity: VisibleCourse::class)]
+    private $visibleCourses;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'courses')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user;
+
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Survey::class)]
+    private $surveys;
+
+    public function __construct()
+    {
+        $this->visibleCourses = new ArrayCollection();
+        $this->surveys = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -74,6 +92,78 @@ class Course
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, VisibleCourse>
+     */
+    public function getVisibleCourses(): Collection
+    {
+        return $this->visibleCourses;
+    }
+
+    public function addVisibleCourse(VisibleCourse $visibleCourse): self
+    {
+        if (!$this->visibleCourses->contains($visibleCourse)) {
+            $this->visibleCourses[] = $visibleCourse;
+            $visibleCourse->setCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisibleCourse(VisibleCourse $visibleCourse): self
+    {
+        if ($this->visibleCourses->removeElement($visibleCourse)) {
+            // set the owning side to null (unless already changed)
+            if ($visibleCourse->getCourse() === $this) {
+                $visibleCourse->setCourse(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Survey>
+     */
+    public function getSurveys(): Collection
+    {
+        return $this->surveys;
+    }
+
+    public function addSurvey(Survey $survey): self
+    {
+        if (!$this->surveys->contains($survey)) {
+            $this->surveys[] = $survey;
+            $survey->setCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSurvey(Survey $survey): self
+    {
+        if ($this->surveys->removeElement($survey)) {
+            // set the owning side to null (unless already changed)
+            if ($survey->getCourse() === $this) {
+                $survey->setCourse(null);
+            }
+        }
 
         return $this;
     }
