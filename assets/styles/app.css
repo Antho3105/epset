@@ -1,3 +1,89 @@
+/*----------------------------------------------------------------
+GLOBAL
+---------------------------------------------------------------- */
+
+* {
+    box-sizing: border-box;
+}
+
+.clear {
+    clear: both;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: "";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+nav ul,
+ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+li a,
+.nav-item a,
+a {
+    text-decoration: none;
+}
+
+img,
+iframe,
+video {
+    max-width: 100%;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    margin: 0 auto;
+}
+
 body {
     background-color: lightgray;
+    font-family: 'Lato', sans-serif;
 }
+
+.container {
+    width: 95%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/*----------------------------------------------------------------
+HEADER
+---------------------------------------------------------------- */
+
+
+
+
+/*----------------------------------------------------------------
+FOOTER
+---------------------------------------------------------------- */
+
+
+footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.footer, .header{
+    min-height: 80px;
+}
+
