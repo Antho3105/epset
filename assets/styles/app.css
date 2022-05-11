@@ -49,13 +49,18 @@ video {
 h1,
 h2,
 h3,
-h4 {
+h4,
+p {
     margin: 0 auto;
 }
 
 body {
     background-color: lightgray;
     font-family: 'Lato', sans-serif;
+    position: relative;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
@@ -64,10 +69,24 @@ body {
     margin: 0 auto;
 }
 
+html {
+    height: 100%;
+}
+
+
 /*----------------------------------------------------------------
 HEADER
 ---------------------------------------------------------------- */
 
+
+
+/*----------------------------------------------------------------
+MAIN
+---------------------------------------------------------------- */
+
+main>section:last-child {
+    padding-bottom: 80px;
+}
 
 
 
@@ -75,15 +94,13 @@ HEADER
 FOOTER
 ---------------------------------------------------------------- */
 
+.footer, .header {
+    min-height: 80px;
+}
 
 footer {
     position: absolute;
     bottom: 0;
     left: 0;
-    right: 0;
+    right: 0
 }
-
-.footer, .header{
-    min-height: 80px;
-}
-

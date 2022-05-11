@@ -3,9 +3,23 @@
 {% block title %}Accueil fonctions{% endblock %}
 
 {% block body %}
-<section>
-    <h1>hello</h1>
-</section>
+        <section>
+        <h1 class="h3 mb-3 font-weight-normal text-center">EPSET : Education Pre-SElection Tool</h1>
 
+        {% if is_granted('ROLE_ADMIN') %}
+            {% block homePageAdmin %}
+                {% include "main/Components/homePageAdmin.html.twig" %}
+            {% endblock %}
+        {% elseif is_granted('ROLE_CENTER') %}
+            {% block homePageCenter %}
+                {% include "main/Components/homePageCenter.html.twig" %}
+            {% endblock %}
+        {% elseif is_granted('ROLE_TRAINER') %}
+            {% block homePageTrainer %}
+                {% include "main/Components/homePageTrainer.html.twig" %}
+            {% endblock %}
+        {% endif %}
+
+    </section>
 
 {% endblock %}

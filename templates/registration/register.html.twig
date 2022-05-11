@@ -6,8 +6,8 @@
     {% for flash_error in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
+    <h1 class="h3 mb-3 font-weight-normal text-center">Enregistrement formateur</h1>
 
-    <h1 class="h3 mb-3 font-weight-normal text-center">Enregistrement centre / formateur</h1>
     <div>
         <p class="text-center">
             <small>
@@ -17,6 +17,7 @@
         </p>
     </div>
 <div class="form">
+
     {{ form_start(registrationForm) }}
     {{ form_row(registrationForm.userName) }}
     {{ form_row(registrationForm.firstName) }}

@@ -14,21 +14,11 @@ use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class RegistrationFormAdmin extends AbstractType
+class RegistrationFormCenter extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('roles', ChoiceType::class, [
-                'required' => true,
-                'multiple' => false,
-                'expanded' => false,
-                'choices' => [
-                    'Centre' => 'ROLE_CENTER',
-                    'Formateur' => 'ROLE_TRAINER',
-                    'Administrateur' => 'ROLE_ADMIN',
-                ],
-            ])
             ->add('userName')
             ->add('firstName')
             ->add('lastName')
@@ -59,20 +49,6 @@ class RegistrationFormAdmin extends AbstractType
                     ]),
                 ],
             ]);
-
-        // Data transformer
-        $builder->get('roles')
-            ->addModelTransformer(new CallbackTransformer(
-                function ($rolesArray) {
-                    // transform the array to a string
-                    return count($rolesArray)? $rolesArray[0]: null;
-                },
-                function ($rolesString) {
-                    // transform the string back to an array
-                    return [$rolesString];
-                }
-            ));
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void

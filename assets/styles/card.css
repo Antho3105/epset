@@ -1,0 +1,19 @@
+.card{
+    padding: 0;
+    width: 300px;
+    margin: 10px 20px;
+}
+
+@media screen and (max-width: 970px) {
+    .card{
+        width: 45%;
+        margin: 10px 20px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .card{
+        width: 90%;
+        margin: 10px 20px;
+    }
+}
