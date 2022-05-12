@@ -22,7 +22,7 @@ class MailerController extends AbstractController
     public function sendEmail(MailerInterface $mailer): Response
     {
         $email = (new Email())
-            ->from('contact@anthony-airaud.fr')
+            ->from($_ENV['ADMIN_EMAIL'])
             ->to('a.airaud.dev@gmail.com')
             //->cc('cc@example.com')
             //->bcc('bcc@example.com')
