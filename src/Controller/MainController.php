@@ -16,8 +16,8 @@ class MainController extends AbstractController
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
-        $now = new DateTime();
-        $user = $this->getUser()->setLastConnection($now);
+        $date = new DateTime();
+        $user = $this->getUser()->setLastConnection($date);
         $userRepository->add($user, true);
 
         return $this->render('main/index.html.twig');

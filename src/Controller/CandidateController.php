@@ -29,10 +29,11 @@ class CandidateController extends AbstractController
                 'candidates' => $candidateRepository->findAll(),
             ]);
         }
-        // sinon n'afficher que les candidats rattachés au centre.
+        // Sinon n'afficher que les candidats rattachés au centre.
         return $this->render('candidate/index.html.twig', [
             'candidates' => $candidateRepository->findBy(
-                ['user' => $user]
+                ['user' => $user,
+                    'deleteDate' => null]
             ),
         ]);
     }
@@ -46,12 +47,13 @@ class CandidateController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $this->getUser();
+            // Affecter le nouveau candidat à l'utilisateur actuel.
+            // TODO add admin function to select specific center for new candidate.
             $candidate->setUser($user);
             $candidateRepository->add($candidate, true);
-
+            $this->addFlash('success', $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' ajouté !');
             return $this->redirectToRoute('app_candidate_index', [], Response::HTTP_SEE_OTHER);
         }
-
         return $this->renderForm('candidate/new.html.twig', [
             'candidate' => $candidate,
             'form' => $form,
@@ -61,17 +63,23 @@ class CandidateController extends AbstractController
     #[Route('/{id}', name: 'app_candidate_show', methods: ['GET'])]
     public function show(Candidate $candidate): Response
     {
+        // Si la fiche du candidat n'appartient pas au centre générer une erreur 403.
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            if ($this->getUser() !== $candidate->getUser())
+                throw new AccessDeniedHttpException();
+        }
         return $this->render('candidate/show.html.twig', [
             'candidate' => $candidate,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_candidate_edit', methods: ['GET', 'POST'])]
+    #[
+        Route('/{id}/edit', name: 'app_candidate_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Candidate $candidate, CandidateRepository $candidateRepository): Response
     {
         // Si la fiche du candidat n'appartient pas au centre générer une erreur 403.
         if (!$this->isGranted("ROLE_ADMIN")) {
-            if ($candidate->getUser() !== $this->getUser())
+            if ($this->getUser() !== $candidate->getUser())
                 throw new AccessDeniedHttpException();
         }
         $form = $this->createForm(CandidateType::class, $candidate);
@@ -79,6 +87,7 @@ class CandidateController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $candidateRepository->add($candidate, true);
+            $this->addFlash('success', 'Fiche de '  . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' modifiée !');
 
             return $this->redirectToRoute('app_candidate_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -95,12 +104,13 @@ class CandidateController extends AbstractController
         // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
             // Si la fiche du candidat n'appartient pas au centre générer une erreur 403.
-            if ($candidate->getUser() !== $this->getUser())
+            if ($this->getUser() !== $candidate->getUser())
                 throw new AccessDeniedHttpException();
         }
         if ($this->isCsrfTokenValid('delete' . $candidate->getId(), $request->request->get('_token'))) {
-            $candidateRepository->remove($candidate, true);
+            $candidateRepository->softDelete($candidate, true);
         }
+        $this->addFlash('alert', 'Fiche de '  . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' supprimée !');
 
         return $this->redirectToRoute('app_candidate_index', [], Response::HTTP_SEE_OTHER);
     }

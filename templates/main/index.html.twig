@@ -51,9 +51,9 @@
                     <i class="fa-solid fa-book-open" style="font-size: 26px"></i>
                 </div>
                 <div class="card-body">
-                    <a href="#" class="btn">-> Liste des formations</a>
+                    <a href="{{ path('app_course_index') }}" class="btn">-> Liste des formations</a>
                     {% if is_granted('ROLE_CENTER') %}
-                    <a href="#" class="btn">-> Ajouter une formation</a>
+                    <a href="{{ path('app_course_new') }}" class="btn">-> Ajouter une formation</a>
                     {% endif %}
                 </div>
             </div>

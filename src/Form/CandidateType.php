@@ -14,6 +14,7 @@ class CandidateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            // TODO ajouter des contraintes (nb de caractères...)
             ->add('lastName', TextType::class, ['label' => 'Nom'])
             ->add('firstName', TextType::class, ['label' => 'Prénom'])
             ->add('email', EmailType::class, ['label' => 'Email'])
