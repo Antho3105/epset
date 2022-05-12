@@ -37,6 +37,9 @@ class Course
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: Survey::class)]
     private $surveys;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $deleteDate;
+
     public function __construct()
     {
         $this->visibleCourses = new ArrayCollection();
@@ -164,6 +167,18 @@ class Course
                 $survey->setCourse(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDeleteDate(): ?\DateTimeInterface
+    {
+        return $this->deleteDate;
+    }
+
+    public function setDeleteDate(?\DateTimeInterface $deleteDate): self
+    {
+        $this->deleteDate = $deleteDate;
 
         return $this;
     }

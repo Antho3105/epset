@@ -55,6 +55,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Survey::class)]
     private $surveys;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $lastConnection;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $deleteDate;
+
     public function __construct()
     {
         $this->visibleCourses = new ArrayCollection();
@@ -309,6 +315,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $survey->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastConnection(): ?\DateTimeInterface
+    {
+        return $this->lastConnection;
+    }
+
+    public function setLastConnection(?\DateTimeInterface $lastConnection): self
+    {
+        $this->lastConnection = $lastConnection;
+
+        return $this;
+    }
+
+    public function getDeleteDate(): ?\DateTimeInterface
+    {
+        return $this->deleteDate;
+    }
+
+    public function setDeleteDate(?\DateTimeInterface $deleteDate): self
+    {
+        $this->deleteDate = $deleteDate;
 
         return $this;
     }

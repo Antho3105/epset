@@ -44,6 +44,9 @@ class Survey
     #[ORM\JoinColumn(nullable: false)]
     private $course;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $deleteDate;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
@@ -195,6 +198,18 @@ class Survey
     public function setCourse(?Course $course): self
     {
         $this->course = $course;
+
+        return $this;
+    }
+
+    public function getDeleteDate(): ?\DateTimeInterface
+    {
+        return $this->deleteDate;
+    }
+
+    public function setDeleteDate(?\DateTimeInterface $deleteDate): self
+    {
+        $this->deleteDate = $deleteDate;
 
         return $this;
     }

@@ -3,23 +3,87 @@
 {% block title %}Accueil fonctions{% endblock %}
 
 {% block body %}
-        <section>
-        <h1 class="h3 mb-3 font-weight-normal text-center">EPSET : Education Pre-SElection Tool</h1>
+<section>
+    <h1 class="h3 mb-3 font-weight-normal text-center">EPSET : Education Pre-SElection Tool</h1>
 
-        {% if is_granted('ROLE_ADMIN') %}
-            {% block homePageAdmin %}
-                {% include "main/Components/homePageAdmin.html.twig" %}
-            {% endblock %}
-        {% elseif is_granted('ROLE_CENTER') %}
-            {% block homePageCenter %}
-                {% include "main/Components/homePageCenter.html.twig" %}
-            {% endblock %}
-        {% elseif is_granted('ROLE_TRAINER') %}
-            {% block homePageTrainer %}
-                {% include "main/Components/homePageTrainer.html.twig" %}
-            {% endblock %}
-        {% endif %}
+    <section id="homePage">
+        <div class="row d-flex  justify-content-center justify-content-sm-between">
+            {% if is_granted('ROLE_ADMIN') %}
+            <div class="card mx-1">
+                <div class="d-flex card-header justify-content-between align-item-center">
+                    / ADMIN \ Centres / Formateurs
+                    <i class="fa-solid fa-users" style="font-size: 26px"></i>
+                 </div>
+                <div class="card-body">
+                    <a href="#" class="btn">-> Liste des utilisateurs</a>
+                    <a href="{{ path('app_register_admin') }}" class="btn">-> Liste des utilisateurs</a>
+                </div>
+            </div>
+            {% endif %}
+            {% if is_granted('ROLE_CENTER') %}
+            <div class="card mx-1">
+                <div class="d-flex card-header justify-content-between align-item-center">
+                    Formateurs
+                    <i class="fa-solid fa-person-chalkboard" style="font-size: 26px"></i>
+                </div>
+                <div class="card-body">
+
+                    <a href="#" class="btn">-> Liste des formateurs</a>
+                    <a href="{{ path('app_register_trainer') }}" class="btn">-> Ajouter un formateur</a>
+                </div>
+            </div>
+            {% endif %}
+            {% if is_granted('ROLE_CENTER') %}
+            <div class="card mx-1">
+                <div class="d-flex card-header justify-content-between align-item-center">
+                    Candidats
+                    <i class="fa-solid fa-graduation-cap" style="font-size: 26px"></i>
+                </div>
+                <div class="card-body">
+                    <a href="#" class="btn">-> Liste des candidats</a>
+                    <a href="#" class="btn">-> Ajouter un candidats</a>
+                </div>
+            </div>
+            {% endif %}
+            <div class="card mx-1">
+                <div class="d-flex card-header justify-content-between align-item-center">
+                    Formations
+                    <i class="fa-solid fa-book-open" style="font-size: 26px"></i>
+                </div>
+                <div class="card-body">
+                    <a href="#" class="btn">-> Liste des formations</a>
+                    {% if is_granted('ROLE_CENTER') %}
+                    <a href="#" class="btn">-> Ajouter une formation</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card  mx-1">
+                <div class="d-flex card-header justify-content-between align-item-center">
+                    Questionnaires
+                    <i class="fa-solid fa-question" style="font-size: 26px"></i>
+                </div>
+                <div class="card-body">
+                    <a href="#" class="btn">-> Liste des questionnaires</a>
+                    <a href="#" class="btn">-> Ajouter un questionnaires</a>
+                </div>
+            </div>
+
+            <div class="card mx-1">
+                <div class="d-flex card-header justify-content-between align-item-center">
+                    Gestion profil
+                    <i class="fa-solid fa-address-card" style="font-size: 26px"></i>
+                </div>
+                <div class="card-body">
+                    <a href="#" class="btn">-> Editer son profil.</a>
+
+                </div>
+            </div>
+        </div>
 
     </section>
+
+
+</section>
 
 {% endblock %}

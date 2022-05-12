@@ -36,6 +36,9 @@ class Result
     #[ORM\JoinColumn(nullable: false)]
     private $candidate;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $deleteDate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -121,6 +124,18 @@ class Result
     public function setCandidate(?Candidate $candidate): self
     {
         $this->candidate = $candidate;
+
+        return $this;
+    }
+
+    public function getDeleteDate(): ?\DateTimeInterface
+    {
+        return $this->deleteDate;
+    }
+
+    public function setDeleteDate(?\DateTimeInterface $deleteDate): self
+    {
+        $this->deleteDate = $deleteDate;
 
         return $this;
     }

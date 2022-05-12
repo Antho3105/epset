@@ -35,6 +35,9 @@ class Question
     #[ORM\JoinColumn(nullable: false)]
     private $Survey;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $deleteDate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +123,18 @@ class Question
     public function setSurvey(?Survey $Survey): self
     {
         $this->Survey = $Survey;
+
+        return $this;
+    }
+
+    public function getDeleteDate(): ?\DateTimeInterface
+    {
+        return $this->deleteDate;
+    }
+
+    public function setDeleteDate(?\DateTimeInterface $deleteDate): self
+    {
+        $this->deleteDate = $deleteDate;
 
         return $this;
     }
