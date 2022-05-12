@@ -1,0 +1,18 @@
+<div class="form">
+    {{ form_start(form) }}
+    <div class="row d-flex justify-content-between">
+        <div class="col-6">
+            {{ form_row(form.lastName) }}
+        </div>
+        <div class="col-6">
+            {{ form_row(form.firstName) }}
+        </div>
+
+    </div>
+    {{ form_row(form.email) }}
+    {{ form_row(form.phone) }}
+
+    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+    <a class="btn btn-primary" href="{{ path('app_candidate_index') }}">Retour liste</a>
+    {{ form_end(form) }}
+</div>
