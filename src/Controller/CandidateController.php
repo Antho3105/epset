@@ -77,8 +77,9 @@ class CandidateController extends AbstractController
         Route('/{id}/edit', name: 'app_candidate_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Candidate $candidate, CandidateRepository $candidateRepository): Response
     {
-        // Si la fiche du candidat n'appartient pas au centre générer une erreur 403.
+        // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
+            // Si la fiche du candidat n'appartient pas au centre générer une erreur 403.
             if ($this->getUser() !== $candidate->getUser())
                 throw new AccessDeniedHttpException();
         }

@@ -49,4 +49,10 @@ class VisibleCourse
 
         return $this;
     }
+    public function __toString(): string
+    {
+        return $this->getUser()->getLastName() . ' ' . $this->getUser()->getFirstName() ;
+    }
+
+
 }

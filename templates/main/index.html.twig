@@ -16,7 +16,7 @@
                  </div>
                 <div class="card-body">
                     <a href="#" class="btn">-> Liste des utilisateurs</a>
-                    <a href="{{ path('app_register_admin') }}" class="btn">-> Liste des utilisateurs</a>
+                    <a href="{{ path('app_register_admin') }}" class="btn">-> Ajouter un utilisateur</a>
                 </div>
             </div>
             {% endif %}
@@ -54,6 +54,7 @@
                     <a href="{{ path('app_course_index') }}" class="btn">-> Liste des formations</a>
                     {% if is_granted('ROLE_CENTER') %}
                     <a href="{{ path('app_course_new') }}" class="btn">-> Ajouter une formation</a>
+                    <a href="{{ path('app_visible_course_new') }}" class="btn">-> Affecter une formation</a>
                     {% endif %}
                 </div>
             </div>
@@ -65,7 +66,9 @@
                 </div>
                 <div class="card-body">
                     <a href="#" class="btn">-> Liste des questionnaires</a>
-                    <a href="#" class="btn">-> Ajouter un questionnaires</a>
+                    {% if is_granted('ROLE_TRAINER') %}
+                    <a href="#" class="btn">-> Ajouter un questionnaire</a>
+                    {% endif %}
                 </div>
             </div>
 

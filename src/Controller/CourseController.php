@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+
 /**
  * @IsGranted("ROLE_USER")
  */
@@ -33,11 +34,15 @@ class CourseController extends AbstractController
         // Si formateur n'afficher que les formations qui lui sont rattachées
         // TODO debugger la vue...
         if ($this->isGranted("ROLE_TRAINER")) {
+            $courses = $visibleCourseRepository->findBy(
+                ['user' => $user
+                ]);
+            $visibleCourses = [];
+            foreach ($courses as $course) {
+                $visibleCourses[] = $courseRepository->findOneBy(['id' => $course->getCourse()]);
+            }
             return $this->render('course/index.html.twig', [
-                'courses' => $visibleCourseRepository->findBy(
-                    ['user' => $user,
-                        'deleteDate' => null]
-                ),
+                'courses' => $visibleCourses
             ]);
         }
 
@@ -54,16 +59,21 @@ class CourseController extends AbstractController
 
     }
 
-    #[
-        Route('/new', name: 'app_course_new', methods: ['GET', 'POST'])]
+    /**
+     * Seuls les centre ont les droits pour créer une nouvelle formation.
+     * @IsGranted("ROLE_CENTER")
+     *
+     */
+    #[Route('/new', name: 'app_course_new', methods: ['GET', 'POST'])]
     public function new(Request $request, CourseRepository $courseRepository): Response
     {
-
         $course = new Course();
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            $course->setUser($user);
             $courseRepository->add($course, true);
 
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
@@ -76,8 +86,29 @@ class CourseController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_course_show', methods: ['GET'])]
-    public function show(Course $course): Response
+    public function show(Course $course, VisibleCourseRepository $visibleCourseRepository): Response
     {
+        // Si l'utilisateur n'est pas administrateur, gérer l'accès.
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            // Si la formation pas n'appartient pas au centre générer une erreur 403.
+            if (!$this->isGranted("ROLE_CENTER")) {
+                if ($this->getUser() !== $course->getUser())
+                    throw new AccessDeniedHttpException();
+            }
+            // Si la formation n'est pas affectée au formateur générer une erreur 403.
+            if (!$this->isGranted("ROLE_TRAINER")) {
+                $courses = $visibleCourseRepository->findBy(
+                    ['user' => $this->getUser()
+                    ]);
+                // TODO gérer l'accès uax formation pour les formateurs.
+
+
+                return $this->render('course/show.html.twig', [
+                    'course' => $course
+                ]);
+            }
+        }
+
         return $this->render('course/show.html.twig', [
             'course' => $course,
         ]);
