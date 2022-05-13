@@ -32,7 +32,6 @@ class CourseController extends AbstractController
             ]);
         }
         // Si formateur n'afficher que les formations qui lui sont rattachées
-        // TODO debugger la vue...
         if ($this->isGranted("ROLE_TRAINER")) {
             $courses = $visibleCourseRepository->findBy(
                 ['user' => $user
@@ -88,27 +87,24 @@ class CourseController extends AbstractController
     #[Route('/{id}', name: 'app_course_show', methods: ['GET'])]
     public function show(Course $course, VisibleCourseRepository $visibleCourseRepository): Response
     {
+        $user = $this->getUser();
         // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
             // Si la formation pas n'appartient pas au centre générer une erreur 403.
-            if (!$this->isGranted("ROLE_CENTER")) {
-                if ($this->getUser() !== $course->getUser())
+            if ($this->isGranted("ROLE_CENTER")) {
+                if ($user !== $course->getUser())
                     throw new AccessDeniedHttpException();
             }
             // Si la formation n'est pas affectée au formateur générer une erreur 403.
-            if (!$this->isGranted("ROLE_TRAINER")) {
-                $courses = $visibleCourseRepository->findBy(
-                    ['user' => $this->getUser()
-                    ]);
-                // TODO gérer l'accès uax formation pour les formateurs.
-
-
-                return $this->render('course/show.html.twig', [
-                    'course' => $course
+            if ($this->isGranted("ROLE_TRAINER")) {
+                $isVisible = $visibleCourseRepository->findBy([
+                    'user' => $user,
+                    'Course' => $course
                 ]);
+                if (!$isVisible)
+                    throw new AccessDeniedHttpException();
             }
         }
-
         return $this->render('course/show.html.twig', [
             'course' => $course,
         ]);

@@ -40,7 +40,7 @@ class VisibleCourseController extends AbstractController
             $visibleCourseRepository->add($visibleCourse, true);
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
         }
-        return $this->renderForm('visible_course/new_old_file.html.twig', [
+        return $this->renderForm('visible_course/new.html.twig', [
              'form' => $form,
         ]);
     }
@@ -53,7 +53,6 @@ class VisibleCourseController extends AbstractController
 //        ]);
 //    }
 //
-
 
 //    #[Route('/{id}/edit', name: 'app_visible_course_edit', methods: ['GET', 'POST'])]
 //    public function edit(Request $request, VisibleCourse $visibleCourse, VisibleCourseRepository $visibleCourseRepository): Response

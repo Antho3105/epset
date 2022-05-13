@@ -1,23 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Affecter une formation{% endblock %}
+{% block title %}Nouvelle assignation{% endblock %}
 
 {% block body %}
-    <h1 class="h3 mb-3 font-weight-normal text-center">Affecter une formation</h1>
-    <div class="d-flex form">
-        <select id="course" class="form-select" aria-label="Default select example">
-            <option selected>Formations</option>
-            {% for course in courses %}
-                <option value="{{ course.id }}">{{ course.ref }}</option>
-            {% endfor %}
-        </select>
-        <select id="trainer" class="form-select" aria-label="Default select example">
-            <option selected>Formateurs</option>
-            {% for trainer in trainers %}
-                <option value="{{ trainer.id }}">{{ trainer.lastName }} {{ trainer.firstName }}</option>
-            {% endfor %}
-        </select>
-        <a  class="btn btn-primary" href="{{ path('app_visible_course_add')}}">Valider</a>
+    <h1 class="h3 mb-3 font-weight-normal text-center">Ajouter une assignation</h1>
+    <div class="form">
+        {{ include('visible_course/_form.html.twig') }}
+
     </div>
-    <a href="{{ path('app_course_index') }}">Retour liste des formations</a>
 {% endblock %}

@@ -1,32 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Course index{% endblock %}
+{% block title %}Liste des formationsx{% endblock %}
 
 {% block body %}
-    <h1 class="h3 mb-3 font-weight-normal text-center">Course index</h1>
+    <h1 class="h3 mb-3 font-weight-normal text-center">Liste des formations</h1>
 
     <table class="table">
         <thead>
-            <tr>
-                <th>Id</th>
-                <th>Ref</th>
-                <th>Detail</th>
-                <th>Level</th>
-                <th>Title</th>
-                <th>actions</th>
-            </tr>
+        <tr>
+            <th>Ref</th>
+            <th>Title</th>
+            <th>Detail</th>
+            <th>Level</th>
+            {% if is_granted('ROLE_ADMIN') %}
+            <th>Centre</th>
+            {% endif %}
+            <th>actions</th>
+        </tr>
         </thead>
         <tbody>
         {% for course in courses %}
             <tr>
-                <td>{{ course.id }}</td>
                 <td>{{ course.ref }}</td>
+                <td>{{ course.title }}</td>
                 <td>{{ course.detail }}</td>
                 <td>{{ course.level }}</td>
-                <td>{{ course.title }}</td>
-                <td>
-                    <a href="{{ path('app_course_show', {'id': course.id}) }}">show</a>
-                    <a href="{{ path('app_course_edit', {'id': course.id}) }}">edit</a>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <td>{{ course.user }}</td>
+                {% endif %}
+                <td>    {% if is_granted('ROLE_CENTER') %}
+                        <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
+                        <a href="{{ path('app_course_edit', {'id': course.id}) }}">Modifier</a>
+                    {% elseif is_granted('ROLE_TRAINER')  %}
+                        <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
+                        <a href="#">Créer un questionnaire</a>
+                    {% endif %}
+
                 </td>
             </tr>
         {% else %}
@@ -36,6 +45,8 @@
         {% endfor %}
         </tbody>
     </table>
-    <a href="{{ path('app_visible_course_new') }}" class="btn btn-primary">Affecter une formation</a>
-    <a href="{{ path('app_course_new') }}" class="btn btn-primary">Ajouter une formation</a>
+    {% if is_granted('ROLE_CENTER') %}
+        <a href="{{ path('app_visible_course_new') }}" class="btn btn-primary">Affecter une formation</a>
+        <a href="{{ path('app_course_new') }}" class="btn btn-primary">Ajouter une formation</a>
+    {% endif %}
 {% endblock %}
