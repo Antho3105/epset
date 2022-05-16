@@ -15,7 +15,7 @@
                             <i class="fa-solid fa-users" style="font-size: 26px"></i>
                         </div>
                         <div class="card-body">
-                            <a href="#" class="btn">-> Liste des utilisateurs</a>
+                            <a href="{{ path('app_user_list') }}" class="btn">-> Liste des utilisateurs</a>
                             <a href="{{ path('app_register_admin') }}" class="btn">-> Ajouter un utilisateur</a>
                         </div>
                     </div>
@@ -28,7 +28,7 @@
                         </div>
                         <div class="card-body">
 
-                            <a href="#" class="btn">-> Liste des formateurs</a>
+                            <a href="{{ path('app_trainer_list') }}" class="btn">-> Liste des formateurs</a>
                             {% if is_granted('ROLE_ADMIN') %}
                             {% else %}
                                 <a href="{{ path('app_register_trainer') }}" class="btn">-> Ajouter un formateur</a>
