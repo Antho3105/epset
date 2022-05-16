@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Course;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -38,6 +39,28 @@ class CourseRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function softRemove(Course $entity, bool $flush = false): void
+    {
+        $date = new DateTime();
+        $entity->setDeleteDate($date);
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function cancelRemove(Course $entity, bool $flush = false): void
+    {
+        $entity->setDeleteDate(null);
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
 
 //    /**
 //     * @return Course[] Returns an array of Course objects

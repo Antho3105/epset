@@ -34,7 +34,7 @@ class CourseController extends AbstractController
         // Si formateur n'afficher que les formations qui lui sont rattachées
         if ($this->isGranted("ROLE_TRAINER")) {
             $courses = $visibleCourseRepository->findBy(
-                ['user' => $user
+                ['user' => $user,
                 ]);
             $visibleCourses = [];
             foreach ($courses as $course) {
@@ -90,12 +90,13 @@ class CourseController extends AbstractController
         $user = $this->getUser();
         // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
-            // Si la formation pas n'appartient pas au centre générer une erreur 403.
+            // Si la formation pas n'appartient pas au centre ou qu'elle a été supprimée générer une erreur.
             if ($this->isGranted("ROLE_CENTER")) {
-                if ($user !== $course->getUser())
+                if ($user !== $course->getUser() | $course->getDeleteDate() !== null)
                     throw new AccessDeniedHttpException();
             }
-            // Si la formation n'est pas affectée au formateur générer une erreur 403.
+            // Si la formation n'est pas affectée au formateur générer une erreur.
+            // Si la formation est supprimée le lien avec le formateur est supprimé automatiquement.
             if ($this->isGranted("ROLE_TRAINER")) {
                 $isVisible = $visibleCourseRepository->findBy([
                     'user' => $user,
@@ -110,9 +111,20 @@ class CourseController extends AbstractController
         ]);
     }
 
+    /**
+     * Seuls les centres ont les droits pour modifier une formation.
+     * @IsGranted("ROLE_CENTER")
+     *
+     */
     #[Route('/{id}/edit', name: 'app_course_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Course $course, CourseRepository $courseRepository): Response
     {
+        $user = $this->getUser();
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            // Si la formation n'appartient pas au centre ou qu'elle a été supprimée générer une erreur.
+            if ($user !== $course->getUser() | $course->getDeleteDate() !== null)
+                throw new AccessDeniedHttpException();
+        }
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 
@@ -128,11 +140,36 @@ class CourseController extends AbstractController
         ]);
     }
 
+    /**
+     * Seuls les centre ont les droits pour supprimer une formation.
+     * Soft delete (suppression definitive accessible par l'administrateur uniquement)
+     * @IsGranted("ROLE_CENTER")
+     *
+     */
     #[Route('/{id}', name: 'app_course_delete', methods: ['POST'])]
-    public function delete(Request $request, Course $course, CourseRepository $courseRepository): Response
+    public function delete(Request $request, Course $course, CourseRepository $courseRepository, VisibleCourseRepository $visibleCourseRepository): Response
     {
         if ($this->isCsrfTokenValid('delete' . $course->getId(), $request->request->get('_token'))) {
-            $courseRepository->remove($course, true);
+            $assignments = $visibleCourseRepository->findBy(['Course' => $course]);
+            foreach ($assignments as $assignment) {
+                $visibleCourseRepository->remove($assignment);
+            }
+            $courseRepository->softRemove($course, true);
+        }
+
+        return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * Seuls les administrateurs peuvent annuler la suppression d'une formation.
+     * @IsGranted("ROLE_ADMIN")
+     *
+     */
+    #[Route('/reset/{id}', name: 'app_course_reset', methods: ['POST'])]
+    public function reset(Request $request, Course $course, CourseRepository $courseRepository): Response
+    {
+        if ($this->isCsrfTokenValid('_tokenReset' . $course->getId(), $request->request->get('_tokenReset'))) {
+           $courseRepository->cancelRemove($course, true);
         }
 
         return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);

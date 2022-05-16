@@ -8,29 +8,31 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Ref</th>
-                <th>Detail</th>
-                <th>Difficulty</th>
-                <th>QuestionTimer</th>
-                <th>Ordered</th>
-                <th>DeleteDate</th>
-                <th>actions</th>
+                <th>Référence</th>
+                <th>Details</th>
+                <th>Difficulté</th>
+                <th>Temps par question</th>
+                <th>Ordre des questions</th>
+                {% if is_granted('ROLE_ADMIN') %}
+                <th>Date de suppression</th>
+                {% endif %}
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for survey in surveys %}
             <tr>
-                <td>{{ survey.id }}</td>
                 <td>{{ survey.ref }}</td>
                 <td>{{ survey.detail }}</td>
                 <td>{{ survey.difficulty }}</td>
                 <td>{{ survey.questionTimer }}</td>
-                <td>{{ survey.ordered ? 'Yes' : 'No' }}</td>
-                <td>{{ survey.deleteDate ? survey.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ survey.ordered ? 'Ordoné' : 'Aléatoire' }}</td>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <td>{{ survey.deleteDate ? survey.deleteDate|date('d-m-Y H:i') : '-' }}</td>
+                {% endif %}
                 <td>
-                    <a href="{{ path('app_survey_show', {'id': survey.id}) }}">show</a>
-                    <a href="{{ path('app_survey_edit', {'id': survey.id}) }}">edit</a>
+                    <a href="{{ path('app_survey_show', {'id': survey.id}) }}">Détails</a>
+                    <a href="{{ path('app_survey_edit', {'id': survey.id}) }}">Modifier</a>
                 </td>
             </tr>
         {% else %}
@@ -41,5 +43,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_survey_new') }}">Create new</a>
+
 {% endblock %}

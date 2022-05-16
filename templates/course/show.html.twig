@@ -12,10 +12,6 @@
             <td>{{ course.ref }}</td>
         </tr>
         <tr>
-            <th>Detail</th>
-            <td>{{ course.detail }}</td>
-        </tr>
-        <tr>
             <th>Level</th>
             <td>{{ course.level }}</td>
         </tr>
@@ -23,29 +19,34 @@
             <th>Title</th>
             <td>{{ course.title }}</td>
         </tr>
+        <tr>
+            <th>Detail</th>
+            <td>{{ course.detail }}</td>
+        </tr>
         </tbody>
     </table>
-
+    {% if is_granted('ROLE_CENTER') %}
     <h2 class="h3 mb-3 font-weight-normal text-center">Formateurs assignés</h2>
-
 
     {% for user in course.visibleCourses %}
         <ul>
             <li>
                 <p>{{ user }}</p>
-                <form method="post" action="{{ path('app_visible_course_delete', {'id': user.id}) }}"
-                      onsubmit="return confirm('Êtes vous sur de vouloir supprimer cette assignation ?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-                    <button class="btn btn-primary">Retirer</button>
-                </form>
+                {{ include('visible_course/_delete_form.html.twig') }}
 
             </li>
         </ul>
     {% endfor %}
+    {% endif %}
 
     <div class="d-flex mt-5">
         <a class="btn btn-primary mx-2" href="{{ path('app_course_index') }}">Retour liste</a>
+        {% if is_granted('ROLE_CENTER') %}
         <a class="btn btn-primary mx-2 " href="{{ path('app_course_edit', {'id': course.id}) }}">Modifier</a>
         {{ include('course/_delete_form.html.twig') }}
+        {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+            {{ include('course/_reset_form.html.twig') }}
+        {% endif %}
     </div>
 {% endblock %}

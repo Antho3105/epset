@@ -8,14 +8,15 @@
     <table class="table">
         <thead>
         <tr>
-            <th>Ref</th>
-            <th>Title</th>
-            <th>Detail</th>
-            <th>Level</th>
+            <th>Référence</th>
+            <th>Titre</th>
+            <th>Détails</th>
+            <th>Niveau</th>
             {% if is_granted('ROLE_ADMIN') %}
-            <th>Centre</th>
+                <th>Centre</th>
+                <th>Date de suppression</th>
             {% endif %}
-            <th>actions</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -27,13 +28,14 @@
                 <td>{{ course.level }}</td>
                 {% if is_granted('ROLE_ADMIN') %}
                     <td>{{ course.user }}</td>
+                    <td>{{ course.deleteDate ? course.deleteDate|date('d-m-Y H:i') : '-' }}</td>
                 {% endif %}
                 <td>    {% if is_granted('ROLE_CENTER') %}
                         <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
                         <a href="{{ path('app_course_edit', {'id': course.id}) }}">Modifier</a>
-                    {% elseif is_granted('ROLE_TRAINER')  %}
+                    {% elseif is_granted('ROLE_TRAINER') %}
                         <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
-                        <a href="#">Créer un questionnaire</a>
+                        <a href="{{ path('app_survey_new', {'id': course.id}) }}">Créer un questionnaire</a>
                     {% endif %}
 
                 </td>

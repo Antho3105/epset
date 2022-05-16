@@ -30,7 +30,7 @@
                 <td>{{ user.phone }}</td>
                 {% if is_granted('ROLE_ADMIN') %}
                 <td>{{ user.roles[0] }}</td>
-                <td>{{ user.lastConnection|date('Y-m-d H:i:s') }}</td>
+                <td>{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:i:s') : '-' }}</td>
                 {% endif %}
                 <td>
                     <a class="btn" href="#">Voir</a>

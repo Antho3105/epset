@@ -7,40 +7,47 @@
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ survey.id }}</td>
-            </tr>
-            <tr>
-                <th>Ref</th>
-                <td>{{ survey.ref }}</td>
-            </tr>
-            <tr>
-                <th>Detail</th>
-                <td>{{ survey.detail }}</td>
-            </tr>
-            <tr>
-                <th>Difficulty</th>
-                <td>{{ survey.difficulty }}</td>
-            </tr>
-            <tr>
-                <th>QuestionTimer</th>
-                <td>{{ survey.questionTimer }}</td>
-            </tr>
-            <tr>
-                <th>Ordered</th>
-                <td>{{ survey.ordered ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>DeleteDate</th>
-                <td>{{ survey.deleteDate ? survey.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
+        <tr>
+            <th>Id</th>
+            <td>{{ survey.id }}</td>
+        </tr>
+        <tr>
+            <th>Ref</th>
+            <td>{{ survey.ref }}</td>
+        </tr>
+        <tr>
+            <th>Detail</th>
+            <td>{{ survey.detail }}</td>
+        </tr>
+        <tr>
+            <th>Difficulty</th>
+            <td>{{ survey.difficulty }}</td>
+        </tr>
+        <tr>
+            <th>QuestionTimer</th>
+            <td>{{ survey.questionTimer }}</td>
+        </tr>
+        <tr>
+            <th>Ordered</th>
+            <td>{{ survey.ordered ? 'Yes' : 'No' }}</td>
+        </tr>
+        <tr>
+            <th>DeleteDate</th>
+            <td>{{ survey.deleteDate ? survey.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
+        </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_survey_index') }}">back to list</a>
+    <div class="d-flex">
+        <a class="btn btn-primary mx-2" href="{{ path('app_survey_index') }}">back to list</a>
 
-    <a href="{{ path('app_survey_edit', {'id': survey.id}) }}">edit</a>
+        <a class="btn btn-primary mx-2" href="{{ path('app_survey_edit', {'id': survey.id}) }}">edit</a>
 
-    {{ include('survey/_delete_form.html.twig') }}
+        {{ include('survey/_delete_form.html.twig') }}
+
+        {% if is_granted('ROLE_ADMIN') %}
+            {{ include('survey/_reset_form.html.twig') }}
+        {% endif %}
+
+    </div>
 {% endblock %}

@@ -68,7 +68,7 @@
                         <i class="fa-solid fa-question" style="font-size: 26px"></i>
                     </div>
                     <div class="card-body">
-                        <a href="#" class="btn">-> Liste des questionnaires</a>
+                        <a href="{{ path('app_survey_index') }}" class="btn">-> Liste des questionnaires</a>
                         {% if is_granted('ROLE_TRAINER') %}
                             <a href="#" class="btn">-> Ajouter un questionnaire</a>
                         {% endif %}
