@@ -46,10 +46,10 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
-            $roles =  $form->get('roles')->getData();
+            $roles = $form->get('roles')->getData();
             $user->setRoles($roles);
             $user->setPassword(
-            $userPasswordHasher->hashPassword(
+                $userPasswordHasher->hashPassword(
                     $user,
                     $form->get('plainPassword')->getData()
                 )
@@ -67,7 +67,7 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
             // do anything else you need here, like send an email
-
+            $this->addFlash('success', $user->getUserName() . ' ajouté !');
             return $this->redirectToRoute('app_home');
         }
 
@@ -113,7 +113,7 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
             // do anything else you need here, like send an email
-
+            $this->addFlash('success', 'Formateur : ' . $user->getUserName() . ' ajouté !');
             return $this->redirectToRoute('app_home');
         }
 
@@ -121,8 +121,6 @@ class RegistrationController extends AbstractController
             'registrationForm' => $form->createView(),
         ]);
     }
-
-
 
 
     #[Route('/verify/email', name: 'app_verify_email')]
@@ -133,14 +131,14 @@ class RegistrationController extends AbstractController
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
+            $this->addFlash('success', 'Votre compte à été validé !');
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
-
             return $this->redirectToRoute('app_home');
         }
 
         // Change the redirect on success and handle or remove the flash message in your templates
-        $this->addFlash('success', 'Votre compte à été validé.');
+
         // change app_register to app_home
         return $this->redirectToRoute('app_home');
     }

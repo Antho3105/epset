@@ -74,7 +74,7 @@ class CourseController extends AbstractController
             $user = $this->getUser();
             $course->setUser($user);
             $courseRepository->add($course, true);
-
+            $this->addFlash('success', 'formation ajoutée !');
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -130,7 +130,7 @@ class CourseController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $courseRepository->add($course, true);
-
+            $this->addFlash('success', 'Formation modifiée !');
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -155,6 +155,7 @@ class CourseController extends AbstractController
                 $visibleCourseRepository->remove($assignment);
             }
             $courseRepository->softRemove($course, true);
+            $this->addFlash('alert', 'Formation supprimée !');
         }
 
         return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
@@ -170,6 +171,7 @@ class CourseController extends AbstractController
     {
         if ($this->isCsrfTokenValid('_tokenReset' . $course->getId(), $request->request->get('_tokenReset'))) {
            $courseRepository->cancelRemove($course, true);
+            $this->addFlash('alert', 'Formation restaurée !');
         }
 
         return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);

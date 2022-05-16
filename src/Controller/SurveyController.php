@@ -120,9 +120,8 @@ class SurveyController extends AbstractController
 
     /**
      *
-     *
-     *
      * @param Survey $survey
+     * @param VisibleCourseRepository $visibleCourseRepository
      * @return Response
      */
     #[Route('/{id}', name: 'app_survey_show', methods: ['GET'])]

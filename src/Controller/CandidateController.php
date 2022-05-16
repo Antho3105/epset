@@ -51,7 +51,7 @@ class CandidateController extends AbstractController
             // TODO add admin function to select specific center for new candidate.
             $candidate->setUser($user);
             $candidateRepository->add($candidate, true);
-            $this->addFlash('success', $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' ajouté !');
+            $this->addFlash('success', 'Candidat' . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' ajouté !');
             return $this->redirectToRoute('app_candidate_index', [], Response::HTTP_SEE_OTHER);
         }
         return $this->renderForm('candidate/new.html.twig', [
@@ -80,7 +80,7 @@ class CandidateController extends AbstractController
         // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
             // Si la fiche du candidat n'appartient pas au centre générer une erreur 403.
-            if ($this->getUser() !== $candidate->getUser())
+            if ($candidate->getUser() !== $this->getUser() )
                 throw new AccessDeniedHttpException();
         }
         $form = $this->createForm(CandidateType::class, $candidate);
