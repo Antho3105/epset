@@ -3,9 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\VisibleCourse;
+use App\Form\VisibleCourseAdminType;
 use App\Form\VisibleCourseType;
-use App\Repository\CourseRepository;
-use App\Repository\UserRepository;
 use App\Repository\VisibleCourseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,9 +29,24 @@ class VisibleCourseController extends AbstractController
 //    }
 
     #[Route('/new', name: 'app_visible_course_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, VisibleCourseRepository $visibleCourseRepository, UserRepository $userRepository, CourseRepository $courseRepository): Response
+    public function new(Request $request, VisibleCourseRepository $visibleCourseRepository): Response
     {
+        $user = $this->getUser();
         $visibleCourse = new VisibleCourse();
+        // Si administrateur ouvrir le formulaire avec toutes les formations.
+        if ($this->isGranted("ROLE_ADMIN")) {
+            $form = $this->createForm(VisibleCourseAdminType::class, $visibleCourse);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $visibleCourseRepository->add($visibleCourse, true);
+                return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
+            }
+            return $this->renderForm('visible_course/new.html.twig', [
+                'form' => $form,
+            ]);
+        }
+        // Si centre n'afficher dans le formulaire que les formations que ce centre propose.
         $form = $this->createForm(VisibleCourseType::class, $visibleCourse);
         $form->handleRequest($request);
 
@@ -41,7 +55,7 @@ class VisibleCourseController extends AbstractController
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
         }
         return $this->renderForm('visible_course/new.html.twig', [
-             'form' => $form,
+            'form' => $form,
         ]);
     }
 

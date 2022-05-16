@@ -11,17 +11,9 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class VisibleCourseType extends AbstractType
+class VisibleCourseAdminType extends AbstractType
 {
-    private TokenStorageInterface $token;
-
-    public function __construct(TokenStorageInterface $token)
-    {
-        $this->token = $token;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
@@ -31,8 +23,6 @@ class VisibleCourseType extends AbstractType
                 'class' => Course::class,
                 'query_builder' => function (CourseRepository $courseRepository) {
                     return $courseRepository->createQueryBuilder('course')
-                        ->where('course.user = :user')
-                        ->setParameter('user', $this->token->getToken()->getUser())
                         ->orderBy('course.ref', 'ASC');
                 },
             ])
