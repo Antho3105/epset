@@ -9,11 +9,13 @@ use App\Repository\VisibleCourseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
+ * Seuls les centre peuvent attribuer des formations à des formateurs.
  * @IsGranted("ROLE_CENTER")
  *
  */
@@ -89,6 +91,10 @@ class VisibleCourseController extends AbstractController
     #[Route('/{id}', name: 'app_visible_course_delete', methods: ['POST'])]
     public function delete(Request $request, VisibleCourse $visibleCourse, VisibleCourseRepository $visibleCourseRepository): Response
     {
+        // Si la formation associée n'appartient pas au centre générer une erreur.
+        if ($visibleCourse->getCourse()->getUser() !== $this->getUser())
+            throw throw new AccessDeniedHttpException();
+
         if ($this->isCsrfTokenValid('delete' . $visibleCourse->getId(), $request->request->get('_token'))) {
             $visibleCourseRepository->remove($visibleCourse, true);
         }

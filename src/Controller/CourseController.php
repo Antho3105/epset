@@ -32,10 +32,11 @@ class CourseController extends AbstractController
             ]);
         }
         // Si formateur n'afficher que les formations qui lui sont rattachées
+        // (si les formations sont supprimée le lien avec le formateur l'est aussi automatiquement)
         if ($this->isGranted("ROLE_TRAINER")) {
             $courses = $visibleCourseRepository->findBy(
                 ['user' => $user,
-                ]);
+                    ]);
             $visibleCourses = [];
             foreach ($courses as $course) {
                 $visibleCourses[] = $courseRepository->findOneBy(['id' => $course->getCourse()]);
@@ -45,7 +46,7 @@ class CourseController extends AbstractController
             ]);
         }
 
-        // Si centre n'afficher que les formations qui lui sont rattachées
+        // Si centre n'afficher que les formations qui lui sont rattachées et non supprimées.
         if ($this->isGranted("ROLE_CENTER")) {
             return $this->render('course/index.html.twig', [
                 'courses' => $courseRepository->findBy(
@@ -55,7 +56,6 @@ class CourseController extends AbstractController
             ]);
         }
         return $this->render('main/index.html.twig');
-
     }
 
     /**
@@ -151,9 +151,11 @@ class CourseController extends AbstractController
     {
         if ($this->isCsrfTokenValid('delete' . $course->getId(), $request->request->get('_token'))) {
             $assignments = $visibleCourseRepository->findBy(['Course' => $course]);
+            // suppression de toutes les assignations de formateurs pour la formation à supprimer.
             foreach ($assignments as $assignment) {
                 $visibleCourseRepository->remove($assignment);
             }
+            // supprimer la formation (écrire la date de suppression dans la propriété deleteDate)
             $courseRepository->softRemove($course, true);
             $this->addFlash('alert', 'Formation supprimée !');
         }
@@ -170,10 +172,10 @@ class CourseController extends AbstractController
     public function reset(Request $request, Course $course, CourseRepository $courseRepository): Response
     {
         if ($this->isCsrfTokenValid('_tokenReset' . $course->getId(), $request->request->get('_tokenReset'))) {
-           $courseRepository->cancelRemove($course, true);
+            // appeler la fonction qui permet de remettre à null la propriété delete date.
+            $courseRepository->cancelRemove($course, true);
             $this->addFlash('alert', 'Formation restaurée !');
         }
-
         return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
     }
 }

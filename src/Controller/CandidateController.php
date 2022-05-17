@@ -29,7 +29,7 @@ class CandidateController extends AbstractController
                 'candidates' => $candidateRepository->findAll(),
             ]);
         }
-        // Sinon n'afficher que les candidats rattachés au centre.
+        // Sinon n'afficher que les candidats rattachés au centre et non supprimés.
         return $this->render('candidate/index.html.twig', [
             'candidates' => $candidateRepository->findBy(
                 ['user' => $user,
@@ -48,7 +48,7 @@ class CandidateController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $this->getUser();
             // Affecter le nouveau candidat à l'utilisateur actuel.
-            // TODO add admin function to select specific center for new candidate.
+            // TODO ajouter une fonction admin pour affecter un candidat a un centre.
             $candidate->setUser($user);
             $candidateRepository->add($candidate, true);
             $this->addFlash('success', 'Candidat' . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' ajouté !');
@@ -63,10 +63,11 @@ class CandidateController extends AbstractController
     #[Route('/{id}', name: 'app_candidate_show', methods: ['GET'])]
     public function show(Candidate $candidate): Response
     {
-        // Si la fiche du candidat n'appartient pas au centre générer une erreur 403.
+        // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
-            if ($this->getUser() !== $candidate->getUser())
-                throw new AccessDeniedHttpException();
+            // Si la fiche du candidat n'appartient pas au centre ou que la fiche a été supprimée générer une erreur 403.
+            if ($this->getUser() !== $candidate->getUser() | $candidate->getDeleteDate() !== null)
+            throw new AccessDeniedHttpException();
         }
         return $this->render('candidate/show.html.twig', [
             'candidate' => $candidate,
@@ -79,8 +80,8 @@ class CandidateController extends AbstractController
     {
         // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
-            // Si la fiche du candidat n'appartient pas au centre générer une erreur 403.
-            if ($candidate->getUser() !== $this->getUser() )
+            // Si la fiche du candidat n'appartient pas au centre ou que la fiche a été supprimée générer une erreur 403.
+            if ($candidate->getUser() !== $this->getUser()  | $candidate->getDeleteDate() !== null)
                 throw new AccessDeniedHttpException();
         }
         $form = $this->createForm(CandidateType::class, $candidate);
@@ -104,8 +105,8 @@ class CandidateController extends AbstractController
     {
         // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
-            // Si la fiche du candidat n'appartient pas au centre générer une erreur 403.
-            if ($this->getUser() !== $candidate->getUser())
+            // Si la fiche du candidat n'appartient pas au centre  ou que la fiche a déjà été supprimée générer une erreur 403.
+            if ($this->getUser() !== $candidate->getUser()  | $candidate->getDeleteDate() !== null)
                 throw new AccessDeniedHttpException();
         }
         if ($this->isCsrfTokenValid('delete' . $candidate->getId(), $request->request->get('_token'))) {
