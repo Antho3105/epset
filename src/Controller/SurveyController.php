@@ -134,6 +134,7 @@ class SurveyController extends AbstractController
      *
      * @param Survey $survey
      * @param VisibleCourseRepository $visibleCourseRepository
+     * @param QuestionRepository $questionRepository
      * @return Response
      */
     #[Route('/{id}', name: 'app_survey_show', methods: ['GET'])]
@@ -174,9 +175,6 @@ class SurveyController extends AbstractController
             'Survey' => $survey,
             'deleteDate' => null
         ]);
-
-
-
 
         return $this->render('survey/show.html.twig', [
             'survey' => $survey,

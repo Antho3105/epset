@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Result index{% endblock %}
+
+{% block body %}
+    <h1>Result index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>TestDate</th>
+                <th>ViewedQuestion</th>
+                <th>AnsweredQuestion</th>
+                <th>Score</th>
+                <th>Token</th>
+                <th>DeleteDate</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for result in results %}
+            <tr>
+                <td>{{ result.id }}</td>
+                <td>{{ result.testDate ? result.testDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ result.viewedQuestion }}</td>
+                <td>{{ result.answeredQuestion }}</td>
+                <td>{{ result.score }}</td>
+                <td>{{ result.token }}</td>
+                <td>{{ result.deleteDate ? result.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_result_show', {'id': result.id}) }}">show</a>
+                    <a href="{{ path('app_result_edit', {'id': result.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_result_new') }}">Create new</a>
+{% endblock %}

@@ -67,6 +67,9 @@
                         <div class="card-body">
                             {{ question.answer }}
                         </div>
+                        <div>
+                            <a class="btn btn-primary" href="{{ path('app_question_edit', {'id': question.id}) }}">Modifier</a>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
