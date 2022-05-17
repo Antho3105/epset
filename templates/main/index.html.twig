@@ -74,6 +74,18 @@
                         {% endif %}
                     </div>
                 </div>
+                {% if is_granted('ROLE_CENTER') %}
+                    <div class="card  mx-1">
+                        <div class="d-flex card-header justify-content-between align-item-center">
+                           Résultats
+                            <i class="fa-solid fa-square-poll-horizontal" style="font-size: 26px"></i>
+                        </div>
+                        <div class="card-body">
+                            <a href="{{ path('app_result_index') }}" class="btn">-> Liste des résultats</a>
+                                <a href="{{ path('app_result_new') }}" class="btn">-> Créer une fiche de résultat</a>
+                            </div>
+                    </div>
+                {% endif %}
 
                 <div class="card mx-1">
                     <div class="d-flex card-header justify-content-between align-item-center">

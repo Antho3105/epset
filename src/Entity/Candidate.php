@@ -148,4 +148,9 @@ class Candidate
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->getLastName() . ' ' . $this->getFirstName();
+    }
 }

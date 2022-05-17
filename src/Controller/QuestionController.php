@@ -81,7 +81,7 @@ class QuestionController extends AbstractController
     }
 
     /**
-     * Soft delete (seul l'administrateur peux supprimer définitivement l'element
+     * Soft delete (seul l'administrateur peux supprimer définitivement l'élément
      *
      * @param Request $request
      * @param Question $question

@@ -40,7 +40,7 @@ class VisibleCourseType extends AbstractType
                 'label' => 'Formateur',
                 'class' => User::class,
                 'query_builder' => function (UserRepository $userRepository) {
-                    return $qb = $userRepository->createQueryBuilder('user')
+                    return $userRepository->createQueryBuilder('user')
                         ->where('user.roles LIKE :roles')
                         ->setParameter('roles', '%"' . 'ROLE_TRAINER' . '"%')
                         ->orderBy('user.lastName', 'ASC');

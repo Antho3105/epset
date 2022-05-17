@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Result;
+use App\Entity\Survey;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -30,7 +32,7 @@ class ResultRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Result $entity, bool $flush = false): void
+    public function hardDelete(Result $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -38,6 +40,28 @@ class ResultRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function softDelete(Result $entity, bool $flush = false): void
+    {
+        $date = new DateTime();
+        $entity->setDeleteDate($date);
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function cancelRemove(Result $entity, bool $flush = false): void
+    {
+        $entity->setDeleteDate(null);
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
 
 //    /**
 //     * @return Result[] Returns an array of Result objects

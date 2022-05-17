@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class MainController extends AbstractController
@@ -24,5 +25,4 @@ class MainController extends AbstractController
 
         return $this->render('main/index.html.twig');
     }
-
 }
