@@ -1,4 +1,11 @@
 {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+<div class="d-flex">
+    <a class="btn btn-primary mx-2" href="{{ path('app_survey_index') }}">Retour liste</a>
+    {% if survey.id %}
+        {{ include('survey/_delete_form.html.twig') }}
+    {% endif %}
+    <button class="btn btn-primary mx-2">{{ button_label|default('Valider') }}</button>
+
+</div>
 {{ form_end(form) }}

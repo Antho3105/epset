@@ -39,7 +39,8 @@
     {% endfor %}
     {% endif %}
 
-    <div class="d-flex mt-5">
+    <div class="d-flex justify-content-between mt-5">
+        <div class="d-flex">
         <a class="btn btn-primary mx-2" href="{{ path('app_course_index') }}">Retour liste</a>
         {% if is_granted('ROLE_CENTER') %}
         <a class="btn btn-primary mx-2 " href="{{ path('app_course_edit', {'id': course.id}) }}">Modifier</a>
@@ -48,5 +49,11 @@
         {% if is_granted('ROLE_ADMIN') %}
             {{ include('course/_reset_form.html.twig') }}
         {% endif %}
+        </div>
+
+        <div>
+            <a class="btn btn-primary mx-2 " href="{{ path('app_survey_new', {'id': course.id}) }}">Créer questionnaire</a>
+
+        </div>
     </div>
 {% endblock %}

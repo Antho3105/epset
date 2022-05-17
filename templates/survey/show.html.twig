@@ -1,53 +1,78 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Survey{% endblock %}
+{% block title %}Questionnaire{% endblock %}
 
 {% block body %}
-    <h1>Survey</h1>
+    <h1 class="h1 mb-3 font-weight-normal text-center">Questionnaire</h1>
+    <section id="surveyDetails">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th>Référence</th>
+                <td>{{ survey.ref }}</td>
+            </tr>
+            <tr>
+                <th>Difficulté</th>
+                <td>{{ survey.difficulty }}</td>
+            </tr>
+            <tr>
+                <th>Temps par question</th>
+                <td>{{ survey.questionTimer }}</td>
+            </tr>
+            <tr>
+                <th>Affichage questions</th>
+                <td>{{ survey.ordered ? 'Dans l\'ordre' : 'Aléatoire' }}</td>
+            </tr>
+            {% if is_granted('ROLE_ADMIN') %}
+                <tr>
+                    <th>Date de suppression</th>
+                    <td>{{ survey.deleteDate ? survey.deleteDate|date('d-m-Y H:i') : '-' }}</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>Détails</th>
+                <td>{{ survey.detail }}</td>
+            </tr>
 
-    <table class="table">
-        <tbody>
-        <tr>
-            <th>Id</th>
-            <td>{{ survey.id }}</td>
-        </tr>
-        <tr>
-            <th>Ref</th>
-            <td>{{ survey.ref }}</td>
-        </tr>
-        <tr>
-            <th>Detail</th>
-            <td>{{ survey.detail }}</td>
-        </tr>
-        <tr>
-            <th>Difficulty</th>
-            <td>{{ survey.difficulty }}</td>
-        </tr>
-        <tr>
-            <th>QuestionTimer</th>
-            <td>{{ survey.questionTimer }}</td>
-        </tr>
-        <tr>
-            <th>Ordered</th>
-            <td>{{ survey.ordered ? 'Yes' : 'No' }}</td>
-        </tr>
-        <tr>
-            <th>DeleteDate</th>
-            <td>{{ survey.deleteDate ? survey.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
-        </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <div class="d-flex">
-        <a class="btn btn-primary mx-2" href="{{ path('app_survey_index') }}">back to list</a>
+        <div class="d-flex">
+            <a class="btn btn-primary mx-2" href="{{ path('app_survey_index') }}">Retour liste</a>
 
-        <a class="btn btn-primary mx-2" href="{{ path('app_survey_edit', {'id': survey.id}) }}">edit</a>
+            <a class="btn btn-primary mx-2" href="{{ path('app_survey_edit', {'id': survey.id}) }}">Modifier</a>
 
-        {{ include('survey/_delete_form.html.twig') }}
+            {{ include('survey/_delete_form.html.twig') }}
 
-        {% if is_granted('ROLE_ADMIN') %}
-            {{ include('survey/_reset_form.html.twig') }}
+            {% if is_granted('ROLE_ADMIN') %}
+                {{ include('survey/_reset_form.html.twig') }}
+            {% endif %}
+
+        </div>
+    </section>
+
+    <section id="questionList" class=" pt-2">
+
+        <h2 class="h2 mb-3 font-weight-normal text-center">Liste des questions</h2>
+        {% if is_granted('ROLE_TRAINER') %}
+            <a class="btn btn-primary" href="{{ path('app_question_new', {'id': survey.id}) }}">Ajouter une question</a>
+        {% endif %}
+        {% if questions %}
+            <div class="d-flex justify-content-between">
+                {% for question in questions %}
+                    <div class="card  mx-1">
+                        <div class="d-flex card-header justify-content-between align-item-center">
+                            {{ question.question }}
+                        </div>
+                        <div class="card-body">
+                            {{ question.answer }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h3 class="h3 mb-3 font-weight-normal text-center">Pas de question créée pour ce questionnaire</h3>
         {% endif %}
 
-    </div>
+    </section>
 {% endblock %}

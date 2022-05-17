@@ -6,6 +6,7 @@ use App\Entity\Course;
 use App\Entity\Survey;
 use App\Form\SurveyType;
 use App\Repository\CourseRepository;
+use App\Repository\QuestionRepository;
 use App\Repository\SurveyRepository;
 use App\Repository\VisibleCourseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -85,20 +86,22 @@ class SurveyController extends AbstractController
     #[Route('/new/{id}', name: 'app_survey_new', methods: ['GET', 'POST'])]
     public function new(Request $request, Course $course, SurveyRepository $surveyRepository, VisibleCourseRepository $visibleCourseRepository): Response
     {
-        // N'autoriser l'accès au formulaire de création d'un questionnaire que si le formateur est assigné.
-        $user = $this->getUser();
-        // Récupérer la liste des formations assignées.
-        $visibleCourses = $visibleCourseRepository->findBy([
-            'user' => $user
-        ]);
-        // initialiser le tableau des formations assignées
-        $allowedCourses = [];
-        foreach ($visibleCourses as $visibleCourse)
-            $allowedCourses[] = $visibleCourse->getCourse();
-        // Si la formation passée en GET n'est pas dans le tableau des formations autorisées générer une erreur.
-        if (!in_array($course, $allowedCourses))
-            throw throw new AccessDeniedHttpException();
-
+        // Si l'utilisateur n'est pas administrateur gérer l'acces.
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            // N'autoriser l'accès au formulaire de création d'un questionnaire que si le formateur est assigné.
+            $user = $this->getUser();
+            // Récupérer la liste des formations assignées.
+            $visibleCourses = $visibleCourseRepository->findBy([
+                'user' => $user
+            ]);
+            // initialiser le tableau des formations assignées
+            $allowedCourses = [];
+            foreach ($visibleCourses as $visibleCourse)
+                $allowedCourses[] = $visibleCourse->getCourse();
+            // Si la formation passée en GET n'est pas dans le tableau des formations autorisées générer une erreur.
+            if (!in_array($course, $allowedCourses))
+                throw throw new AccessDeniedHttpException();
+        }
         // Sinon rendre le formulaire de création.
         $survey = new Survey();
         $form = $this->createForm(SurveyType::class, $survey);
@@ -127,13 +130,14 @@ class SurveyController extends AbstractController
     }
 
     /**
+     * Affiche le questionnaire et les questions qui lui sont liées.
      *
      * @param Survey $survey
      * @param VisibleCourseRepository $visibleCourseRepository
      * @return Response
      */
     #[Route('/{id}', name: 'app_survey_show', methods: ['GET'])]
-    public function show(Survey $survey, VisibleCourseRepository $visibleCourseRepository): Response
+    public function show(Survey $survey, VisibleCourseRepository $visibleCourseRepository, QuestionRepository $questionRepository): Response
     {
         $user = $this->getUser();
         // Si l'utilisateur n'est pas administrateur gérer les accès.
@@ -164,8 +168,19 @@ class SurveyController extends AbstractController
                     throw throw new AccessDeniedHttpException();
             }
         }
+
+        // Récupérer la liste des questions d'un questionnaire.
+        $questions = $questionRepository->findBy([
+            'Survey' => $survey,
+            'deleteDate' => null
+        ]);
+
+
+
+
         return $this->render('survey/show.html.twig', [
             'survey' => $survey,
+            'questions' => $questions
         ]);
     }
 
@@ -182,10 +197,12 @@ class SurveyController extends AbstractController
         Route('/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
-        // Si le questionnaire passé en GET n'appartient pas au formateur ou a été supprimé générer une erreur
-        if ($survey->getUser() !== $this->getUser() | $survey->getDeleteDate() !== null)
-            throw throw new AccessDeniedHttpException();
-
+        // Si l'utilisateur n'est pas administrateur gérer l'accès.
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            // Si le questionnaire passé en GET n'appartient pas au formateur ou a été supprimé générer une erreur
+            if ($survey->getUser() !== $this->getUser() | $survey->getDeleteDate() !== null)
+                throw throw new AccessDeniedHttpException();
+        }
         // Sinon créer le formulaire et l'afficher.
         $form = $this->createForm(SurveyType::class, $survey);
         $form->handleRequest($request);
@@ -212,18 +229,21 @@ class SurveyController extends AbstractController
     public function softDelete(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
         $user = $this->getUser();
-        // Si le quesitonnaire a déjà été supprimer générer une erreur.
+        // Si le questionnaire a déjà été supprimé générer une erreur.
         if ($survey->getDeleteDate() !== null)
             throw throw new AccessDeniedHttpException();
-        // Si le questionnaire n'appartient pas au formateur générer une erreur.
-        if ($this->isGranted("ROLE_TRAINER")) {
-            if ($survey->getUser() !== $user)
-                throw throw new AccessDeniedHttpException();
-        }
-        // Si la formation à laquelle est liée le questionnaire n'appartient pas au centre générer une erreur
-        if ($this->isGranted("ROLE_CENTER")) {
-            if ($survey->getCourse()->getUser() !== $user)
-                throw throw new AccessDeniedHttpException();
+        // Si l'utilisateur n'est pas administrateur gérer l'accès
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            // Si le questionnaire n'appartient pas au formateur générer une erreur.
+            if ($this->isGranted("ROLE_TRAINER")) {
+                if ($survey->getUser() !== $user)
+                    throw throw new AccessDeniedHttpException();
+            }
+            // Si la formation à laquelle est liée le questionnaire n'appartient pas au centre générer une erreur
+            if ($this->isGranted("ROLE_CENTER")) {
+                if ($survey->getCourse()->getUser() !== $user)
+                    throw throw new AccessDeniedHttpException();
+            }
         }
         // Sinon passer appeler la fonction de softDelete
         if ($this->isCsrfTokenValid('delete' . $survey->getId(), $request->request->get('_token'))) {
