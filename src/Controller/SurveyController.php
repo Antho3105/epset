@@ -7,6 +7,7 @@ use App\Entity\Survey;
 use App\Form\SurveyType;
 use App\Repository\CourseRepository;
 use App\Repository\QuestionRepository;
+use App\Repository\ResultRepository;
 use App\Repository\SurveyRepository;
 use App\Repository\VisibleCourseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -191,8 +192,7 @@ class SurveyController extends AbstractController
      * @param SurveyRepository $surveyRepository
      * @return Response
      */
-    #[
-        Route('/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
         // Si l'utilisateur n'est pas administrateur gérer l'accès.

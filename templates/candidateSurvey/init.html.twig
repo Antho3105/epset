@@ -1,0 +1,24 @@
+{% extends './candidateSurvey/index.html.twig' %}
+
+{% block title %}Edit Result{% endblock %}
+
+{% block body %}
+    <section id="header">
+        <h1 class="h1 mb-3 font-weight-normal text-center pt-2">Initialisation du test {{ survey.course.title }}</h1>
+        <p>Centre : {{ survey.course.user.userName }}</p>
+        <p>Formation : {{ survey.course.title }}</p>
+        <p>Candidat : {{ result.candidate.lastName }} {{ result.candidate.firstName }} </p>
+
+    </section>
+<section id="detail">
+    <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Détails du questionnaire :</h2>
+    <p>{{ survey.detail }}</p>
+</section>
+
+    <section is="upload">
+        <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Upload fichiers :</h2>
+
+        {{ include('candidateSurvey/_form.html.twig') }}
+    </section>
+
+{% endblock %}

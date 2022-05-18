@@ -2,14 +2,20 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Result;
-use App\Form\ResultType;
 use App\Repository\CandidateRepository;
+use App\Repository\CourseRepository;
 use App\Repository\ResultRepository;
+use App\Repository\SurveyRepository;
+use DateTime;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -58,24 +64,142 @@ class ResultController extends AbstractController
         return $this->render('main/index.html.twig');
     }
 
+//    #[Route('/new', name: 'app_result_new', methods: ['GET', 'POST'])]
+//    public function new(Request $request, ResultRepository $resultRepository): Response
+//    {
+//        $result = new Result();
+//        $form = $this->createForm(ResultType::class, $result);
+//        $form->handleRequest($request);
+//
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $resultRepository->add($result, true);
+//
+//            return $this->redirectToRoute('app_result_index', [], Response::HTTP_SEE_OTHER);
+//        }
+//
+//        return $this->renderForm('result/new.html.twig', [
+//            'result' => $result,
+//            'form' => $form,
+//        ]);
+//    }
+
+    /**
+     * Methode de création d'une fiche de résultat.
+     * Permet d'afficher la page de choix candidat / formation.
+     *
+     * @param Request $request
+     * @param ResultRepository $resultRepository
+     * @param CandidateRepository $candidateRepository
+     * @param CourseRepository $courseRepository
+     * @return Response
+     */
     #[Route('/new', name: 'app_result_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, ResultRepository $resultRepository): Response
+    public function new(Request $request, ResultRepository $resultRepository, CandidateRepository $candidateRepository, CourseRepository $courseRepository): Response
     {
-        $result = new Result();
-        $form = $this->createForm(ResultType::class, $result);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $resultRepository->add($result, true);
-
-            return $this->redirectToRoute('app_result_index', [], Response::HTTP_SEE_OTHER);
+        $user = $this->getUser();
+        // Récupérer tous les candidats (non supprimés) du centre.
+        $candidates = $candidateRepository->findBy([
+            'user' => $user,
+            'deleteDate' => null
+        ]);
+        // Initialiser le tableau de tous les questionnaires du centre.
+        $surveys = [];
+        // Récupérer toutes les formations (non supprimées) du centre
+        $courses = $courseRepository->findBy([
+            'user' => $user,
+            'deleteDate' => null
+        ]);
+        // Pour chaque formation, ajouter tous les questionnaires liés et non supprimés au tableau.
+        foreach ($courses as $course) {
+            $courseSurveys = $course->getSurveys();
+            foreach ($courseSurveys as $courseSurvey) {
+                if ($courseSurvey->getDeleteDate() === null)
+                    $surveys[] = $courseSurvey;
+            }
         }
 
-        return $this->renderForm('result/new.html.twig', [
-            'result' => $result,
-            'form' => $form,
+        // rendre la vue avec les tableaux.
+        return $this->render('result/new.html.twig', [
+            'candidates' => $candidates,
+            'surveys' => $surveys
         ]);
+
     }
+
+    /**
+     * Methode de création d'une fiche de résultat.
+     * Permet de créer une fiche de résultat et d'envoyer un mail au candidat
+     *
+     * @param Request $request
+     * @param ResultRepository $resultRepository
+     * @param CandidateRepository $candidateRepository
+     * @param SurveyRepository $surveyRepository
+     * @param CourseRepository $courseRepository
+     * @return Response
+     * @throws \Exception
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
+    #[Route('/add', name: 'app_result_add', methods: ['GET', 'POST'])]
+    public function add(MailerInterface $mailer, Request $request, ResultRepository $resultRepository, CandidateRepository $candidateRepository, SurveyRepository $surveyRepository, CourseRepository $courseRepository): Response
+    {
+        $user = $this->getUser();
+        $candidate = $candidateRepository->find((int)$request->get('candidate'));
+        $survey = $surveyRepository->find((int)$request->get('survey'));
+
+        // Verifier que les entités passés en get appartiennent au centre.
+        $user = $this->getUser();
+        // Récupérer tous les candidats (non supprimés) du centre.
+        $candidates = $candidateRepository->findBy([
+            'user' => $user,
+            'deleteDate' => null
+        ]);
+        // Initialiser le tableau de tous les questionnaires du centre.
+        $surveys = [];
+        // Récupérer toutes les formations (non supprimées) du centre
+        $courses = $courseRepository->findBy([
+            'user' => $user,
+            'deleteDate' => null
+        ]);
+        // Pour chaque formation, ajouter tous les questionnaires liés et non supprimés au tableau.
+        foreach ($courses as $course) {
+            $courseSurveys = $course->getSurveys();
+            foreach ($courseSurveys as $courseSurvey) {
+                if ($courseSurvey->getDeleteDate() === null)
+                    $surveys[] = $courseSurvey;
+            }
+        }
+        // Si le candidat n'appartient pas au centre ou que le questionnaire n'appartient pas à une formation du centre, générer une erreur.
+        if (!in_array($candidate, $candidates) | !in_array($survey, $surveys))
+            throw throw new AccessDeniedHttpException();
+        // Sinon créer l'entité résultat.
+        $result = new Result();
+        $result->setCandidate($candidate);
+        $result->setSurvey($survey);
+        $result->setTestDate(new DateTime());
+
+        // Créer un token de validation
+        $token = uniqid('', true) . rtrim(strtr(base64_encode(random_bytes(12)), '+/', '-_'), '=');
+
+        $result->setToken($token);
+        // Envoyer le mail avec le lien au candidat.
+
+        $email = (new TemplatedEmail())
+            ->from(new Address($_ENV['ADMIN_EMAIL'], 'epset mailer'))
+            ->to($candidate->getEmail())
+            ->subject('QCM formation ' . $survey->getCourse()->getTitle())
+            ->htmlTemplate('mailer/email_candidate.html.twig')
+            ->context([
+                'token' => $token,
+                'candidate' => $candidate
+            ]);
+
+              $mailer->send($email);
+
+        $resultRepository->add($result, true);
+
+        return $this->render('main/index.html.twig');
+    }
+
 
     #[Route('/{id}', name: 'app_result_show', methods: ['GET'])]
     public function show(Result $result): Response
