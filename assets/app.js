@@ -16,3 +16,4 @@ import './styles/form.css';
 
 // start the Stimulus application
 import './bootstrap';
+import './tinymce';

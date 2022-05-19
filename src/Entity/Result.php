@@ -39,8 +39,11 @@ class Result
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $deleteDate;
 
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 130, nullable: true)]
     private $coverLetterFilename;
+
+    #[ORM\Column(type: 'array', nullable: true)]
+    private $questionList = [];
 
     public function getId(): ?int
     {
@@ -151,6 +154,18 @@ class Result
     public function setCoverLetterFilename(?string $coverLetterFilename): self
     {
         $this->coverLetterFilename = $coverLetterFilename;
+
+        return $this;
+    }
+
+    public function getQuestionList(): ?array
+    {
+        return $this->questionList;
+    }
+
+    public function setQuestionList(?array $questionList): self
+    {
+        $this->questionList = $questionList;
 
         return $this;
     }
