@@ -17,10 +17,21 @@
 
     <section id="response">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Réponses :</h2>
+        <form action="{{ path('app_survey_next') }}">
+            <div class="d-flex">
 
-        {% for answer in answers %}
-            <p>{{ answer }}</p>
-        {% endfor %}
+                {% for answer in answers %}
+                    <div class="card">
+                        <p>{{ answer }}</p>
+                    </div>
+                {% endfor %}
+
+            </div>
+            <button class="btn btn-primary">Valider</button>
+            <input name="candidateAnswer" type="text" style="display:block">
+        </form>
     </section>
+
+
 
 {% endblock %}

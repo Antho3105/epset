@@ -105,9 +105,9 @@ class CandidateSurveyController extends AbstractController
                         'id' => 'ASC'
                     ]
                 );
-                // Initialiser le tableau qui va contenir la liste d'id des questions du questionnaire.
+                // Initialiser le tableau qui va contenir les id des questions (et si elles ont été lues).
                 $questionList = [];
-                // Récupérer les id et les ajouter au tableau en initialisant a false (non lu)
+                // Récupérer les id et les ajouter au tableau en initialisant à false (non lu)
                 foreach ($questions as $question) {
                     $questionList[] = [$question->getId() => false];
                 }
@@ -122,7 +122,7 @@ class CandidateSurveyController extends AbstractController
             $questionList[0] = [key($questionList[0]) => true];
 
 
-            // récupérer la question et les réponses (en les mélangeant)
+            // Récupérer la question et les réponses (en les mélangeant)
             $question = $currentQuestion->getQuestion();
             $answers = [
                 $currentQuestion->getAnswer(),
@@ -131,6 +131,7 @@ class CandidateSurveyController extends AbstractController
                 $currentQuestion->getChoice4(),
                 $currentQuestion->getChoice5(),
             ];
+            shuffle($answers);
 
             // Affecter la liste de questions au tableau de résultat.
             $result->setQuestionList($questionList);
@@ -157,7 +158,7 @@ class CandidateSurveyController extends AbstractController
      *
      *
      */
-    #[Route('/question/survey', name: 'app_survey_next', methods: ['GET'])]
+    #[Route('/question/survey', name: 'app_survey_next', methods: ['GET', 'POST'])]
     public function next(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository, string $token = null): Response
     {
         // Récupérer le token dans la session.
@@ -167,9 +168,10 @@ class CandidateSurveyController extends AbstractController
         if ($token === null) {
             throw throw new AccessDeniedHttpException();
         }
+        // récupérer la réponse du candidat
+        $answer = $request->get('candidateAnswer');
 
-
-        dd('ok');
+        dd($answer);
 
         return true;
     }

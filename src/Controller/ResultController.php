@@ -142,7 +142,6 @@ class ResultController extends AbstractController
     #[Route('/add', name: 'app_result_add', methods: ['GET', 'POST'])]
     public function add(MailerInterface $mailer, Request $request, ResultRepository $resultRepository, CandidateRepository $candidateRepository, SurveyRepository $surveyRepository, CourseRepository $courseRepository): Response
     {
-        $user = $this->getUser();
         $candidate = $candidateRepository->find((int)$request->get('candidate'));
         $survey = $surveyRepository->find((int)$request->get('survey'));
 

@@ -42,7 +42,7 @@ class Result
     #[ORM\Column(type: 'string', length: 130, nullable: true)]
     private $coverLetterFilename;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     private $questionList = [];
 
     public function getId(): ?int
