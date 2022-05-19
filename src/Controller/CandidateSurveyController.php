@@ -56,7 +56,6 @@ class CandidateSurveyController extends AbstractController
             'token' => $token
         ]);
 
-        dd($result);
         // Récupérer le questionnaire à partir de la fiche de résultat.
         $survey = $result->getSurvey();
 
@@ -95,40 +94,55 @@ class CandidateSurveyController extends AbstractController
                 $motivationLetter->move('./coverLetters_files/', $coverLetterFilename);
             }
 
-            // Récupérer la liste de question du questionnaire.
-            $questions = $questionRepository->findBy([
-                'Survey' => $survey,
-                'deleteDate' => null
-            ],
-                [
-                    'id' => 'ASC'
-                ]
-            );
-            // Initialiser le tableau qui va contenir la liste d'id des questions du questionnaire.
-            $questionList = [];
-            // Récupérer les id et les ajouter au tableau en initialisant a false (non lu)
-            foreach ($questions as $question) {
-                $questionList[] = [$question->getId() => false];
-            }
-            // Si le questionnaire est aléatoire mélanger les questions.
-            if (!$survey->isOrdered())
-                shuffle($questionList);
+            // Si le tableau de question est deja renseigné ne pas le recharger (lors d'un rechargement de page pas ex)
+            if (!$result->getQuestionList()) {
+                // Récupérer la liste de question du questionnaire.
+                $questions = $questionRepository->findBy([
+                    'Survey' => $survey,
+                    'deleteDate' => null
+                ],
+                    [
+                        'id' => 'ASC'
+                    ]
+                );
+                // Initialiser le tableau qui va contenir la liste d'id des questions du questionnaire.
+                $questionList = [];
+                // Récupérer les id et les ajouter au tableau en initialisant a false (non lu)
+                foreach ($questions as $question) {
+                    $questionList[] = [$question->getId() => false];
+                }
+                // Si le questionnaire est aléatoire mélanger les questions.
+                if (!$survey->isOrdered())
+                    shuffle($questionList);
+            } else
+                $questionList = $result->getQuestionList();
+
+            // Récupérer la première question.
+            $currentQuestion = $questionRepository->find(key($questionList[0]));
+            $questionList[0] = [key($questionList[0]) => true];
+
+
+            // récupérer la question et les réponses (en les mélangeant)
+            $question = $currentQuestion->getQuestion();
+            $answers = [
+                $currentQuestion->getAnswer(),
+                $currentQuestion->getChoice2(),
+                $currentQuestion->getChoice3(),
+                $currentQuestion->getChoice4(),
+                $currentQuestion->getChoice5(),
+            ];
 
             // Affecter la liste de questions au tableau de résultat.
             $result->setQuestionList($questionList);
-
             // Persister la fiche de résultat.
             $resultRepository->add($result, true);
-
-            dd('ok');
-
-            // Récupérer la première question.
-
 
             // Rediriger vers la premiere question du questionnaire.
             return $this->render('candidateSurvey/question.html.twig', [
                 'candidate' => $candidate,
-                'question' => $question
+                'survey' => $survey,
+                'question' => $question,
+                'answers' => $answers
             ]);
         }
 
