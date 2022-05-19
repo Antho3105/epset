@@ -39,6 +39,9 @@ class Result
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $deleteDate;
 
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $coverLetterFilename;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -136,6 +139,18 @@ class Result
     public function setDeleteDate(?\DateTimeInterface $deleteDate): self
     {
         $this->deleteDate = $deleteDate;
+
+        return $this;
+    }
+
+    public function getCoverLetterFilename(): ?string
+    {
+        return $this->coverLetterFilename;
+    }
+
+    public function setCoverLetterFilename(?string $coverLetterFilename): self
+    {
+        $this->coverLetterFilename = $coverLetterFilename;
 
         return $this;
     }

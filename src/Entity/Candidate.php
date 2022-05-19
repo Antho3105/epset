@@ -37,6 +37,9 @@ class Candidate
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $deleteDate;
 
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $cvFileName;
+
     public function __construct()
     {
         $this->results = new ArrayCollection();
@@ -152,5 +155,17 @@ class Candidate
     public function __toString(): string
     {
         return $this->getLastName() . ' ' . $this->getFirstName();
+    }
+
+    public function getCvFileName(): ?string
+    {
+        return $this->cvFileName;
+    }
+
+    public function setCvFileName(?string $cvFileName): self
+    {
+        $this->cvFileName = $cvFileName;
+
+        return $this;
     }
 }

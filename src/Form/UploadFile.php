@@ -29,7 +29,7 @@ class UploadFile extends AbstractType
                     ])
                 ]
             ])
-            ->add('MotivationLetter', FileType::class, [
+            ->add('motivationLetter', FileType::class, [
                 'mapped' => false,
                 'label' => 'Lettre de motivation',
                 'multiple' => false,

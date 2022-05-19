@@ -30,7 +30,7 @@ class CandidateSurveyController extends AbstractController
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    #[Route('begin/survey/{token]', name: 'app_survey_init', methods: ['GET'])]
+    #[Route('begin/survey/{token]', name: 'app_survey_init', methods: ['GET', 'POST'])]
     public function begin(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository, string $token = null): Response
     {
         // Récupérer le token passé en GET et le stocker dans la session.
@@ -56,13 +56,26 @@ class CandidateSurveyController extends AbstractController
         // Récupérer le questionnaire à partir de la fiche de résultat.
         $survey = $result->getSurvey();
 
-        // créer le formulaire pour l'upload des fichiers (CV et lettre de motivation.
-        $form = $this->createForm(UploadFile::class, );
+        // Créer le formulaire pour l'upload des fichiers (CV et lettre de motivation).
+        $form = $this->createForm(UploadFile::class,);
         $form->handleRequest($request);
 
+        // Si le formulaire est valide uploader les fichiers sur le serveur.
         if ($form->isSubmitted() && $form->isValid()) {
+            $cv = $form->get("CV_file")->getData();
+            if ($cv) {
+                $fileExtension = $cv->guessExtension();
+                $cv->move('./cv_files/', 'CV ' . $result->getCandidate()->getLastName() . ' ' . $result->getCandidate()->getFirstName() . '.' . $fileExtension);
+            }
+            $motivationLetter = $form->get("motivationLetter")->getData();
+            if ($motivationLetter) {
+                $fileExtension = $motivationLetter->guessExtension();
+                $motivationLetter->move('./motivationLetters_files/', 'Lettre de motivation ' . $result->getCandidate()->getLastName() . ' ' . $result->getCandidate()->getFirstName() . ' ' . $survey->getRef() . '.' . $fileExtension);
+            }
 
+            dd('ok');
 
+            // Rediriger vers la premiere question du questionnaire.
             return $this->redirectToRoute('app_survey_next', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -78,7 +91,7 @@ class CandidateSurveyController extends AbstractController
      *
      *
      */
-    #[Route('next/question/survey/{token]', name: 'app_survey_next', methods: ['GET'])]
+    #[Route('/question/survey', name: 'app_survey_next', methods: ['GET'])]
     public function next(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository, string $token = null): Response
     {
 
