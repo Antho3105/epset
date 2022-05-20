@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Answer;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -33,6 +34,17 @@ class AnswerRepository extends ServiceEntityRepository
     public function remove(Answer $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function softDelete(Answer $entity, bool $flush = false): void
+    {
+        $date = new DateTime();
+        $entity->setDeleteDate($date);
+        $this->getEntityManager()->persist($entity);
 
         if ($flush) {
             $this->getEntityManager()->flush();

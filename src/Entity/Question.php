@@ -15,22 +15,23 @@ class Question
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 1000)]
+
+    #[ORM\Column(type: 'text')]
     private $question;
 
-    #[ORM\Column(type: 'string', length: 200)]
+    #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private $answer;
 
-    #[ORM\Column(type: 'string', length: 200)]
+    #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private $choice2;
 
-    #[ORM\Column(type: 'string', length: 200)]
+    #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private $choice3;
 
-    #[ORM\Column(type: 'string', length: 200)]
+    #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private $choice4;
 
-    #[ORM\Column(type: 'string', length: 200)]
+    #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private $choice5;
 
     #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'questions')]

@@ -22,7 +22,7 @@
 
                 {% for answer in answers %}
                     <div class="card">
-                        <a class="answer">{{ answer }}</a>
+                        <a id="{{ answer.id }}" class="answer">{{ answer.value }}</a>
                     </div>
                 {% endfor %}
 

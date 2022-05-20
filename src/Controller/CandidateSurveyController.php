@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\UploadFile;
+use App\Repository\AnswerRepository;
 use App\Repository\CandidateRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\ResultRepository;
@@ -33,7 +34,7 @@ class CandidateSurveyController extends AbstractController
      * @throws NotFoundExceptionInterface
      */
     #[Route('init/survey/{token}', name: 'app_survey_init', methods: ['GET', 'POST'])]
-    public function begin(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, CandidateRepository $candidateRepository, SurveyRepository $surveyRepository, string $token = null): Response
+    public function begin(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, CandidateRepository $candidateRepository, AnswerRepository $answerRepository, SurveyRepository $surveyRepository, string $token = null): Response
     {
         // Récupérer le token passé en GET et le stocker dans la session.
         if ($token) {
@@ -124,13 +125,14 @@ class CandidateSurveyController extends AbstractController
 
             // Récupérer la question et les réponses (en les mélangeant)
             $question = $currentQuestion->getQuestion();
-            $answers = [
-                $currentQuestion->getAnswer(),
-                $currentQuestion->getChoice2(),
-                $currentQuestion->getChoice3(),
-                $currentQuestion->getChoice4(),
-                $currentQuestion->getChoice5(),
-            ];
+
+            // Récupérer la liste des reponses.
+            $answers = $answerRepository->findBy([
+                'question' => $currentQuestion,
+                'deleteDate' => null],
+                [
+                    'id' => 'ASC'
+            ]);
             shuffle($answers);
 
             // Affecter la liste de questions au tableau de résultat.

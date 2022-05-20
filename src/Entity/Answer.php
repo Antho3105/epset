@@ -13,24 +13,30 @@ class Answer
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'json')]
-    private $value = [];
+    #[ORM\Column(type: 'text')]
+    private $value;
 
     #[ORM\ManyToOne(targetEntity: Question::class, inversedBy: 'answers')]
     #[ORM\JoinColumn(nullable: false)]
     private $question;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $deleteDate;
+
+    #[ORM\Column(type: 'boolean')]
+    private $isRightAnswer;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getValue(): ?array
+    public function getValue(): ?string
     {
         return $this->value;
     }
 
-    public function setValue(array $value): self
+    public function setValue(string $value): self
     {
         $this->value = $value;
 
@@ -45,6 +51,30 @@ class Answer
     public function setQuestion(?Question $question): self
     {
         $this->question = $question;
+
+        return $this;
+    }
+
+    public function getDeleteDate(): ?\DateTimeInterface
+    {
+        return $this->deleteDate;
+    }
+
+    public function setDeleteDate(?\DateTimeInterface $deleteDate): self
+    {
+        $this->deleteDate = $deleteDate;
+
+        return $this;
+    }
+
+    public function isIsRightAnswer(): ?bool
+    {
+        return $this->isRightAnswer;
+    }
+
+    public function setIsRightAnswer(bool $isRightAnswer): self
+    {
+        $this->isRightAnswer = $isRightAnswer;
 
         return $this;
     }

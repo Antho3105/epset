@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
@@ -130,14 +131,14 @@ class ResultController extends AbstractController
      * Methode de création d'une fiche de résultat.
      * Permet de créer une fiche de résultat et d'envoyer un mail au candidat
      *
+     * @param MailerInterface $mailer
      * @param Request $request
      * @param ResultRepository $resultRepository
      * @param CandidateRepository $candidateRepository
      * @param SurveyRepository $surveyRepository
      * @param CourseRepository $courseRepository
      * @return Response
-     * @throws \Exception
-     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     * @throws TransportExceptionInterface
      */
     #[Route('/add', name: 'app_result_add', methods: ['GET', 'POST'])]
     public function add(MailerInterface $mailer, Request $request, ResultRepository $resultRepository, CandidateRepository $candidateRepository, SurveyRepository $surveyRepository, CourseRepository $courseRepository): Response
