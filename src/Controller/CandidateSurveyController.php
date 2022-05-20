@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Answer;
 use App\Form\UploadFile;
 use App\Repository\AnswerRepository;
 use App\Repository\CandidateRepository;
@@ -27,6 +28,7 @@ class CandidateSurveyController extends AbstractController
      * @param QuestionRepository $questionRepository
      * @param ResultRepository $resultRepository
      * @param CandidateRepository $candidateRepository
+     * @param AnswerRepository $answerRepository
      * @param SurveyRepository $surveyRepository
      * @param string|null $token
      * @return Response
@@ -106,39 +108,35 @@ class CandidateSurveyController extends AbstractController
                         'id' => 'ASC'
                     ]
                 );
+
                 // Initialiser le tableau qui va contenir les id des questions (et si elles ont été lues).
                 $questionList = [];
                 // Récupérer les id et les ajouter au tableau en initialisant à false (non lu)
                 foreach ($questions as $question) {
-                    $questionList[] = [$question->getId() => false];
+                    $questionList[] = $question->getId();
                 }
                 // Si le questionnaire est aléatoire mélanger les questions.
                 if (!$survey->isOrdered())
                     shuffle($questionList);
+                $result->setQuestionList($questionList);
+                $resultRepository->add($result, true);
             } else
                 $questionList = $result->getQuestionList();
 
             // Récupérer la première question.
-            $currentQuestion = $questionRepository->find(key($questionList[0]));
-            $questionList[0] = [key($questionList[0]) => true];
-
+            $currentQuestion = $questionRepository->find($questionList[0]);
 
             // Récupérer la question et les réponses (en les mélangeant)
             $question = $currentQuestion->getQuestion();
 
-            // Récupérer la liste des reponses.
+            // Récupérer la liste des réponses.
             $answers = $answerRepository->findBy([
                 'question' => $currentQuestion,
                 'deleteDate' => null],
                 [
                     'id' => 'ASC'
-            ]);
+                ]);
             shuffle($answers);
-
-            // Affecter la liste de questions au tableau de résultat.
-            $result->setQuestionList($questionList);
-            // Persister la fiche de résultat.
-            $resultRepository->add($result, true);
 
             // Rediriger vers la premiere question du questionnaire.
             return $this->render('candidateSurvey/question.html.twig', [
@@ -161,7 +159,7 @@ class CandidateSurveyController extends AbstractController
      *
      */
     #[Route('/question/survey', name: 'app_survey_next', methods: ['GET', 'POST'])]
-    public function next(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository, string $token = null): Response
+    public function next(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository): Response
     {
         // Récupérer le token dans la session.
         $token = $this->getTokenFromSession();
@@ -171,11 +169,11 @@ class CandidateSurveyController extends AbstractController
             throw throw new AccessDeniedHttpException();
         }
         // récupérer la réponse du candidat
-        $answer = $request->get('candidateAnswer');
+        $answerId = $request->get('candidateAnswer');
 
-        dd($answer);
+        dd($answerId);
 
-        return true;
+
     }
 
 

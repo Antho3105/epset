@@ -17,17 +17,19 @@
 
     <section id="response">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Réponses :</h2>
-        <form action="{{ path('app_survey_next') }}">
+
             <div class="d-flex">
 
                 {% for answer in answers %}
                     <div class="card">
-                        <a id="{{ answer.id }}" class="answer">{{ answer.value }}</a>
+                        <a href="#" id="{{ answer.id }}">{{ answer.value }}</a>
                     </div>
                 {% endfor %}
 
+
             </div>
-            <button class="btn btn-primary">Valider</button>
+        <form action="{{ path('app_survey_next') }}" method="post">
+        <a class="btn btn-primary" href="{{ path('app_survey_next') }}">Valider</a>
             <input name="candidateAnswer" type="text" style="display:block">
         </form>
     </section>
