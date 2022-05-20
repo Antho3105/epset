@@ -1,6 +1,6 @@
 {% extends './candidateSurvey/index.html.twig' %}
 
-{% block title %}Edit Result{% endblock %}
+{% block title %}Question{% endblock %}
 
 {% block body %}
     <section id="header">
@@ -22,7 +22,7 @@
 
                 {% for answer in answers %}
                     <div class="card">
-                        <p>{{ answer }}</p>
+                        <a class="answer">{{ answer }}</a>
                     </div>
                 {% endfor %}
 
@@ -32,6 +32,7 @@
         </form>
     </section>
 
-
+    <script>
+    </script>
 
 {% endblock %}
