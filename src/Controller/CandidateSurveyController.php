@@ -59,6 +59,11 @@ class CandidateSurveyController extends AbstractController
             'token' => $token
         ]);
 
+        // Si le Questionnaire a déjà été commencé rediriger vers la fonction "question suivante.
+        if ($result->getViewedQuestion() !== null)
+            return $this->redirectToRoute('app_survey_next', [], Response::HTTP_SEE_OTHER);
+
+
         // Récupérer le questionnaire à partir de la fiche de résultat.
         $survey = $result->getSurvey();
 
@@ -138,7 +143,11 @@ class CandidateSurveyController extends AbstractController
                 ]);
             shuffle($answers);
 
-            // Rediriger vers la premiere question du questionnaire.
+            // Mettre à jour le nombre de questions vues avant de rendre la vue.
+            $result->setViewedQuestion(1);
+            $resultRepository->add($result, true);
+
+            // Rediriger vers la page de question.
             return $this->render('candidateSurvey/question.html.twig', [
                 'candidate' => $candidate,
                 'survey' => $survey,
@@ -163,33 +172,31 @@ class CandidateSurveyController extends AbstractController
     {
         // Récupérer le token dans la session.
         $token = $this->getTokenFromSession();
-
         // S'il n'y a pas de token en session générer une erreur.
         if ($token === null) {
             throw throw new AccessDeniedHttpException();
         }
-
         // Récupérer la fiche de résultat à partir du token.
         $result = $resultRepository->findOneBy([
             'token' => $token
         ]);
-
         // Récupérer la liste des questions
         $questionList = $result->getQuestionList();
 
-        if (count($questionList) === 0) {
-            throw $this->createNotFoundException();
-        }
+        // TODO à valider
+//        if (count($questionList) === 0) {
+//            throw $this->createNotFoundException();
+//        }
 
         // Récupérer la réponse du candidat
         $answerId = (int)$request->get('candidateAnswer');
 
-        // calculer le résultat :
+        // Calculer le résultat :
         $question = $questionRepository->find($questionList[0]);
-        $rightAnswer = $answerRepository->findBy([
+        $rightAnswer = $answerRepository->findOneBy([
             'question' => $question,
             'isRightAnswer' => true
-        ])[0];
+        ]);
 
         if ($rightAnswer->getId() === $answerId) {
             $result->setScore($result->getScore() + 1);
@@ -223,6 +230,9 @@ class CandidateSurveyController extends AbstractController
         $candidate = $result->getCandidate();
         $survey = $result->getSurvey();
 
+        // Mettre à jour le nombre de questions vues.
+        $result->setViewedQuestion($result->getViewedQuestion() + 1) ;
+        $resultRepository->add($result, true);
 
         // Rediriger vers la premiere question du questionnaire.
         return $this->render('candidateSurvey/question.html.twig', [
