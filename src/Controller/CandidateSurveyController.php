@@ -159,7 +159,7 @@ class CandidateSurveyController extends AbstractController
      *
      */
     #[Route('/question/survey', name: 'app_survey_next', methods: ['GET', 'POST'])]
-    public function next(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository): Response
+    public function next(Request $request, QuestionRepository $questionRepository, AnswerRepository $answerRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository): Response
     {
         // Récupérer le token dans la session.
         $token = $this->getTokenFromSession();
@@ -168,10 +168,69 @@ class CandidateSurveyController extends AbstractController
         if ($token === null) {
             throw throw new AccessDeniedHttpException();
         }
-        // récupérer la réponse du candidat
-        $answerId = $request->get('candidateAnswer');
 
-        dd($answerId);
+        // Récupérer la fiche de résultat à partir du token.
+        $result = $resultRepository->findOneBy([
+            'token' => $token
+        ]);
+
+        // Récupérer la liste des questions
+        $questionList = $result->getQuestionList();
+
+        if (count($questionList) === 0) {
+            throw $this->createNotFoundException();
+        }
+
+        // Récupérer la réponse du candidat
+        $answerId = (int)$request->get('candidateAnswer');
+
+        // calculer le résultat :
+        $question = $questionRepository->find($questionList[0]);
+        $rightAnswer = $answerRepository->findBy([
+            'question' => $question,
+            'isRightAnswer' => true
+        ])[0];
+
+        if ($rightAnswer->getId() === $answerId) {
+            $result->setScore($result->getScore() + 1);
+        }
+        $result->setAnsweredQuestion($result->getAnsweredQuestion() + 1);
+
+        // Supprimer la première question.
+        array_shift($questionList);
+        $result->setQuestionList($questionList);
+        $resultRepository->add($result, true);
+
+        if (count($questionList) === 0) {
+            // TODO renvoyer vers une page de fin de test (et afficher le score.
+            dd('fin du test');
+        }
+
+
+        // Récupérer la première question.
+        $currentQuestion = $questionRepository->find($questionList[0]);
+
+        // Récupérer la liste des réponses.
+        $answers = $answerRepository->findBy([
+            'question' => $currentQuestion,
+            'deleteDate' => null],
+            [
+                'id' => 'ASC'
+            ]);
+        shuffle($answers);
+
+        $question = $currentQuestion->getQuestion();
+        $candidate = $result->getCandidate();
+        $survey = $result->getSurvey();
+
+
+        // Rediriger vers la premiere question du questionnaire.
+        return $this->render('candidateSurvey/question.html.twig', [
+            'candidate' => $candidate,
+            'survey' => $survey,
+            'question' => $question,
+            'answers' => $answers
+        ]);
 
 
     }

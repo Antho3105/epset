@@ -4,7 +4,7 @@
 
 {% block body %}
     <section id="header">
-        <h1 class="h1 mb-3 font-weight-normal text-center pt-2">Initialisation du test de recrutement</h1>
+        <h1 class="h1 mb-3 font-weight-normal text-center pt-2">Test de recrutement</h1>
         <p>Centre : {{ survey.course.user.userName }}</p>
         <p>Formation : {{ survey.course.title }}</p>
         <p>Candidat : {{ candidate.lastName }} {{ candidate.firstName }} </p>
@@ -18,23 +18,39 @@
     <section id="response">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Réponses :</h2>
 
-            <div class="d-flex">
+        <div class="d-flex">
 
-                {% for answer in answers %}
-                    <div class="card">
-                        <a href="#" id="{{ answer.id }}">{{ answer.value }}</a>
-                    </div>
-                {% endfor %}
+            {% for answer in answers %}
+                <div class="card">
+                    <a href="#" class="answers" id="{{ answer.id }}">{{ answer.value }}</a>
+                </div>
+            {% endfor %}
 
 
-            </div>
+        </div>
         <form action="{{ path('app_survey_next') }}" method="post">
-        <a class="btn btn-primary" href="{{ path('app_survey_next') }}">Valider</a>
-            <input name="candidateAnswer" type="text" style="display:block">
+            <button class="btn btn-primary">Valider</button>
+            <input name="candidateAnswer" type="text" style="display:none">
         </form>
     </section>
 
     <script>
+        let input = document.querySelector('[name="candidateAnswer"]')
+        let answers = document.querySelectorAll('.answers')
+        answers.forEach(element => {
+            element.addEventListener('click', () => {
+                    answers.forEach(element => {
+                        element.style.backgroundColor = "white"
+                        element.style.color = "blue"
+                    });
+                    element.style.backgroundColor = "green";
+                    element.style.color = "black";
+                    input.value = element.id
+                }
+            )
+        });
+
+
     </script>
 
 {% endblock %}
