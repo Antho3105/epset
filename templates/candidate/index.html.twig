@@ -7,13 +7,13 @@
 
     <table class="table table-striped table-hover">
         <thead>
-            <tr>
-                <th>LastName</th>
-                <th>FirstName</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>actions</th>
-            </tr>
+        <tr>
+            <th>LastName</th>
+            <th>FirstName</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>actions</th>
+        </tr>
         </thead>
         <tbody>
         {% for candidate in candidates %}
@@ -23,17 +23,18 @@
                 <td>{{ candidate.email }}</td>
                 <td>{{ candidate.phone }}</td>
                 <td>
-                    <a href="{{ path('app_candidate_show', {'id': candidate.id}) }}">show</a>
-                    <a href="{{ path('app_candidate_edit', {'id': candidate.id}) }}">edit</a>
+                    <a href="{{ path('app_candidate_show', {'id': candidate.id}) }}">Voir</a>
+                    <a href="{{ path('app_candidate_edit', {'id': candidate.id}) }}">Modifier</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="7">no records found</td>
+                <td colspan="7">Pas de candidats</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_candidate_new') }}">Create new</a>
+    <a class="btn btn-primary" href="{{ path('app_candidate_new') }}">Créer une fiche candidat</a>
+
 {% endblock %}

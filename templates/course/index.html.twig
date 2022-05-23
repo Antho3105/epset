@@ -3,50 +3,52 @@
 {% block title %}Liste des formations{% endblock %}
 
 {% block body %}
-    <h1 class="h1 mb-3 font-weight-normal text-center">Liste des formations</h1>
+    <section>
+        <h1 class="h1 mb-3 font-weight-normal text-center">Liste des formations</h1>
 
-    <table class="table table-striped table-hover">
-        <thead>
-        <tr>
-            <th>Référence</th>
-            <th>Titre</th>
-            <th>Niveau</th>
-            {% if is_granted('ROLE_ADMIN') %}
-                <th>Centre</th>
-                <th>Date de suppression</th>
-            {% endif %}
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for course in courses %}
+        <table class="table table-striped table-hover">
+            <thead>
             <tr>
-                <td>{{ course.ref }}</td>
-                <td>{{ course.title }}</td>
-                <td>{{ course.level }}</td>
+                <th>Référence</th>
+                <th>Titre</th>
+                <th>Niveau</th>
                 {% if is_granted('ROLE_ADMIN') %}
-                    <td>{{ course.user }}</td>
-                    <td>{{ course.deleteDate ? course.deleteDate|date('d-m-Y H:i') : '-' }}</td>
+                    <th>Centre</th>
+                    <th>Date de suppression</th>
                 {% endif %}
-                <td>    {% if is_granted('ROLE_CENTER') %}
-                        <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
-                        <a href="{{ path('app_course_edit', {'id': course.id}) }}">Modifier</a>
-                    {% elseif is_granted('ROLE_TRAINER') %}
-                        <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
-                        <a href="{{ path('app_survey_new', {'id': course.id}) }}">Créer un questionnaire</a>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for course in courses %}
+                <tr>
+                    <td>{{ course.ref }}</td>
+                    <td>{{ course.title }}</td>
+                    <td>{{ course.level }}</td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>{{ course.user }}</td>
+                        <td>{{ course.deleteDate ? course.deleteDate|date('d-m-Y H:i') : '-' }}</td>
                     {% endif %}
+                    <td>    {% if is_granted('ROLE_CENTER') %}
+                            <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
+                            <a href="{{ path('app_course_edit', {'id': course.id}) }}">Modifier</a>
+                        {% elseif is_granted('ROLE_TRAINER') %}
+                            <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
+                            <a href="{{ path('app_survey_new', {'id': course.id}) }}">Créer un questionnaire</a>
+                        {% endif %}
 
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% if is_granted('ROLE_CENTER') %}
-        <a href="{{ path('app_visible_course_new') }}" class="btn btn-primary">Affecter une formation</a>
-        <a href="{{ path('app_course_new') }}" class="btn btn-primary">Ajouter une formation</a>
-    {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">Pas de formations</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% if is_granted('ROLE_CENTER') %}
+            <a href="{{ path('app_visible_course_new') }}" class="btn btn-primary">Affecter une formation</a>
+            <a href="{{ path('app_course_new') }}" class="btn btn-primary">Ajouter une formation</a>
+        {% endif %}
+    </section>
 {% endblock %}

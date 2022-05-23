@@ -3,16 +3,17 @@
 {% block title %}Candidate{% endblock %}
 
 {% block body %}
-    <h1>Candidate</h1>
+    <section>
+        <h1 class="h1 mb-3 font-weight-normal text-center">Candidat</h1>
 
-    <table class="table">
-        <tbody>
+        <table class="table">
+            <tbody>
             <tr>
-                <th>LastName</th>
+                <th>Nom de famille</th>
                 <td>{{ candidate.lastName }}</td>
             </tr>
             <tr>
-                <th>FirstName</th>
+                <th>Prénom</th>
                 <td>{{ candidate.firstName }}</td>
             </tr>
             <tr>
@@ -20,15 +21,18 @@
                 <td>{{ candidate.email }}</td>
             </tr>
             <tr>
-                <th>Phone</th>
+                <th>Téléphone</th>
                 <td>{{ candidate.phone }}</td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <a href="{{ path('app_candidate_index') }}">back to list</a>
+        <div class="d-flex">
+        <a class="btn btn-primary mx-2" href="{{ path('app_candidate_index') }}">Retour liste</a>
 
-    <a href="{{ path('app_candidate_edit', {'id': candidate.id}) }}">edit</a>
+        <a class="btn btn-primary mx-2" href="{{ path('app_candidate_edit', {'id': candidate.id}) }}">Modifier</a>
 
-    {{ include('candidate/_delete_form.html.twig') }}
+        {{ include('candidate/_delete_form.html.twig') }}
+        </div>
+    </section>
 {% endblock %}

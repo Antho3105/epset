@@ -1,13 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Candidate{% endblock %}
+{% block title %}Modifier fiche candidat{% endblock %}
 
 {% block body %}
-    <h1>Edit Candidate</h1>
+<section>
+    <h1 class="h1 mb-3 font-weight-normal text-center">Modifier fiche candidat</h1>
 
-    {{ include('candidate/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_candidate_index') }}">back to list</a>
-
-    {{ include('candidate/_delete_form.html.twig') }}
+    {{ include('candidate/_form.html.twig') }}
+</section>
 {% endblock %}

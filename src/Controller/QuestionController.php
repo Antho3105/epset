@@ -17,7 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
- * @IsGranted("ROLE_TRAINER")
+ * @IsGranted("ROLE_USER")
  */
 #[Route('/question')]
 class QuestionController extends AbstractController
@@ -30,6 +30,16 @@ class QuestionController extends AbstractController
 //        ]);
 //    }
 
+    /**
+     * Seuls les formateurs ont les droits pour créer une nouvelle question.
+     * @IsGranted("ROLE_TRAINER")
+     *
+     * @param Request $request
+     * @param Survey $survey
+     * @param QuestionRepository $questionRepository
+     * @param AnswerRepository $answerRepository
+     * @return Response
+     */
     #[Route('/new/{id}', name: 'app_question_new', methods: ['GET', 'POST'])]
     public function new(Request $request, Survey $survey, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
     {
@@ -49,15 +59,15 @@ class QuestionController extends AbstractController
             // TODO passer les messages en constante de l'appli.
             if (!$question->getQuestion()) {
                 $errorMsg = 'Merci de renseigner la question !';
-            }elseif (!$rightAnswer = $form->get('answer')->getData()){
+            } elseif (!$rightAnswer = $form->get('answer')->getData()) {
                 $errorMsg = 'Merci de renseigner la bonne réponse !';
-            }elseif (!$answerChoice2 = $form->get('choice2')->getData()){
+            } elseif (!$answerChoice2 = $form->get('choice2')->getData()) {
                 $errorMsg = 'Merci de renseigner le 2e choix de réponse !';
-            }elseif(!$answerChoice3 = $form->get('choice3')->getData()) {
+            } elseif (!$answerChoice3 = $form->get('choice3')->getData()) {
                 $errorMsg = 'Merci de renseigner le 3e choix de réponse !';
-            }elseif (!$answerChoice4 = $form->get('choice4')->getData()){
+            } elseif (!$answerChoice4 = $form->get('choice4')->getData()) {
                 $errorMsg = 'Merci de renseigner le 4e choix de réponse !';
-            }elseif (!$answerChoice5 = $form->get('choice5')->getData()) {
+            } elseif (!$answerChoice5 = $form->get('choice5')->getData()) {
                 $errorMsg = 'Merci de renseigner le 5e choix de réponse !';
             }
 
@@ -141,36 +151,50 @@ class QuestionController extends AbstractController
 //        ]);
 //    }
 //
-//    #[Route('/{id}', name: 'app_question_show', methods: ['GET'])]
-//    public function show(Question $question): Response
-//    {
-//        return $this->render('question/show.html.twig', [
-//            'question' => $question,
-//        ]);
-//    }
 
-// TODO update question edition
+    #[Route('/{id}', name: 'app_question_show', methods: ['GET'])]
+    public function show(Question $question, AnswerRepository $answerRepository): Response
+    {
+        // TODO Sécuriser l'accès aux page de detail de question
+
+        if ($question->getDeleteDate())
+            throw throw new AccessDeniedHttpException();
+
+
+        // Récupérer les réponses.
+        $answers = $answerRepository->findBy([
+            'question' => $question,
+            'deleteDate' => null
+        ]);
+
+        return $this->render('question/show.html.twig', [
+            'question' => $question,
+            'answers' => $answers
+
+        ]);
+    }
+
+
     #[Route('/{id}/edit', name: 'app_question_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Question $question, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
     {
         $form = $this->createForm(QuestionAnswerType::class, $question);
         $answers = $answerRepository->findBy([
-            'question' => $question], [
-                'id' => 'ASC'
+            'question' => $question,
+            'deleteDate' => null
+        ], [
+            'id' => 'ASC'
         ]);
 
-        $answer = $answers[0]->getValue()[0];
-        $choice2 = $answers[1]->getValue()[0];
-        $choice3 = $answers[2]->getValue()[0];
-        $choice4 = $answers[3]->getValue()[0];
-        $choice5 = $answers[4]->getValue()[0];
 
-        foreach ($answers as $answer) {
-            dump($answer->getValue()[0]);
-            dump($answer->isIsRightAnswer());
-        }
+        $answer = $answers[0];
+        $choice2 = $answers[1];
+        $choice3 = $answers[2];
+        $choice4 = $answers[3];
+        $choice5 = $answers[4];
 
-        die();
+        // TODO débugger l'éditeur de réponse.
+        dd($answers);
 
         $form->handleRequest($request);
 
@@ -182,6 +206,11 @@ class QuestionController extends AbstractController
 
         return $this->renderForm('question/edit.html.twig', [
             'question' => $question,
+            'answer' => $answer,
+            'choice2' => $choice2,
+            'choice3' => $choice3,
+            'choice4' => $choice4,
+            'choice5' => $choice5,
             'form' => $form,
         ]);
     }
