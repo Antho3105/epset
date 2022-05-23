@@ -3,15 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\Answer;
+use App\Entity\Result;
 use App\Form\UploadFile;
 use App\Repository\AnswerRepository;
 use App\Repository\CandidateRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\ResultRepository;
 use App\Repository\SurveyRepository;
+use DateTime;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -116,7 +119,7 @@ class CandidateSurveyController extends AbstractController
 
                 // Initialiser le tableau qui va contenir les id des questions (et si elles ont été lues).
                 $questionList = [];
-                // Récupérer les id et les ajouter au tableau en initialisant à false (non lu)
+                // Récupérer les id et les ajouter au tableau.
                 foreach ($questions as $question) {
                     $questionList[] = $question->getId();
                 }
@@ -128,13 +131,13 @@ class CandidateSurveyController extends AbstractController
             } else
                 $questionList = $result->getQuestionList();
 
-            // Récupérer la première question.
+            // Récupérer la première entité de question.
             $currentQuestion = $questionRepository->find($questionList[0]);
 
-            // Récupérer la question et les réponses (en les mélangeant)
+            // Récupérer la question.
             $question = $currentQuestion->getQuestion();
 
-            // Récupérer la liste des réponses.
+            // Récupérer la liste des réponses et les mélanger.
             $answers = $answerRepository->findBy([
                 'question' => $currentQuestion,
                 'deleteDate' => null],
@@ -143,8 +146,10 @@ class CandidateSurveyController extends AbstractController
                 ]);
             shuffle($answers);
 
-            // Mettre à jour le nombre de questions vues avant de rendre la vue.
+            // Mettre à jour le nombre de questions vues et la date du test avant de rendre la vue.
             $result->setViewedQuestion(1);
+            $now = new DateTime();
+            $result->setTestDate($now);
             $resultRepository->add($result, true);
 
             // Rediriger vers la page de question.
@@ -171,7 +176,14 @@ class CandidateSurveyController extends AbstractController
     public function next(Request $request, QuestionRepository $questionRepository, AnswerRepository $answerRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository): Response
     {
         // Récupérer le token dans la session.
-        $token = $this->getTokenFromSession();
+        try {
+            $token = $this->getTokenFromSession();
+        } catch (NotFoundExceptionInterface $e) {
+            throw $this->createNotFoundException();
+        } catch (ContainerExceptionInterface $e) {
+            throw throw new AccessDeniedHttpException();
+
+        }
         // S'il n'y a pas de token en session générer une erreur.
         if ($token === null) {
             throw throw new AccessDeniedHttpException();
@@ -191,11 +203,16 @@ class CandidateSurveyController extends AbstractController
         // Récupérer la réponse du candidat
         $answerId = (int)$request->get('candidateAnswer');
 
+        if (count($questionList) === 0) {
+            return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
+        }
+
         // Calculer le résultat :
         $question = $questionRepository->find($questionList[0]);
         $rightAnswer = $answerRepository->findOneBy([
             'question' => $question,
-            'isRightAnswer' => true
+            'isRightAnswer' => true,
+            'deleteDate' => null
         ]);
 
         if ($rightAnswer->getId() === $answerId) {
@@ -209,8 +226,7 @@ class CandidateSurveyController extends AbstractController
         $resultRepository->add($result, true);
 
         if (count($questionList) === 0) {
-            // TODO renvoyer vers une page de fin de test (et afficher le score.
-            dd('fin du test');
+            return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
         }
 
 
@@ -230,8 +246,10 @@ class CandidateSurveyController extends AbstractController
         $candidate = $result->getCandidate();
         $survey = $result->getSurvey();
 
-        // Mettre à jour le nombre de questions vues.
-        $result->setViewedQuestion($result->getViewedQuestion() + 1) ;
+        // Mettre à jour le nombre de questions vues et la date du test.
+        $result->setViewedQuestion($result->getViewedQuestion() + 1);
+        $now = new DateTime();
+        $result->setTestDate($now);
         $resultRepository->add($result, true);
 
         // Rediriger vers la premiere question du questionnaire.
@@ -259,6 +277,48 @@ class CandidateSurveyController extends AbstractController
         $request = $this->container->get('request_stack')->getCurrentRequest();
 
         return $request->getSession();
+    }
+
+    #[Route('/end/survey', name: 'app_survey_end', methods: ['GET'])]
+    public function end(Request $request, QuestionRepository $questionRepository, AnswerRepository $answerRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository): Response
+    {
+        // Récupérer le token dans la session.
+        try {
+            $token = $this->getTokenFromSession();
+        } catch (NotFoundExceptionInterface $e) {
+            throw $this->createNotFoundException();
+        } catch (ContainerExceptionInterface $e) {
+            throw throw new AccessDeniedHttpException();
+
+        }
+        // S'il n'y a pas de token en session générer une erreur.
+        if ($token === null) {
+            throw throw new AccessDeniedHttpException();
+        }
+        // Récupérer la fiche de résultat à partir du token.
+        $result = $resultRepository->findOneBy([
+            'token' => $token
+        ]);
+
+        $candidate = $result->getCandidate();
+        $survey = $result->getSurvey();
+
+        $questionNb = count($questionRepository->findBy([
+            'Survey' => $survey,
+            'deleteDate' => null,
+        ]));
+
+        $score = number_format($result->getScore() * 100 / $questionNb, 1, '.', ' ');
+
+        $result->setScore($score);
+        $resultRepository->add($result);
+
+        return $this->render('candidateSurvey/end.html.twig', [
+            'result' => $result,
+            'candidate' => $candidate,
+            'survey' => $survey,
+        ]);
+
     }
 
     /**

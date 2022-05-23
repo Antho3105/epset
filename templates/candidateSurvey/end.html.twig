@@ -1,0 +1,23 @@
+{% extends './candidateSurvey/index.html.twig' %}
+
+{% block title %}Question{% endblock %}
+
+{% block body %}
+    <section id="header">
+        <h1 class="h1 mb-3 font-weight-normal text-center pt-2">Test de recrutement</h1>
+        <p>Centre : {{ survey.course.user.userName }}</p>
+        <p>Formation : {{ survey.course.title }}</p>
+        <p>Candidat : {{ candidate.lastName }} {{ candidate.firstName }} </p>
+    </section>
+    <section id="question">
+        <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Test terminé</h2>
+        <p>VOus avez obtenu un score de {{ result.score }} %</p>
+
+    </section>
+
+
+    <script>
+
+    </script>
+
+{% endblock %}
