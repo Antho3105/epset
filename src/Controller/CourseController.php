@@ -71,6 +71,13 @@ class CourseController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$course->getDetail()){
+                $this->addFlash('alert', 'Il manque le détail !');
+                return $this->renderForm('course/new.html.twig', [
+                    'course' => $course,
+                    'form' => $form,
+                ]);
+            }
             $user = $this->getUser();
             $course->setUser($user);
             $courseRepository->add($course, true);

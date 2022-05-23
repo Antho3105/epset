@@ -7,23 +7,21 @@
 
     <table class="table table-striped table-hover">
         <thead>
-            <tr>
-                <th>Référence</th>
-                <th>Details</th>
-                <th>Difficulté</th>
-                <th>Temps par question</th>
-                <th>Ordre des questions</th>
-                {% if is_granted('ROLE_ADMIN') %}
+        <tr>
+            <th>Référence</th>
+            <th>Difficulté</th>
+            <th>Temps par question</th>
+            <th>Ordre des questions</th>
+            {% if is_granted('ROLE_ADMIN') %}
                 <th>Date de suppression</th>
-                {% endif %}
-                <th>Actions</th>
-            </tr>
+            {% endif %}
+            <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
         {% for survey in surveys %}
             <tr>
                 <td>{{ survey.ref }}</td>
-                <td>{{ survey.detail }}</td>
                 <td>{{ survey.difficulty }}</td>
                 <td>{{ survey.questionTimer }}</td>
                 <td>{{ survey.ordered ? 'Ordoné' : 'Aléatoire' }}</td>

@@ -18,7 +18,7 @@ class Course
     #[ORM\Column(type: 'string', length: 15)]
     private $ref;
 
-    #[ORM\Column(type: 'string', length: 1500)]
+    #[ORM\Column(type: 'text')]
     private $detail;
 
     #[ORM\Column(type: 'string', length: 40)]

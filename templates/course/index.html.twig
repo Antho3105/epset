@@ -10,7 +10,6 @@
         <tr>
             <th>Référence</th>
             <th>Titre</th>
-            <th>Détails</th>
             <th>Niveau</th>
             {% if is_granted('ROLE_ADMIN') %}
                 <th>Centre</th>
@@ -24,7 +23,6 @@
             <tr>
                 <td>{{ course.ref }}</td>
                 <td>{{ course.title }}</td>
-                <td>{{ course.detail }}</td>
                 <td>{{ course.level }}</td>
                 {% if is_granted('ROLE_ADMIN') %}
                     <td>{{ course.user }}</td>

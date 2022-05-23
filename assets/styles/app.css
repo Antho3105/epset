@@ -89,8 +89,9 @@ main>section:last-child {
 }
 
 .flashMessage {
+    border-radius: 15px;
     position: absolute;
-    bottom: 70px;
+    top: 70px;
     left: 0;
     right: 0;
 }

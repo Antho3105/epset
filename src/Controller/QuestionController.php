@@ -6,7 +6,6 @@ use App\Entity\Answer;
 use App\Entity\Question;
 use App\Entity\Survey;
 use App\Form\QuestionAnswerType;
-use App\Form\QuestionType;
 use App\Repository\AnswerRepository;
 use App\Repository\QuestionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -46,37 +45,60 @@ class QuestionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $question->setSurvey($survey);
+            $errorMsg = null;
+            // TODO passer les messages en constante de l'appli.
+            if (!$question->getQuestion()) {
+                $errorMsg = 'Merci de renseigner la question !';
+            }elseif (!$rightAnswer = $form->get('answer')->getData()){
+                $errorMsg = 'Merci de renseigner la bonne réponse !';
+            }elseif (!$answerChoice2 = $form->get('choice2')->getData()){
+                $errorMsg = 'Merci de renseigner le 2e choix de réponse !';
+            }elseif(!$answerChoice3 = $form->get('choice3')->getData()) {
+                $errorMsg = 'Merci de renseigner le 3e choix de réponse !';
+            }elseif (!$answerChoice4 = $form->get('choice4')->getData()){
+                $errorMsg = 'Merci de renseigner le 4e choix de réponse !';
+            }elseif (!$answerChoice5 = $form->get('choice5')->getData()) {
+                $errorMsg = 'Merci de renseigner le 5e choix de réponse !';
+            }
 
+            if ($errorMsg) {
+                $this->addFlash('alert', $errorMsg);
+                return $this->renderForm('question/newQuestion.html.twig', [
+                    'question' => $question,
+                    'form' => $form,
+                ]);
+            }
+
+            $question->setSurvey($survey);
             $questionRepository->add($question, true);
 
             $answer = new Answer();
             $answer->setQuestion($question);
-            $answer->setValue($form->get('answer')->getData());
+            $answer->setValue($rightAnswer);
             $answer->setIsRightAnswer(true);
             $answerRepository->add($answer, true);
 
             $answer2 = new Answer();
             $answer2->setQuestion($question);
-            $answer2->setValue($form->get('choice2')->getData());
+            $answer2->setValue($answerChoice2);
             $answer2->setIsRightAnswer(false);
             $answerRepository->add($answer2, true);
 
             $answer3 = new Answer();
             $answer3->setQuestion($question);
-            $answer3->setValue($form->get('choice3')->getData());
+            $answer3->setValue($answerChoice3);
             $answer3->setIsRightAnswer(false);
             $answerRepository->add($answer3, true);
 
             $answer4 = new Answer();
             $answer4->setQuestion($question);
-            $answer4->setValue($form->get('choice4')->getData());
+            $answer4->setValue($answerChoice4);
             $answer4->setIsRightAnswer(false);
             $answerRepository->add($answer4, true);
 
             $answer5 = new Answer();
             $answer5->setQuestion($question);
-            $answer5->setValue($form->get('choice5')->getData());
+            $answer5->setValue($answerChoice5);
             $answer5->setIsRightAnswer(false);
             $answerRepository->add($answer5, true);
 

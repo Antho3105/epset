@@ -75,7 +75,7 @@ class SurveyController extends AbstractController
 
     /**
      *
-     * Seuls les formateur on le droit de créer un questionnaire.
+     * Seuls les formateurs ont le droit de créer un questionnaire.
      * @IsGranted("ROLE_TRAINER")
      *
      * @param Request $request
@@ -109,6 +109,15 @@ class SurveyController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$survey->getDetail()){
+                $this->addFlash('alert', 'Il manque le détail !');
+                return $this->renderForm('survey/new.html.twig', [
+                    'survey' => $survey,
+                    'form' => $form,
+                    'course' => $course,
+                ]);
+            }
+
             // Attribuer le questionnaire au formateur.
             $survey->setUser($user);
             // Attribuer le questionnaire a la formation.
