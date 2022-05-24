@@ -4,9 +4,11 @@ namespace App\Form;
 
 use App\Entity\Question;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 
 class QuestionAnswerType extends AbstractType
@@ -28,7 +30,7 @@ class QuestionAnswerType extends AbstractType
                 ]
             )
             ->add('answer', TextareaType::class, [
-                'mapped'=> false,
+                'mapped' => false,
                 'attr' => [
                     'class' => 'tinymce',
                     'maxlength' => 200
@@ -41,7 +43,7 @@ class QuestionAnswerType extends AbstractType
                 ])
             ])
             ->add('choice2', TextareaType::class, [
-                'mapped'=> false,
+                'mapped' => false,
                 'attr' => [
                     'class' => 'tinymce',
                     'maxlength' => 200
@@ -54,7 +56,7 @@ class QuestionAnswerType extends AbstractType
                 ])
             ])
             ->add('choice3', TextareaType::class, [
-                'mapped'=> false,
+                'mapped' => false,
                 'attr' => [
                     'class' => 'tinymce',
                     'maxlength' => 200
@@ -67,7 +69,7 @@ class QuestionAnswerType extends AbstractType
                 ])
             ])
             ->add('choice4', TextareaType::class, [
-                'mapped'=> false,
+                'mapped' => false,
                 'attr' => [
                     'class' => 'tinymce',
                     'maxlength' => 200
@@ -80,7 +82,7 @@ class QuestionAnswerType extends AbstractType
                 ])
             ])
             ->add('choice5', TextareaType::class, [
-                'mapped'=> false,
+                'mapped' => false,
                 'attr' => [
                     'class' => 'tinymce',
                     'maxlength' => 200
@@ -92,7 +94,20 @@ class QuestionAnswerType extends AbstractType
                     'maxMessage' => 'Réponse trop longue !'
                 ])
             ])
-        ;
+            ->add('imgFileName', FileType::class, [
+                'mapped' => false,
+                'label' => 'Image',
+                'multiple' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '8M',
+                        'maxSizeMessage' => 'Image trop volumineuse',
+                        'mimeTypes' => ['image/jpeg'],
+                        'mimeTypesMessage' => 'Merci de charger une image valide'
+                    ])
+                ]
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

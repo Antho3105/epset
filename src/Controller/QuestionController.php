@@ -82,6 +82,21 @@ class QuestionController extends AbstractController
             $question->setSurvey($survey);
             $questionRepository->add($question, true);
 
+            // Récupérer l'image liée à la question si elle existe
+            $questionImg = $form->get("imgFileName")->getData();
+            if ($questionImg) {
+                // Récupérer l'extension du fichier
+                $fileExtension = $questionImg->guessExtension();
+                // Générer le nom du fichier de destination.
+                $imgFileName = 'img_question_' . $question->getId() . '.' . $fileExtension;
+                // Mettre à jour la question avec le nom du fichier image..
+                $question->setImgFileName($imgFileName);
+                // Persister la question pour sauvegarder le nom du fichier.
+                $questionRepository->add($question, true);
+                // Déplacer le fichier sur le serveur.
+                $questionImg->move('./surveyQuestion_Img/', $imgFileName);
+            }
+
             $answer = new Answer();
             $answer->setQuestion($question);
             $answer->setValue($rightAnswer);

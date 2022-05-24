@@ -28,6 +28,9 @@ class Question
     #[ORM\OneToMany(mappedBy: 'question', targetEntity: Answer::class)]
     private $answers;
 
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $imgFileName;
+
     public function __construct()
     {
         $this->answers = new ArrayCollection();
@@ -100,6 +103,18 @@ class Question
                 $answer->setQuestion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImgFileName(): ?string
+    {
+        return $this->imgFileName;
+    }
+
+    public function setImgFileName(?string $imgFileName): self
+    {
+        $this->imgFileName = $imgFileName;
 
         return $this;
     }
