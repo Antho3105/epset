@@ -196,9 +196,9 @@ class CandidateSurveyController extends AbstractController
         $questionList = $result->getQuestionList();
 
         // TODO à valider
-//        if (count($questionList) === 0) {
-//            throw $this->createNotFoundException();
-//        }
+        if (count($questionList) === 0) {
+            throw $this->createNotFoundException();
+        }
 
         // Récupérer la réponse du candidat
         $answerId = (int)$request->get('candidateAnswer');
@@ -220,7 +220,9 @@ class CandidateSurveyController extends AbstractController
         }
         $result->setAnsweredQuestion($result->getAnsweredQuestion() + 1);
 
+
         // Supprimer la première question.
+        // TODO update repo pour Test
         array_shift($questionList);
         $result->setQuestionList($questionList);
         $resultRepository->add($result, true);

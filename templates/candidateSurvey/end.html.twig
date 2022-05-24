@@ -1,6 +1,6 @@
 {% extends './candidateSurvey/index.html.twig' %}
 
-{% block title %}Question{% endblock %}
+{% block title %}Résultat du test{% endblock %}
 
 {% block body %}
     <section id="header">
@@ -11,13 +11,9 @@
     </section>
     <section id="question">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Test terminé</h2>
-        <p>VOus avez obtenu un score de {{ result.score }} %</p>
+        <p>Vous avez obtenu un score de {{ result.score }} %</p>
 
     </section>
 
-
-    <script>
-
-    </script>
 
 {% endblock %}

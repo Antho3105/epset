@@ -11,7 +11,7 @@
                 <p>Formation : {{ survey.course.title }}</p>
                 <p>Candidat : {{ candidate.lastName }} {{ candidate.firstName }} </p>
             </div>
-            <div class="timer">
+            <div id="timer">
                 {{ survey.questionTimer }}
             </div>
         </div>
@@ -35,11 +35,13 @@
 
 
         </div>
-        <form action="{{ path('app_survey_next') }}" method="post">
+        <form action="{{ path('app_survey_next') }}" name="formSurvey" method="post">
             <button class="btn btn-primary">Valider</button>
             <input name="candidateAnswer" type="text" style="display:none">
         </form>
     </section>
 
-
+    {% block javascripts %}
+        {{ encore_entry_script_tags('candidateJs') }}
+    {% endblock %}
 {% endblock %}

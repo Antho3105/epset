@@ -49,6 +49,7 @@ class RegistrationController extends AbstractController
         return $this->registerFormRequest($request, $userPasswordHasher, $entityManager);
     }
 
+
     /**
      * Méthode d'enregistrement des utilisateurs accessible par les centres
      * Permet d'enregistrer un Formateur seulement
