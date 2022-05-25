@@ -16,20 +16,30 @@
             </div>
         </div>
     </section>
-    <section id="question">
+    <section >
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Question :</h2>
-        <p>{{ question }}</p>
+        {% if question.imgFileName %}
+            <div id="question" class="flex">
+                <div >
+                    {{ question.question | raw }}
+                </div>
+                <div class="questionImg">
+                    <img src="{{ asset('./surveyQuestion_img/'~question.imgFileName) }}" alt="test">
+                </div>
+            </div>
+        {% else %}
+            <p>{{ question.question| raw }}</p>
+        {% endif %}
 
     </section>
 
     <section id="response">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Réponses :</h2>
 
-        <div class="d-flex">
-
+        <div class="flex">
             {% for answer in answers %}
-                <div class="card">
-                    <a href="#" class="answers" id="{{ answer.id }}">{{ answer.value }}</a>
+                <div id="{{ answer.id }}" class="card flex answers">
+                    {{ answer.value| raw }}
                 </div>
             {% endfor %}
 

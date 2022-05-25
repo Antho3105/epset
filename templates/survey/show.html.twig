@@ -62,13 +62,13 @@
                 {% for question in questions %}
                     <div class="card  mx-1">
                         <div class="d-flex card-header justify-content-between align-item-center">
-                            {{ question.question }}
+                            {{ question.question| raw }}
                         </div>
 {#                        <div class="card-body">#}
 {#                            {{ question.answers }}#}
 {#                        </div>#}
                         <div>
-                            <a class="btn btn-primary" href="{{ path('app_question_edit', {'id': question.id}) }}">Modifier</a>
+                            <a class="btn btn-primary" href="{{ path('app_question_show', {'id': question.id}) }}">Voir</a>
                         </div>
                     </div>
                 {% endfor %}

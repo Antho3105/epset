@@ -18,8 +18,8 @@ class QuestionAnswerType extends AbstractType
         $builder
             ->add('question', TextareaType::class,
                 ['attr' => [
-                    'class' => 'tinymce',
-                    'maxlength' => 1000
+                    'class' => 'tinymceL',
+                    'maxlength' => 850
                 ],
                     'label' => 'Question :',
                     'required' => false,
@@ -32,8 +32,8 @@ class QuestionAnswerType extends AbstractType
             ->add('answer', TextareaType::class, [
                 'mapped' => false,
                 'attr' => [
-                    'class' => 'tinymce',
-                    'maxlength' => 200
+                    'class' => 'tinymceXS',
+                    'maxlength' => 110
                 ],
                 'label' => 'Bonne réponse :',
                 'required' => false,
@@ -45,8 +45,8 @@ class QuestionAnswerType extends AbstractType
             ->add('choice2', TextareaType::class, [
                 'mapped' => false,
                 'attr' => [
-                    'class' => 'tinymce',
-                    'maxlength' => 200
+                    'class' => 'tinymceXS',
+                    'maxlength' => 110
                 ],
                 'label' => '2nd choix de réponse :',
                 'required' => false,
@@ -58,8 +58,8 @@ class QuestionAnswerType extends AbstractType
             ->add('choice3', TextareaType::class, [
                 'mapped' => false,
                 'attr' => [
-                    'class' => 'tinymce',
-                    'maxlength' => 200
+                    'class' => 'tinymceXS',
+                    'maxlength' => 110
                 ],
                 'label' => '3e choix de réponse :',
                 'required' => false,
@@ -71,8 +71,8 @@ class QuestionAnswerType extends AbstractType
             ->add('choice4', TextareaType::class, [
                 'mapped' => false,
                 'attr' => [
-                    'class' => 'tinymce',
-                    'maxlength' => 200
+                    'class' => 'tinymceXS',
+                    'maxlength' => 110
                 ],
                 'label' => '4e choix de réponse :',
                 'required' => false,
@@ -84,8 +84,8 @@ class QuestionAnswerType extends AbstractType
             ->add('choice5', TextareaType::class, [
                 'mapped' => false,
                 'attr' => [
-                    'class' => 'tinymce',
-                    'maxlength' => 200
+                    'class' => 'tinymceXS',
+                    'maxlength' => 110
                 ],
                 'label' => '5e choix de réponse :',
                 'required' => false,
@@ -96,12 +96,12 @@ class QuestionAnswerType extends AbstractType
             ])
             ->add('imgFileName', FileType::class, [
                 'mapped' => false,
-                'label' => 'Image',
+                'label' => false,
                 'multiple' => false,
                 'required' => false,
                 'constraints' => [
                     new File([
-                        'maxSize' => '8M',
+                        'maxSize' => '5360k',
                         'maxSizeMessage' => 'Image trop volumineuse',
                         'mimeTypes' => ['image/jpeg'],
                         'mimeTypesMessage' => 'Merci de charger une image valide'

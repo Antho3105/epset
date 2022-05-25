@@ -94,38 +94,14 @@ class QuestionController extends AbstractController
                 // Persister la question pour sauvegarder le nom du fichier.
                 $questionRepository->add($question, true);
                 // Déplacer le fichier sur le serveur.
-                $questionImg->move('./surveyQuestion_Img/', $imgFileName);
+                $questionImg->move('./surveyQuestion_img/', $imgFileName);
             }
 
-            $answer = new Answer();
-            $answer->setQuestion($question);
-            $answer->setValue($rightAnswer);
-            $answer->setIsRightAnswer(true);
-            $answerRepository->add($answer, true);
-
-            $answer2 = new Answer();
-            $answer2->setQuestion($question);
-            $answer2->setValue($answerChoice2);
-            $answer2->setIsRightAnswer(false);
-            $answerRepository->add($answer2, true);
-
-            $answer3 = new Answer();
-            $answer3->setQuestion($question);
-            $answer3->setValue($answerChoice3);
-            $answer3->setIsRightAnswer(false);
-            $answerRepository->add($answer3, true);
-
-            $answer4 = new Answer();
-            $answer4->setQuestion($question);
-            $answer4->setValue($answerChoice4);
-            $answer4->setIsRightAnswer(false);
-            $answerRepository->add($answer4, true);
-
-            $answer5 = new Answer();
-            $answer5->setQuestion($question);
-            $answer5->setValue($answerChoice5);
-            $answer5->setIsRightAnswer(false);
-            $answerRepository->add($answer5, true);
+            $this->persistAnswer($rightAnswer, true, $question, $answerRepository);
+            $this->persistAnswer($answerChoice2, false, $question, $answerRepository);
+            $this->persistAnswer($answerChoice3, false, $question, $answerRepository);
+            $this->persistAnswer($answerChoice4, false, $question, $answerRepository);
+            $this->persistAnswer($answerChoice5, false, $question, $answerRepository);
 
             return $this->redirectToRoute('app_survey_show', ['id' => $survey->getId()], Response::HTTP_SEE_OTHER);
         }
@@ -252,4 +228,24 @@ class QuestionController extends AbstractController
 
         return $this->redirectToRoute('app_survey_show', ['id' => $question->getSurvey()->getId()], Response::HTTP_SEE_OTHER);
     }
+
+    /**
+     *
+     *
+     * @param $candidateAnswer
+     * @param $status
+     * @param $question
+     * @param $answerRepository
+     * @return void
+     */
+    private function persistAnswer($candidateAnswer, $status, $question, $answerRepository): void
+    {
+        $answer = new Answer();
+        $answer->setQuestion($question);
+        $answer->setValue($candidateAnswer);
+        $answer->setIsRightAnswer($status);
+        $answerRepository->add($answer, true);
+    }
+
+
 }

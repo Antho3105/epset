@@ -1,0 +1,59 @@
+
+
+#response .card{
+    transition: all .3s;
+    border-radius: 10px;
+    flex-direction: row;
+    width: 200px;
+    min-height: 150px!important;
+    margin: 5px!important;
+    align-items: center;
+}
+
+#response .card a{
+    text-align: center!important;
+}
+
+#question div {
+    width: 45%;
+}
+#question .questionImg {
+    width: 50%;
+}
+
+
+@media screen and (max-width: 1000px) {
+    #question div {
+        width: 55%;
+    }
+    #question .questionImg {
+        width: 40%;
+    }
+}
+
+
+@media screen and (max-width: 1000px) {
+    #question div {
+        width: 55%;
+        font-size: 14px;
+    }
+    #question .questionImg {
+        width: 40%;
+    }
+    #response .card {
+        font-size: 14px;
+        width: 180px;
+    }
+}
+
+
+@media screen and (max-width: 800px) {
+    #question div {
+        width: 100%;
+        font-size: 14px;
+    }
+    #question .questionImg {
+        width: 100%;
+    }
+
+}

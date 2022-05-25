@@ -11,6 +11,7 @@ import './styles/normalize.css';
 import './styles/app.css';
 import './styles/card.css';
 import './styles/form.css';
+import './styles/candidateQuestion.css'
 
 // start the Stimulus application
 import './bootstrap';

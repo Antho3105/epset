@@ -134,9 +134,6 @@ class CandidateSurveyController extends AbstractController
             // Récupérer la première entité de question.
             $currentQuestion = $questionRepository->find($questionList[0]);
 
-            // Récupérer la question.
-            $question = $currentQuestion->getQuestion();
-
             // Récupérer la liste des réponses et les mélanger.
             $answers = $answerRepository->findBy([
                 'question' => $currentQuestion,
@@ -156,7 +153,7 @@ class CandidateSurveyController extends AbstractController
             return $this->render('candidateSurvey/question.html.twig', [
                 'candidate' => $candidate,
                 'survey' => $survey,
-                'question' => $question,
+                'question' => $currentQuestion,
                 'answers' => $answers
             ]);
         }
@@ -223,7 +220,7 @@ class CandidateSurveyController extends AbstractController
 
         // Supprimer la première question.
         // TODO update repo pour Test
-        array_shift($questionList);
+        // array_shift($questionList);
         $result->setQuestionList($questionList);
         $resultRepository->add($result, true);
 
@@ -244,8 +241,7 @@ class CandidateSurveyController extends AbstractController
             ]);
         shuffle($answers);
 
-        $question = $currentQuestion->getQuestion();
-        $candidate = $result->getCandidate();
+         $candidate = $result->getCandidate();
         $survey = $result->getSurvey();
 
         // Mettre à jour le nombre de questions vues et la date du test.
@@ -258,7 +254,7 @@ class CandidateSurveyController extends AbstractController
         return $this->render('candidateSurvey/question.html.twig', [
             'candidate' => $candidate,
             'survey' => $survey,
-            'question' => $question,
+            'question' => $currentQuestion,
             'answers' => $answers
         ]);
 

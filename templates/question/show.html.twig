@@ -4,41 +4,46 @@
 
 {% block body %}
     <section>
-    <h1 class="h1 mb-3 font-weight-normal text-center">Question</h1>
+        <h1 class="h1 mb-3 font-weight-normal text-center">Question</h1>
 
-    <table class="table">
-        <tbody>
-        {% if is_granted('ROLE_ADMIN') %}
-        <tr>
-            <th>Id</th>
-            <td>{{ question.id }}</td>
-        </tr>
-        {% endif %}
-        <tr>
-            <th>Question :</th>
-            <td>{{ question.question|raw }}</td>
-        </tr>
-        {% for answer in answers %}
+        <table class="table">
+            <tbody>
+            {% if is_granted('ROLE_ADMIN') %}
+                <tr>
+                    <th>Id</th>
+                    <td>{{ question.id }}</td>
+                </tr>
+            {% endif %}
             <tr>
-                {% if answer.isRightAnswer %}
-                    <th>Bonne réponse</th>
-                {% else %}
-                    <th>Autre choix de réponse :</th>
-                {% endif %}
-                <td>{{ answer.value|raw }}</td>
+                <th>Question :</th>
+                <td>{{ question.question|raw }}</td>
             </tr>
-        {% endfor %}
-        {% if is_granted('ROLE_ADMIN') %}
-        <tr>
-            <th>DeleteDate</th>
-            <td>{{ question.deleteDate ? question.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
-        </tr>
-        {%  endif %}
-        </tbody>
-    </table>
-    <div class="d-flex">
-        <a class="btn btn-primary mx-2" href="{{ path('app_question_edit', {'id': question.id}) }}">Modifier</a>
-        {{ include('question/_delete_form.html.twig') }}
-    </div>
+            {% for answer in answers %}
+                <tr>
+                    {% if answer.isRightAnswer %}
+                        <th>Bonne réponse</th>
+                    {% else %}
+                        <th>Autre choix de réponse :</th>
+                    {% endif %}
+                    <td>{{ answer.value|raw }}</td>
+                </tr>
+            {% endfor %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <tr>
+                    <th>DeleteDate</th>
+                    <td>{{ question.deleteDate ? question.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+
+            {% endif %}
+            </tbody>
+        </table>
+        {% if question.imgFileName %}
+            <img class="preview" src="{{ asset('./surveyQuestion_img/'~question.imgFileName) }}" alt="">
+        {% endif %}
+
+        <div class="d-flex pt-2">
+            <a class="btn btn-primary mx-2" href="{{ path('app_question_edit', {'id': question.id}) }}">Modifier</a>
+            {{ include('question/_delete_form.html.twig') }}
+        </div>
     </section>
 {% endblock %}

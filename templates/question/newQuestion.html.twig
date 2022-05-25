@@ -3,11 +3,40 @@
 {% block title %}Ajouter une question{% endblock %}
 
 {% block body %}
+
     <section>
         <h1 class="h1 mb-3 font-weight-normal text-center">Ajouter une question</h1>
 
-        {{ include('question/_form.html.twig') }}
+        <div class="form pb-5">
+            {{ form_start(form) }}
+            <div class="d-flex justify-content-center">
+                {{ form_row(form.question) }}
+            </div>
+
+            <label>
+                <input onclick="toggleImgInput()" type="checkbox"> Ajouter une image
+            </label>
+            <div class="addImg flex center pb-5">
+                <div>
+                    {{ form_row(form.imgFileName) }}
+                    <img class="preview" src="{{ asset('./surveyQuestion_img/no_image.jpg') }}" alt="">
+                </div>
+            </div>
+
+            <div class="form flex">
+                {{ form_row(form.answer) }}
+                {{ form_row(form.choice2) }}
+                {{ form_row(form.choice3) }}
+                {{ form_row(form.choice4) }}
+                {{ form_row(form.choice5) }}
+            </div>
+
+            <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+            {{ form_end(form) }}
+        </div>
     </section>
+
+
 
 
 {% endblock %}
