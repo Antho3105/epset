@@ -62,7 +62,7 @@ class CandidateSurveyController extends AbstractController
             'token' => $token
         ]);
 
-        // Si le Questionnaire a déjà été commencé rediriger vers la fonction "question suivante.
+        // Si le Questionnaire a déjà été commencé rediriger vers la fonction "question suivante".
         if ($result->getViewedQuestion() !== null)
             return $this->redirectToRoute('app_survey_next', [], Response::HTTP_SEE_OTHER);
 
@@ -117,7 +117,7 @@ class CandidateSurveyController extends AbstractController
                     ]
                 );
 
-                // Initialiser le tableau qui va contenir les id des questions (et si elles ont été lues).
+                // Initialiser le tableau qui va contenir les id des questions.
                 $questionList = [];
                 // Récupérer les id et les ajouter au tableau.
                 foreach ($questions as $question) {
@@ -126,36 +126,13 @@ class CandidateSurveyController extends AbstractController
                 // Si le questionnaire est aléatoire mélanger les questions.
                 if (!$survey->isOrdered())
                     shuffle($questionList);
+
                 $result->setQuestionList($questionList);
                 $resultRepository->add($result, true);
-            } else
-                $questionList = $result->getQuestionList();
-
-            // Récupérer la première entité de question.
-            $currentQuestion = $questionRepository->find($questionList[0]);
-
-            // Récupérer la liste des réponses et les mélanger.
-            $answers = $answerRepository->findBy([
-                'question' => $currentQuestion,
-                'deleteDate' => null],
-                [
-                    'id' => 'ASC'
-                ]);
-            shuffle($answers);
-
-            // Mettre à jour le nombre de questions vues et la date du test avant de rendre la vue.
-            $result->setViewedQuestion(1);
-            $now = new DateTime();
-            $result->setTestDate($now);
-            $resultRepository->add($result, true);
+            }
 
             // Rediriger vers la page de question.
-            return $this->render('candidateSurvey/question.html.twig', [
-                'candidate' => $candidate,
-                'survey' => $survey,
-                'question' => $currentQuestion,
-                'answers' => $answers
-            ]);
+            return $this->redirectToRoute('app_survey_next');
         }
 
         return $this->renderForm('candidateSurvey/init.html.twig', [
@@ -192,42 +169,52 @@ class CandidateSurveyController extends AbstractController
         // Récupérer la liste des questions
         $questionList = $result->getQuestionList();
 
-        // TODO à valider
-        if (count($questionList) === 0) {
-            throw $this->createNotFoundException();
+        if ($result->getViewedQuestion() !== null) {
+            // Récupérer la réponse du candidat
+            $answerId = (int)$request->get('candidateAnswer');
+
+            if ($answerId)
+                $result->setAnsweredQuestion($result->getAnsweredQuestion() + 1);
+            else
+                $result->setAnsweredQuestion($result->getAnsweredQuestion() + 0);
+
+            // Si la liste de question est vide (en cas de nouveau clic sur le lien unique après la fin du test)
+            if (count($questionList) === 0) {
+                return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
+            }
+
+            // Calculer le résultat :
+            $question = $questionRepository->find($questionList[0]);
+            $rightAnswer = $answerRepository->findOneBy([
+                'question' => $question,
+                'isRightAnswer' => true,
+                'deleteDate' => null
+            ]);
+
+            if ($rightAnswer->getId() === $answerId) {
+                $result->setScore($result->getScore() + 1);
+            } else
+                $result->setScore($result->getScore() + 0);
+
+            // Supprimer la première question.
+            // TODO update repo pour Test
+            array_shift($questionList);
+            $result->setQuestionList($questionList);
+            $resultRepository->add($result, true);
+
+            // Si la liste de question est vide (fin du test) calculer le score final et rediriger vers la page fin.
+            if (count($questionList) === 0) {
+                $questionNb = count($questionRepository->findBy([
+                    'Survey' => $result->getSurvey(),
+                    'deleteDate' => null,
+                ]));
+                $finalScore = number_format($result->getScore() * 100 / $questionNb, 1, '.', ' ');
+                $result->setScore($finalScore);
+                $resultRepository->add($result, true);
+
+                return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
+            }
         }
-
-        // Récupérer la réponse du candidat
-        $answerId = (int)$request->get('candidateAnswer');
-
-        if (count($questionList) === 0) {
-            return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
-        }
-
-        // Calculer le résultat :
-        $question = $questionRepository->find($questionList[0]);
-        $rightAnswer = $answerRepository->findOneBy([
-            'question' => $question,
-            'isRightAnswer' => true,
-            'deleteDate' => null
-        ]);
-
-        if ($rightAnswer->getId() === $answerId) {
-            $result->setScore($result->getScore() + 1);
-        }
-        $result->setAnsweredQuestion($result->getAnsweredQuestion() + 1);
-
-
-        // Supprimer la première question.
-        // TODO update repo pour Test
-        // array_shift($questionList);
-        $result->setQuestionList($questionList);
-        $resultRepository->add($result, true);
-
-        if (count($questionList) === 0) {
-            return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
-        }
-
 
         // Récupérer la première question.
         $currentQuestion = $questionRepository->find($questionList[0]);
@@ -241,13 +228,12 @@ class CandidateSurveyController extends AbstractController
             ]);
         shuffle($answers);
 
-         $candidate = $result->getCandidate();
+        $candidate = $result->getCandidate();
         $survey = $result->getSurvey();
 
         // Mettre à jour le nombre de questions vues et la date du test.
         $result->setViewedQuestion($result->getViewedQuestion() + 1);
-        $now = new DateTime();
-        $result->setTestDate($now);
+        $result->setTestDate(new DateTime());
         $resultRepository->add($result, true);
 
         // Rediriger vers la premiere question du questionnaire.
@@ -257,8 +243,6 @@ class CandidateSurveyController extends AbstractController
             'question' => $currentQuestion,
             'answers' => $answers
         ]);
-
-
     }
 
 
@@ -300,16 +284,6 @@ class CandidateSurveyController extends AbstractController
 
         $candidate = $result->getCandidate();
         $survey = $result->getSurvey();
-
-        $questionNb = count($questionRepository->findBy([
-            'Survey' => $survey,
-            'deleteDate' => null,
-        ]));
-
-        $score = number_format($result->getScore() * 100 / $questionNb, 1, '.', ' ');
-
-        $result->setScore($score);
-        $resultRepository->add($result);
 
         return $this->render('candidateSurvey/end.html.twig', [
             'result' => $result,

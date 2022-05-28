@@ -5,14 +5,19 @@
 {% block body %}
     <section id="header">
         <h1 class="h1 mb-3 font-weight-normal text-center pt-2">Test de recrutement</h1>
-        <p>Centre : {{ survey.course.user.userName }}</p>
-        <p>Formation : {{ survey.course.title }}</p>
-        <p>Candidat : {{ candidate.lastName }} {{ candidate.firstName }} </p>
+        <div id="surveyInfo" class="d-flex justify-content-between align-items-center">
+            <div class="detail">
+                <p>Centre : {{ survey.course.user.userName }}</p>
+                <p>Formation : {{ survey.course.title }}</p>
+                <p>Candidat : {{ candidate.lastName }} {{ candidate.firstName }} </p>
+            </div>
+        </div>
     </section>
-    <section id="question">
+    <section id="result">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Test terminé</h2>
-        <p>Vous avez obtenu un score de {{ result.score }} %</p>
-
+        <div>
+            <p>Vous avez obtenu un score de {{ result.score }} %</p>
+        </div>
     </section>
 
 

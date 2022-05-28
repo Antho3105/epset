@@ -22,7 +22,7 @@
         </thead>
         <tbody>
         {% for user in users %}
-            <tr>
+            <tr onclick="location.href='{{ path('app_user_show', {'id': user.id}) }}'">
                 <td>{{ user.userName }}</td>
                 <td>{{ user.firstName }}</td>
                 <td>{{ user.lastName }}</td>
@@ -30,10 +30,9 @@
                 <td>{{ user.phone }}</td>
                 {% if is_granted('ROLE_ADMIN') %}
                 <td>{{ user.roles[0] }}</td>
-                <td>{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:i:s') : '-' }}</td>
+                <td>{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:i') : '-' }}</td>
                 {% endif %}
                 <td>
-                    <a class="btn" href="{{ path('app_user_show', {'id': user.id}) }}">Voir</a>
                     <a class="btn"  href="#">Modifier</a>
                 </td>
             </tr>

@@ -1,31 +1,44 @@
 
+#surveyInfo, #result>div, #detail>div, #question {
+    border-radius: 10px;
+    padding: 10px 10px;
+    background-color: var(--bg-color1);
+}
 
-#response .card{
+
+#timer {
+    font-size: 30px;
+}
+
+#answer .card {
+    cursor: pointer;
     transition: all .3s;
+    padding: 5px;
     border-radius: 10px;
     flex-direction: row;
     width: 200px;
-    min-height: 150px!important;
-    margin: 5px!important;
+    min-height: 150px !important;
+    margin: 5px !important;
     align-items: center;
-}
-
-#response .card a{
-    text-align: center!important;
 }
 
 #question div {
     width: 45%;
 }
+
 #question .questionImg {
     width: 50%;
 }
+
+#result div
+
 
 
 @media screen and (max-width: 1000px) {
     #question div {
         width: 55%;
     }
+
     #question .questionImg {
         width: 40%;
     }
@@ -37,10 +50,12 @@
         width: 55%;
         font-size: 14px;
     }
+
     #question .questionImg {
         width: 40%;
     }
-    #response .card {
+
+    #answer .card {
         font-size: 14px;
         width: 180px;
     }
@@ -52,6 +67,7 @@
         width: 100%;
         font-size: 14px;
     }
+
     #question .questionImg {
         width: 100%;
     }

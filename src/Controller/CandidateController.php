@@ -88,6 +88,7 @@ class CandidateController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $candidateRepository->add($candidate, true);
             $this->addFlash('success', 'Fiche de '  . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' modifiée !');
 

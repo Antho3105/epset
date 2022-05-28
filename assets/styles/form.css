@@ -2,6 +2,10 @@
     margin: 0 auto;
 }
 
+.login {
+    max-width: 400px;
+}
+
 .addImg {
     transform: scale(0);
     height: 0;

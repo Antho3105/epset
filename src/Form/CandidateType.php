@@ -19,6 +19,7 @@ class CandidateType extends AbstractType
             // TODO ajouter des contraintes (nb de caractères...)
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
+                'attr' => ['maxlength' => 40],
                 'constraints' => new Length([
                     'max' => 40,
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',
@@ -26,6 +27,7 @@ class CandidateType extends AbstractType
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
+                'attr' => ['maxlength' => 30],
                 'constraints' => new Length([
                     'max' => 30,
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',
@@ -33,6 +35,7 @@ class CandidateType extends AbstractType
                 ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
+                'attr' => ['maxlength' => 60],
                 'constraints' => new Length([
                     'max' => 60,
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',
@@ -40,6 +43,7 @@ class CandidateType extends AbstractType
                 ])
             ->add('phone', TelType::class, [
                 'label' => 'Téléphone',
+                'attr' => ['maxlength' => 25],
                 'constraints' => new Length([
                     'max' => 25,
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',

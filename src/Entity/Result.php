@@ -169,4 +169,8 @@ class Result
 
         return $this;
     }
+
+    private function getFinalScore(): int {
+
+    }
 }

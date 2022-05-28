@@ -4,7 +4,8 @@ function toggleImgInput() {
 }
 
 let input = document.querySelector('#question_answer_imgFileName')
-input.addEventListener('change', previewImg)
+if (input)
+    input.addEventListener('change', previewImg)
 
 function previewImg(event) {
     let file = event.path[0].files[0];

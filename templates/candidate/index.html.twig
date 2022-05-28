@@ -8,24 +8,19 @@
     <table class="table table-striped table-hover">
         <thead>
         <tr>
-            <th>LastName</th>
-            <th>FirstName</th>
+            <th>Nom</th>
+            <th>Prénom</th>
             <th>Email</th>
-            <th>Phone</th>
-            <th>actions</th>
+            <th>Téléphone</th>
         </tr>
         </thead>
         <tbody>
         {% for candidate in candidates %}
-            <tr>
+            <tr onclick="location.href='{{ path('app_candidate_show', {'id': candidate.id}) }}'">
                 <td>{{ candidate.lastName }}</td>
                 <td>{{ candidate.firstName }}</td>
                 <td>{{ candidate.email }}</td>
                 <td>{{ candidate.phone }}</td>
-                <td>
-                    <a href="{{ path('app_candidate_show', {'id': candidate.id}) }}">Voir</a>
-                    <a href="{{ path('app_candidate_edit', {'id': candidate.id}) }}">Modifier</a>
-                </td>
             </tr>
         {% else %}
             <tr>

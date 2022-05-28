@@ -55,7 +55,11 @@ p {
 }
 
 body {
-    background-color: lightgray;
+    background: url("../img/background.jpg") no-repeat center fixed;
+    box-shadow: inset 1500px 1500px rgb(0 0 0 / 42%);
+    background-size: cover;
+    color: var(--font-color1);
+    /*background-color: lightgray;*/
     font-family: 'Lato', sans-serif;
     position: relative;
     min-height: 100%;
@@ -84,9 +88,17 @@ HEADER
 MAIN
 ---------------------------------------------------------------- */
 
+table {
+    border-radius: 10px;
+    background-color: var(--bg-color1);
+
+}
+
+
 main>section:last-child {
     padding-bottom: 80px;
 }
+
 
 .flashMessage {
     border-radius: 15px;
@@ -95,6 +107,20 @@ main>section:last-child {
     left: 0;
     right: 0;
 }
+
+#surveyInfo, #surveyDetails, #surveyDetails, #result>div {
+    color: var(--font-color2);
+}
+
+
+/*----------------------------------------------------------------
+TABLES
+---------------------------------------------------------------- */
+
+tr{
+    cursor: pointer;
+}
+
 
 
 /*----------------------------------------------------------------
@@ -105,7 +131,12 @@ FOOTER
     min-height: 80px;
 }
 
+footer a {
+    color: var(--font-color1);
+}
+
 footer {
+
     position: absolute;
     bottom: 0;
     left: 0;

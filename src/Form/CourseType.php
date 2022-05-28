@@ -38,7 +38,7 @@ class CourseType extends AbstractType
             ])
             ->add('detail', TextareaType::class,
                 ['attr' => [
-                    'class' => 'tinymce',
+                    'class' => 'tinymceXL',
                     'maxlength' => 1500],
                     'label' => 'Détails de la formation :',
                     'required' => false,

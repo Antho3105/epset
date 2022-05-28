@@ -5,17 +5,25 @@
 {% block body %}
     <section id="header">
         <h1 class="h1 mb-3 font-weight-normal text-center pt-2">Initialisation du test de recrutement</h1>
-        <p>Centre : {{ survey.course.user.userName }}</p>
-        <p>Formation : {{ survey.course.title }}</p>
-        <p>Candidat : {{ result.candidate.lastName }} {{ result.candidate.firstName }} </p>
+        <div id="surveyInfo" class="d-flex justify-content-between align-items-center">
+            <div class="detail">
+                <p>Centre : {{ survey.course.user.userName }}</p>
+                <p>Formation : {{ survey.course.title }}</p>
+                <p>Candidat : {{ result.candidate.lastName }} {{ result.candidate.firstName }} </p>
+            </div>
+        </div>
     </section>
-<section id="detail">
-    <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Détails du questionnaire :</h2>
-    <p>Difficulté du questionnaire : {{ survey.difficulty }} / 5</p>
-    <p>Nombre de questions : </p>
-    <h3 class="h3 mb-3 font-weight-normal text-center pt-2">Consignes :</h3>
-    <p>{{ survey.detail }}</p>
-</section>
+    <section id="detail">
+        <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Détails du questionnaire :</h2>
+        <div>
+            <p>Difficulté du questionnaire : {{ survey.difficulty }} / 5</p>
+            <p>Nombre de questions : </p>
+        </div>
+        <h3 class="h3 mb-3 font-weight-normal text-center pt-2">Consignes :</h3>
+        <div>
+            <p>{{ survey.detail }}</p>
+        </div>
+    </section>
 
     <section is="upload">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Upload fichiers :</h2>

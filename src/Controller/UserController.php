@@ -43,7 +43,7 @@ class UserController extends AbstractController
         ]);
     }
 
-     /**
+    /**
      *
      * @IsGranted("ROLE_CENTER")
      * @param UserRepository $userRepository
@@ -72,22 +72,22 @@ class UserController extends AbstractController
     #[Route('/user/{id}', name: 'app_user_show')]
     public function showUser(UserRepository $userRepository, User $user): Response
     {
-        // Si l'utilisateur est un formateur interdire l'accès aux detail des utilisateurs
-        if ($this->isGranted("ROLE_TRAINER")) {
-            throw throw new AccessDeniedHttpException();
-        }
-        // Si l'utilisateur n'est pas administrateur gérer l'accès.
+        // si l'utilisateur n'est pas admin gerer l'acces
         if (!$this->isGranted("ROLE_ADMIN")) {
+            // Si l'utilisateur est un formateur interdire l'accès aux detail des utilisateurs
+            if ($this->isGranted("ROLE_TRAINER")) {
+                throw throw new AccessDeniedHttpException();
+            }
             // Si l'utilisateur en un centre générer une erreur s'il veut voir une autre fiche que celle d'un formateur..
             if ($this->isGranted("ROLE_CENTER")) {
-                if ($user->getRoles()[0] !== "ROLE_TRAINER"){
+                if ($user->getRoles()[0] !== "ROLE_TRAINER") {
                     throw throw new AccessDeniedHttpException();
                 }
             }
         }
         return $this->render('user/show.html.twig', [
             'user' => $user,
-         ]);
+        ]);
     }
 
 }

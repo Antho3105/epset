@@ -27,6 +27,6 @@ yarn-error.log
 ###< phpunit/phpunit ###
 
 ###> dossiers stokage fichiers ###
-/public/coverLetters_files
-/public/cv_files
-/public/surveyQuestion_Img
+/public/coverLetters_files/
+/public/cv_files/
+/public/surveyQuestion_Img/

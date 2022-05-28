@@ -39,7 +39,7 @@ class ResultController extends AbstractController
             ]);
         }
         // Si l'utilisateur est un centre n'afficher que les résultats des candidats qui lui sont liés et non supprimés.
-        if (!$this->isGranted("ROLE_CENTER")) {
+        if ($this->isGranted("ROLE_CENTER")) {
             // Récupérer tous les candidats liés au centre.
             $candidates = $candidateRepository->findBy([
                 'user' => $this->getUser(),
@@ -53,7 +53,7 @@ class ResultController extends AbstractController
                     'candidate' => $candidate,
                     'deleteDate' => null
                 ]);
-                // Pour chaque résultat d'un candidat ajouter l'ajouter à la liste à afficher.
+                  // Pour chaque résultat d'un candidat ajouter l'ajouter à la liste à afficher.
                 foreach ($resultsByCandidate as $resultByCandidate) {
                     $results[] = $resultByCandidate;
                 }
@@ -65,28 +65,9 @@ class ResultController extends AbstractController
         return $this->render('main/index.html.twig');
     }
 
-//    #[Route('/new', name: 'app_result_new', methods: ['GET', 'POST'])]
-//    public function new(Request $request, ResultRepository $resultRepository): Response
-//    {
-//        $result = new Result();
-//        $form = $this->createForm(ResultType::class, $result);
-//        $form->handleRequest($request);
-//
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $resultRepository->add($result, true);
-//
-//            return $this->redirectToRoute('app_result_index', [], Response::HTTP_SEE_OTHER);
-//        }
-//
-//        return $this->renderForm('result/new.html.twig', [
-//            'result' => $result,
-//            'form' => $form,
-//        ]);
-//    }
-
     /**
-     * Methode de création d'une fiche de résultat.
-     * Permet d'afficher la page de choix candidat / formation.
+     *
+     * Methode permettant d'afficher la page de choix candidat / formation.
      *
      * @param Request $request
      * @param ResultRepository $resultRepository
@@ -128,8 +109,7 @@ class ResultController extends AbstractController
     }
 
     /**
-     * Methode de création d'une fiche de résultat.
-     * Permet de créer une fiche de résultat et d'envoyer un mail au candidat
+     * Methode permettant de créer une fiche de résultat et d'envoyer un mail au candidat
      *
      * @param MailerInterface $mailer
      * @param Request $request

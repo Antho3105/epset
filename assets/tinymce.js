@@ -1,4 +1,11 @@
 tinymce.init({
+    selector: '.tinymceXL',
+    menubar: false,
+    plugins: 'wordcount',
+    toolbar: 'fontfamily fontsize forecolor backcolor',
+    language: 'fr_FR',
+});
+tinymce.init({
     selector: '.tinymceL',
     menubar: false,
     width: 550,

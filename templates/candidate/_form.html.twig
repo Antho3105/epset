@@ -1,18 +1,30 @@
 <div class="form">
     {{ form_start(form) }}
-    <div class="row d-flex justify-content-between">
-        <div class="col-6">
+    <div class="row d-flex justify-content-center">
+        <div class="col-12 col-sm-5">
             {{ form_row(form.lastName) }}
         </div>
-        <div class="col-6">
+        <div class="col-12 col-sm-3
+">
             {{ form_row(form.firstName) }}
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div class="col-12 col-sm-5">
+            {{ form_row(form.email) }}
+        </div>
+
+        <div class="col-12 col-sm-3">
+            {{ form_row(form.phone) }}
         </div>
 
     </div>
-    {{ form_row(form.email) }}
-    {{ form_row(form.phone) }}
-
-    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
-    <a class="btn btn-primary" href="{{ path('app_candidate_index') }}">Retour liste</a>
+    <div class="row d-flex justify-content-center">
+        <div class="col-12 col-sm-8 d-flex justify-content-end">
+            <a class="btn btn-primary mx-2" title="Retour"
+               href="{{ path('app_candidate_index') }}"><i class="fa-solid fa-delete-left"></i></a>
+            <button title="Valider" class="btn btn-success mx-2"><i class="fa-solid fa-check"></i></button>
+        </div>
+    </div>
     {{ form_end(form) }}
 </div>

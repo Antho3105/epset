@@ -5,7 +5,7 @@
 {% block body %}
     <section id="header">
         <h1 class="h1 mb-3 font-weight-normal text-center pt-2">Test de recrutement</h1>
-        <div class=" d-flex justify-content-between align-items-center">
+        <div id="surveyInfo" class="d-flex justify-content-between align-items-center">
             <div class="detail">
                 <p>Centre : {{ survey.course.user.userName }}</p>
                 <p>Formation : {{ survey.course.title }}</p>
@@ -16,24 +16,26 @@
             </div>
         </div>
     </section>
-    <section >
+    <section>
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Question :</h2>
         {% if question.imgFileName %}
-            <div id="question" class="flex">
-                <div >
-                    {{ question.question | raw }}
-                </div>
-                <div class="questionImg">
-                    <img src="{{ asset('./surveyQuestion_img/'~question.imgFileName) }}" alt="test">
-                </div>
+        <div id="question" class="flex">
+            <div>
+                {{ question.question | raw }}
             </div>
+            <div class="questionImg">
+                <img src="{{ asset('./surveyQuestion_img/'~question.imgFileName) }}" alt="test">
+            </div>
+        </div>
         {% else %}
+        <div id="question">
             <p>{{ question.question| raw }}</p>
-        {% endif %}
+            {% endif %}
+        </div>
 
     </section>
 
-    <section id="response">
+    <section id="answer">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Réponses :</h2>
 
         <div class="flex">

@@ -1,7 +1,13 @@
 .card{
+    color: black;
     padding: 0;
     width: 300px;
     margin: 10px 20px;
+    border-radius: 10px;
+}
+
+.card-header {
+    color: var(--font-color3);
 }
 
 @media screen and (max-width: 970px) {
