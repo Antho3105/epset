@@ -11,6 +11,7 @@ import './styles/normalize.css';
 
 import './styles/app.css';
 import './styles/colors.css';
+import './styles/search.css';
 import './styles/card.css';
 import './styles/form.css';
 import './styles/candidateQuestion.css'

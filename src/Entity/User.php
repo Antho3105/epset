@@ -61,6 +61,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $deleteDate;
 
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $domain;
+
     public function __construct()
     {
         $this->visibleCourses = new ArrayCollection();
@@ -345,5 +348,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return $this->getLastName() . ' ' . $this->getFirstName() . ' (' . $this->getUserName() . ')';
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+
+    public function setDomain(?string $domain): self
+    {
+        $this->domain = $domain;
+
+        return $this;
     }
 }

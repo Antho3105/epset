@@ -33,54 +33,87 @@ class RegistrationFormAdmin extends AbstractType
                 ],
             ])
             ->add('userName', TextType::class, [
-                'label' => 'Nom d\'utilisateur',
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Nom d\'utilisateur',
+                    'maxlength' => 40
+                ],
                 'constraints' => new Length([
                     'max' => 40,
                     'maxMessage' => '{{ limit }} caractères maximum',
                 ])
             ])
             ->add('lastName', TextType::class, [
-                'label' => 'Nom de famille',
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Nom',
+                    'maxlength' => 40
+                ],
                 'constraints' => new Length([
                     'max' => 40,
                     'maxMessage' => '{{ limit }} caractères maximum',
                 ])
             ])
+            ->add('domain', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Domaines d\'activité',
+                    'maxlength' => 100
+                ],
+                'constraints' => new Length([
+                    'max' => 1030,
+                    'maxMessage' => '{{ limit }} caractères maximum',
+                ])
+            ])
             ->add('firstName', TextType::class, [
-                'label' => 'Prénom',
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Prénom',
+                    'maxlength' => 30
+                ],
                 'constraints' => new Length([
                     'max' => 30,
                     'maxMessage' => '{{ limit }} caractères maximum',
                 ])
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Email',
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Email',
+                    'maxlength' => 60
+                ],
                 'constraints' => new Length([
                     'max' => 60,
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',
                 ])
             ])
             ->add('phone', TelType::class, [
-                'label' => 'Téléphone',
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Téléphone',
+                    'maxlength' => 25
+                ],
                 'constraints' => new Length([
                     'max' => 25,
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',
                 ])
             ])
             ->add('agreeTerms', CheckboxType::class, [
-                'label' => 'J\'accepte les termes',
+                'label' => 'J\'accepte les conditions d\'utilisations',
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'Vous devez accepter nos termes.',
+                        'message' => 'Vous devez accepter nos conditions d\'utilisation.',
                     ]),
                 ],
             ])
             ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
+                'label' => false,
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+                'attr' => [
+                    'autocomplete' => 'new-password',
+                    'placeholder' => 'Mot de passe'
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Merci de saisir un mot de passe.',

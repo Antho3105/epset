@@ -3,47 +3,92 @@
 {% block title %}Liste des {{ type }}{% endblock %}
 
 {% block body %}
-    <h1 class="h1 mb-3 font-weight-normal text-center">Liste des {{ type }}</h1>
+    <section id="users">
+        <h1 class="h1 mb-3 font-weight-normal text-center">Liste des {{ type }}</h1>
+        <div class="search">
 
-    <table class="table table-striped table-hover">
-        <thead>
-        <tr>
-            <th>Nom d'utilisateur</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Email</th>
-            <th>Téléphone</th>
-            {% if is_granted('ROLE_ADMIN') %}
-            <th>Rôle</th>
-            <th>Dernière connexion</th>
+            <form action="{{ path('app_search_user') }}" method="post">
+                <label>
+                    <input name='lastName' type="text" placeholder="Nom">
+                </label>
+                <label>
+                    <input name='firstName' type="text" placeholder="Prénom">
+                </label>
+                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+
+        <section>
+            {% if type == 'utilisateurs' %}
+                <h2 class="h2 mb-3 font-weight-normal text-center">Formateurs</h2>
+                <div class="row cardHolder d-flex justify-content-between">
+                    {% for user in users %}
+                        {% if user.roles[0] == "ROLE_TRAINER" %}
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>{{ user.lastName }} {{ user.firstName }}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p>{{ user.domain }}</p>
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                           class="btn btn-primary">Voir</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <h2 class="h2 mb-3 font-weight-normal text-center">Centres</h2>
+                <div class="cardHolder d-flex justify-content-between">
+                    {% for user in users %}
+                        {% if user.roles[0] == "ROLE_CENTER" %}
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>{{ user.userName }}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p>{{ user.domain }}</p>
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                           class="btn btn-primary">Voir</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p>Pas de résultats</p>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="row cardHolder d-flex justify-content-between">
+                    {% for user in users %}
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>{{ user.lastName }} {{ user.firstName }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <p>{{ user.domain }}</p>
+                                <div class="d-flex justify-content-end">
+                                    <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                       class="btn btn-primary">Voir</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr onclick="location.href='{{ path('app_user_show', {'id': user.id}) }}'">
-                <td>{{ user.userName }}</td>
-                <td>{{ user.firstName }}</td>
-                <td>{{ user.lastName }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.phone }}</td>
-                {% if is_granted('ROLE_ADMIN') %}
-                <td>{{ user.roles[0] }}</td>
-                <td>{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:i') : '-' }}</td>
-                {% endif %}
-                <td>
-                    <a class="btn"  href="#">Modifier</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        </section>
 
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('app_user_list') }}" class="btn btn-primary">Voir tout</a>
-        <a href="{{ path('app_center_list') }}" class="btn btn-primary">Voir les centres</a>
-        <a href="{{ path('app_trainer_list') }}" class="btn btn-primary">Voir les formateurs</a>
-    {% endif %}
+        {% if app.request.get('_route') == 'app_search_user' %}
+            <a class="btn btn-primary" href="{{ path('app_trainer_list') }}">Retour liste</a>
+        {% endif %}
 
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('app_user_list') }}" class="btn btn-primary">Voir tout</a>
+            <a href="{{ path('app_center_list') }}" class="btn btn-primary">Voir les centres</a>
+            <a href="{{ path('app_trainer_list') }}" class="btn btn-primary">Voir les formateurs</a>
+        {% endif %}
+    </section>
 {% endblock %}

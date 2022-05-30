@@ -2,18 +2,27 @@
     color: black;
     padding: 0;
     width: 300px;
-    margin: 10px 20px;
+    margin: 0;
     border-radius: 10px;
+}
+
+.cardHolder {
+    gap: 15px;
+    padding: 15px 0;
 }
 
 .card-header {
     color: var(--font-color3);
+
 }
 
 @media screen and (max-width: 970px) {
     .card{
-        width: 45%;
+        width: 40%;
         margin: 10px 20px;
+    }
+    .card-body{
+        padding: 0;
     }
 }
 

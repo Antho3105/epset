@@ -14,37 +14,41 @@
             </div>
         {% endif %}
         <h1 class="h3 mb-3 font-weight-normal text-center">EPSET : Education Pre-SElection Tool</h1>
-        <p class="text-center">Ce site est une plateforme dédiée aux centres de formation pour organiser la préselection de candidats pour les formations proposées.</p>
-        <p class="text-center">Les centres de formation peuvent via cette application créer et gérer avec les formateurs des questionnaire sous forme de QCM.</p>
+        <p class="text-center">Ce site est une plateforme dédiée aux centres de formation pour organiser la préselection
+            de candidats pour les formations proposées.</p>
+        <p class="text-center">Les centres de formation peuvent via cette application créer et gérer avec les formateurs
+            des questionnaire sous forme de QCM.</p>
 
         <h2 class="h3 mb-3 pt-5 font-weight-normal text-center">Connectez vous !</h2>
 
         <div class="form login">
-        <label for="inputUserName">Nom d'utilisateur</label>
-        <input type="text" value="{{ last_username }}" name="userName" id="inputUserName" class="form-control"
-               autocomplete="username" required autofocus>
-        <label for="inputPassword">Mot de passe</label>
-        <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password"
-               required>
+            <label for="inputUserName">Nom d'utilisateur</label>
+            <input type="text" value="{{ last_username }}" name="userName" id="inputUserName" class="form-control"
+                   autocomplete="username" required autofocus>
+            <label for="inputPassword">Mot de passe</label>
+            <input type="password" name="password" id="inputPassword" class="form-control"
+                   autocomplete="current-password"
+                   required>
 
-        <input type="hidden" name="_csrf_token"
-               value="{{ csrf_token('authenticate') }}"
-        >
+            <input type="hidden" name="_csrf_token"
+                   value="{{ csrf_token('authenticate') }}"
+            >
 
-        {#    #}{# #}
-        {#        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality. #}
-        {#        See https://symfony.com/doc/current/security/remember_me.html #}
+            {#    #}{# #}
+            {#        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality. #}
+            {#        See https://symfony.com/doc/current/security/remember_me.html #}
 
-        {#        <div class="checkbox mb-3"> #}
-        {#            <label> #}
-        {#                <input type="checkbox" name="_remember_me"> Remember me #}
-        {#            </label> #}
-        {#        </div> #}
-        {#    #}
-        <div class="d-flex justify-content-end">
-            <a  class="btn btn-secondary mx-1" href="{{ path('app_forgot_password_request') }}">Mot de passe oublié</a>
-            <button class="btn btn-primary mx-1" type="submit">Valider</button>
-        </div>
+            {#        <div class="checkbox mb-3"> #}
+            {#            <label> #}
+            {#                <input type="checkbox" name="_remember_me"> Remember me #}
+            {#            </label> #}
+            {#        </div> #}
+            {#    #}
+            <div class="d-flex justify-content-end pt-2">
+                <a class="btn btn-secondary mx-1" href="{{ path('app_forgot_password_request') }}">Mot de passe
+                    oublié</a>
+                <button class="btn btn-primary mx-1" type="submit">Valider</button>
+            </div>
         </div>
     </form>
 {% endblock %}

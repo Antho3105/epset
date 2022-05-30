@@ -15,12 +15,11 @@
             {% if is_granted('ROLE_ADMIN') %}
                 <th>Date de suppression</th>
             {% endif %}
-            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         {% for survey in surveys %}
-            <tr>
+            <tr onclick="location.href='{{ path('app_survey_show', {'id': survey.id}) }}'">
                 <td>{{ survey.ref }}</td>
                 <td>{{ survey.difficulty }}</td>
                 <td>{{ survey.questionTimer }}</td>
@@ -28,10 +27,6 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <td>{{ survey.deleteDate ? survey.deleteDate|date('d-m-Y H:i') : '-' }}</td>
                 {% endif %}
-                <td>
-                    <a href="{{ path('app_survey_show', {'id': survey.id}) }}">Détails</a>
-                    <a href="{{ path('app_survey_edit', {'id': survey.id}) }}">Modifier</a>
-                </td>
             </tr>
         {% else %}
             <tr>

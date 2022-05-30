@@ -7,7 +7,8 @@
         <h1 class="h1 mb-3 font-weight-normal text-center">Liste des résultats par formation</h1>
 
         {% for course in app.user.courses %}
-            <div>
+            {% if course.deleteDate is null %}
+                <div>
                 <h2 class="h2 mb-3 font-weight-normal text-center">{{ course.title }} :</h2>
                 <div class="flex">
                     {% for result in results %}
@@ -19,14 +20,16 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Formation : {{ result.survey.course }}</h5>
                                     <p class="card-text">Score : {{ result.score }} % </p>
-                                    <a href="{{ path('app_result_show', {'id': result.id}) }}"
-                                       class="btn btn-primary">Voir</a>
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{{ path('app_result_show', {'id': result.id}) }}"
+                                           class="btn btn-primary">Voir</a>
+                                    </div>
                                 </div>
                             </div>
                         {% endif %}
                     {% endfor %}
                 </div>
-
+            {% endif %}
             </div>
         {% endfor %}
 
@@ -66,7 +69,8 @@
                 </tbody>
             </table>
         {% endif %}
+        <div class="d-flex justify-content-end">
         <a class="btn btn-primary" href="{{ path('app_result_new') }}">Créer nouvelle fiche</a>
-
+        </div>
     </section>
 {% endblock %}

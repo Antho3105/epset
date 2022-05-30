@@ -46,6 +46,13 @@ video {
     align-items: center;
 }
 
+.flexStart {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 h1,
 h2,
 h3,
@@ -94,11 +101,9 @@ table {
 
 }
 
-
 main>section:last-child {
     padding-bottom: 80px;
 }
-
 
 .flashMessage {
     border-radius: 15px;
@@ -108,8 +113,12 @@ main>section:last-child {
     right: 0;
 }
 
-#surveyInfo, #surveyDetails, #surveyDetails, #result>div {
+#surveyInfo, #surveyDetails, #surveyDetails, #result>div, #detail>div, #question{
     color: var(--font-color2);
+}
+
+.search {
+    margin: 20px 0;
 }
 
 
@@ -119,6 +128,14 @@ TABLES
 
 tr{
     cursor: pointer;
+}
+
+#userDetail tr, #surveyDetails tr {
+    cursor: inherit;
+}
+
+input, button, a, select {
+    border-radius: 15px!important;
 }
 
 
@@ -133,10 +150,10 @@ FOOTER
 
 footer a {
     color: var(--font-color1);
+    padding: 5px 10px;
 }
 
 footer {
-
     position: absolute;
     bottom: 0;
     left: 0;

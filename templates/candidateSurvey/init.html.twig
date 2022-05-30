@@ -1,6 +1,6 @@
 {% extends './candidateSurvey/index.html.twig' %}
 
-{% block title %}Edit Result{% endblock %}
+{% block title %}Initialisation{% endblock %}
 
 {% block body %}
     <section id="header">
@@ -14,11 +14,23 @@
         </div>
     </section>
     <section id="detail">
-        <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Détails du questionnaire :</h2>
+        <h3 class="h3 mb-3 font-weight-normal text-center pt-2">Détails du questionnaire :</h3>
         <div>
-            <p>Difficulté du questionnaire : {{ survey.difficulty }} / 5</p>
-            <p>Nombre de questions : </p>
+            <div class="d-flex">
+                <div><p>Difficulté du questionnaire :</p></div>
+                <div class="d-flex">
+                    {% for i in 1..5 %}
+                        {% if i<=survey.difficulty %}
+                            <div><i class="fa-solid fa-circle"></i></div>
+                        {% else %}
+                            <div><i class="fa-regular fa-circle"></i></div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <p>Nombre de questions : {{ survey.questions.count }}</p>
         </div>
+
         <h3 class="h3 mb-3 font-weight-normal text-center pt-2">Consignes :</h3>
         <div>
             <p>{{ survey.detail }}</p>

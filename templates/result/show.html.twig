@@ -3,7 +3,7 @@
 {% block title %}Résultats{% endblock %}
 
 {% block body %}
-    <h1 class="h1 mb-3 font-weight-normal text-center">Résultat</h1>
+    <h1 class="h1 mb-3 font-weight-normal text-center">Résultat de {{ result.candidate }}</h1>
 
     <table class="table">
         <tbody>
@@ -22,6 +22,10 @@
             <th>Nom de la formation</th>
             <td>{{ result.survey.course.title }}</td>
         </tr>
+        <tr>
+            <th>Nombre de questions</th>
+            <td>{{ result.survey.questions.count }}</td>
+        </tr>
             <tr>
                 <th>Nombre de questions lues</th>
                 <td>{{ result.viewedQuestion }}</td>
@@ -31,7 +35,7 @@
                 <td>{{ result.answeredQuestion }}</td>
             </tr>
             <tr>
-                <th>Score</th>
+                <th>Score (%)</th>
                 <td>{{ result.score }}</td>
             </tr>
         {% if is_granted('ROLE_ADMIN') %}
@@ -47,8 +51,8 @@
         </tbody>
     </table>
 
-    <a class="btn btn-primary" href="{{ path('app_result_index') }}">Retour liste</a>
-
-
+    <div class="d-flex justify-content-end">
+    <a class="btn btn-primary mx-2" href="{{ path('app_result_index') }}" title="Retour"><i class="fa-solid fa-delete-left"></i></a>
     {{ include('result/_delete_form.html.twig') }}
+    </div>
 {% endblock %}

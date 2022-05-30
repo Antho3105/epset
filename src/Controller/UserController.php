@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -54,6 +55,54 @@ class UserController extends AbstractController
     {
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findByRole("ROLE_TRAINER"),
+            'type' => "formateurs"
+        ]);
+    }
+
+    /**
+     *
+     * @IsGranted("ROLE_CENTER")
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @return Response
+     */
+    #[Route('/search/result', name: 'app_search_user')]
+    public function search(Request $request, UserRepository $userRepository): Response
+    {
+        $lastName = $request->get('lastName');
+        $firstName = $request->get('firstName');
+
+        if ($lastName && $firstName) {
+            $users = $userRepository->createQueryBuilder('user')
+                ->where('user.roles LIKE :roles')
+                ->andWhere('user.lastName LIKE :lastname')
+                ->andWhere('user.firstName LIKE :firstname')
+                ->setParameter('roles', '%"' . "ROLE_TRAINER" . '"%')
+                ->setParameter('lastname', $lastName)
+                ->setParameter('firstname', $firstName)
+                ->getQuery()
+                ->getResult();
+        } elseif ($lastName && !$firstName) {
+            $users = $userRepository->createQueryBuilder('user')
+                ->where('user.roles LIKE :roles')
+                ->andWhere('user.lastName LIKE :lastname')
+                ->setParameter('roles', '%"' . "ROLE_TRAINER" . '"%')
+                ->setParameter('lastname', $lastName)
+                ->getQuery()
+                ->getResult();
+        } elseif (!$lastName && $firstName) {
+            $users = $userRepository->createQueryBuilder('user')
+                ->where('user.roles LIKE :roles')
+                ->andWhere('user.firstName LIKE :firstname')
+                ->setParameter('roles', '%"' . "ROLE_TRAINER" . '"%')
+                ->setParameter('firstname', $firstName)
+                ->getQuery()
+                ->getResult();
+        }
+
+
+        return $this->render('user/index.html.twig', [
+            'users' => $users,
             'type' => "formateurs"
         ]);
     }

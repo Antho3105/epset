@@ -3,34 +3,54 @@
 {% block title %}Enregistrement{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-
-    <h1 class="h3 mb-3 font-weight-normal text-center">Enregistrement centre / formateur</h1>
-
-    <div>
-        <p class="text-center">
-            <small>
-                Entrez votre adresse email et votre nom d'utilisateur, nous vous enverrons un lien pour réinitialiser
-                votre mot de passe
-            </small>
-        </p>
-    </div>
-    <div class="form">
-        {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.roles) }}
-        {{ form_row(registrationForm.userName) }}
-        {{ form_row(registrationForm.firstName) }}
-        {{ form_row(registrationForm.lastName) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.phone) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn btn-primary">Valider</button>
+    <section class="register">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+        <h1 class="h3 mb-3 font-weight-normal text-center">Enregistrement centre / formateur</h1>
+        <div>
+            <p class="text-center">
+                <small>
+                    Entrez votre adresse email et votre nom d'utilisateur, nous vous enverrons un lien par mail pour
+                    valider votre compte
+                </small>
+            </p>
+        </div>
+        <div class="form pt-3">
+            {{ form_start(registrationForm) }}
+            <div class="row d-flex justify-content-center">
+                <div class="col-sm-9 col-12 px-3">
+                    {{ form_row(registrationForm.roles) }}
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <div class="col-12 col-sm-5 px-3">
+                    {{ form_row(registrationForm.userName) }}
+                </div>
+                <div class="col-12 col-sm-4 px-3">
+                    {{ form_row(registrationForm.phone) }}
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <div class="col-12 col-sm-5 px-3">
+                    {{ form_row(registrationForm.lastName) }}
+                </div>
+                <div class="col-12 col-sm-4 px-3">
+                    {{ form_row(registrationForm.firstName) }}
+                                    </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-9 col-12 px-3">
+                {{ form_row(registrationForm.email) }}
+                {{ form_row(registrationForm.domain) }}
+                {{ form_row(registrationForm.plainPassword) }}
+                {{ form_row(registrationForm.agreeTerms) }}
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                </div>
+            </div>
+        </div>
         {{ form_end(registrationForm) }}
-    </div>
+    </section>
 {% endblock %}

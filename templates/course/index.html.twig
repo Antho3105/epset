@@ -21,7 +21,7 @@
             </thead>
             <tbody>
             {% for course in courses %}
-                <tr>
+                <tr onclick="location.href='{{ path('app_course_show', {'id': course.id}) }}'">
                     <td>{{ course.ref }}</td>
                     <td>{{ course.title }}</td>
                     <td>{{ course.level }}</td>
@@ -29,11 +29,8 @@
                         <td>{{ course.user }}</td>
                         <td>{{ course.deleteDate ? course.deleteDate|date('d-m-Y H:i') : '-' }}</td>
                     {% endif %}
-                    <td>    {% if is_granted('ROLE_CENTER') %}
-                            <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
-                            <a href="{{ path('app_course_edit', {'id': course.id}) }}">Modifier</a>
-                        {% elseif is_granted('ROLE_TRAINER') %}
-                            <a href="{{ path('app_course_show', {'id': course.id}) }}">Détails</a>
+                    <td>
+                        {% if is_granted('ROLE_TRAINER') %}
                             <a href="{{ path('app_survey_new', {'id': course.id}) }}">Créer un questionnaire</a>
                         {% endif %}
 
@@ -47,8 +44,10 @@
             </tbody>
         </table>
         {% if is_granted('ROLE_CENTER') %}
-            <a href="{{ path('app_visible_course_new') }}" class="btn btn-primary">Affecter une formation</a>
-            <a href="{{ path('app_course_new') }}" class="btn btn-primary">Ajouter une formation</a>
+            <div class="d-flex justify-content-end">
+                <a href="{{ path('app_visible_course_new') }}" class="btn btn-primary mx-2">Affecter une formation</a>
+                <a href="{{ path('app_course_new') }}" class="btn btn-primary mx-2">Ajouter une formation</a>
+            </div>
         {% endif %}
     </section>
 {% endblock %}
