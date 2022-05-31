@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -138,5 +139,35 @@ class UserController extends AbstractController
             'user' => $user,
         ]);
     }
+
+    /**
+     *
+     */
+    #[Route('/user/edit/{id}', name: 'app_user_edit')]
+    public function editUser(Request $request, UserRepository $userRepository, User $user): Response
+    {
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            // Interdire l'accès a une autre page que celle de l'utilisateur en cours
+            if ($this->getUser() !== $user) {
+                throw throw new AccessDeniedHttpException();
+            }
+        }
+
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $userRepository->add($user, true);
+            $this->addFlash('success', 'Fiche modifiée !');
+            return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+
+        return $this->renderForm('user/edit.html.twig', [
+            'form' => $form,
+            'user' => $user
+        ]);
+    }
+
 
 }

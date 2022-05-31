@@ -43,11 +43,16 @@
             </tr>
         </table>
 
-        <a href="{{ path('app_user_list') }}" class="btn btn-primary">Retour liste</a>
-        <a href="{{ path('app_user_list') }}" class="btn btn-primary">Retour liste</a>
-        {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('app_center_list') }}" class="btn btn-primary">Voir les centres</a>
-            <a href="{{ path('app_trainer_list') }}" class="btn btn-primary">Voir les formateurs</a>
-        {% endif %}
+
+        <div class="d-flex justify-content-end">
+            {% if is_granted('ROLE_CENTER') %}
+                <a href="{{ path('app_trainer_list') }}" class="btn btn-primary">Retour liste</a>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_user_list') }}" class="btn btn-primary">Retour liste</a>
+                <a href="{{ path('app_center_list') }}" class="btn btn-primary">Voir les centres</a>
+                <a href="{{ path('app_trainer_list') }}" class="btn btn-primary">Voir les formateurs</a>
+            {% endif %}
+        </div>
     </section>
 {% endblock %}

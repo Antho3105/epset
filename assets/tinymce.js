@@ -1,6 +1,7 @@
 tinymce.init({
     selector: '.tinymceXL',
     menubar: false,
+    height: 350,
     plugins: 'wordcount',
     toolbar: 'fontfamily fontsize forecolor backcolor',
     language: 'fr_FR',

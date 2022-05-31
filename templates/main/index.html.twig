@@ -28,10 +28,12 @@
                         </div>
                         <div class="card-body">
 
-                            <a href="{{ path('app_trainer_list') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Liste des formateurs</a>
+                            <a href="{{ path('app_trainer_list') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                                Liste des formateurs</a>
                             {% if is_granted('ROLE_ADMIN') %}
                             {% else %}
-                                <a href="{{ path('app_register_trainer') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Ajouter un formateur</a>
+                                <a href="{{ path('app_register_trainer') }}" class="btn"><i
+                                            class="fa-solid fa-arrow-right"></i> Ajouter un formateur</a>
                             {% endif %}
                         </div>
                     </div>
@@ -43,8 +45,10 @@
                             <i class="fa-solid fa-graduation-cap" style="font-size: 26px"></i>
                         </div>
                         <div class="card-body">
-                            <a href="{{ path('app_candidate_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Liste des candidats</a>
-                            <a href="{{ path('app_candidate_new') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Ajouter un candidat</a>
+                            <a href="{{ path('app_candidate_index') }}" class="btn"><i
+                                        class="fa-solid fa-arrow-right"></i> Liste des candidats</a>
+                            <a href="{{ path('app_candidate_new') }}" class="btn"><i
+                                        class="fa-solid fa-arrow-right"></i> Ajouter un candidat</a>
                         </div>
                     </div>
                 {% endif %}
@@ -54,10 +58,13 @@
                         <i class="fa-solid fa-book-open" style="font-size: 26px"></i>
                     </div>
                     <div class="card-body">
-                        <a href="{{ path('app_course_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Liste des formations</a>
+                        <a href="{{ path('app_course_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                            Liste des formations</a>
                         {% if is_granted('ROLE_CENTER') %}
-                            <a href="{{ path('app_course_new') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Ajouter une formation</a>
-                            <a href="{{ path('app_visible_course_new') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Affecter une formation</a>
+                            <a href="{{ path('app_course_new') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                                Ajouter une formation</a>
+                            <a href="{{ path('app_visible_course_new') }}" class="btn"><i
+                                        class="fa-solid fa-arrow-right"></i> Affecter une formation</a>
                         {% endif %}
                     </div>
                 </div>
@@ -68,7 +75,8 @@
                         <i class="fa-solid fa-question" style="font-size: 26px"></i>
                     </div>
                     <div class="card-body">
-                        <a href="{{ path('app_survey_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Liste des questionnaires</a>
+                        <a href="{{ path('app_survey_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                            Liste des questionnaires</a>
                         {% if is_granted('ROLE_TRAINER') %}
                             <a href="#" class="btn"><i class="fa-solid fa-arrow-right"></i> Ajouter un questionnaire</a>
                         {% endif %}
@@ -81,9 +89,11 @@
                             <i class="fa-solid fa-square-poll-horizontal" style="font-size: 26px"></i>
                         </div>
                         <div class="card-body">
-                            <a href="{{ path('app_result_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Liste des résultats</a>
-                                <a href="{{ path('app_result_new') }}" class="btn"><i class="fa-solid fa-arrow-right"></i> Créer une fiche de résultat</a>
-                            </div>
+                            <a href="{{ path('app_result_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                                Liste des résultats</a>
+                            <a href="{{ path('app_result_new') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                                Créer une fiche de résultat</a>
+                        </div>
                     </div>
                 {% endif %}
 
@@ -93,8 +103,10 @@
                         <i class="fa-solid fa-address-card" style="font-size: 26px"></i>
                     </div>
                     <div class="card-body">
-                        <a href="#" class="btn"><i class="fa-solid fa-arrow-right"></i> Editer son profil.</a>
-
+                        <a href="{{ path('app_user_edit', {'id': app.user.id}) }}" class="btn"><i
+                                    class="fa-solid fa-arrow-right"></i> Editer son profil</a>
+                        <a href="#" class="btn"><i
+                                    class="fa-solid fa-arrow-right"></i> Modifier mot de passe</a>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,8 @@
 {{ form_start(form) }}
     {{ form_widget(form) }}
-<button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
-<a class="btn btn-primary" href="{{ path('app_course_index') }}">Retour liste</a>
+<div class="d-flex justify-content-end">
+    <a class="btn btn-info mx-2" href="{{ path('app_course_index') }}"><i
+                class="fa-solid fa-delete-left"></i></a>
+    <button class="btn btn-success mx-2"><i class="fa-solid fa-check"></i></button>
+</div>
 {{ form_end(form) }}

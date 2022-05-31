@@ -16,7 +16,9 @@
                     <th>Centre</th>
                     <th>Date de suppression</th>
                 {% endif %}
+                {% if is_granted('ROLE_TRAINER') %}
                 <th>Actions</th>
+                {% endif %}
             </tr>
             </thead>
             <tbody>

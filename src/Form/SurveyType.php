@@ -23,6 +23,9 @@ class SurveyType extends AbstractType
         $builder
             ->add('ref', TextType::class, [
                 'label' => 'Référence',
+                'attr' => [
+                    'maxlength' => 15
+                ],
                 'constraints' => new Length([
                     'max' => 15,
                     'maxMessage' => 'Merci de saisir une référence de {{ limit }} caractères maximum',
@@ -30,6 +33,10 @@ class SurveyType extends AbstractType
             ])
             ->add('difficulty', IntegerType::class, [
                 'label' => 'Niveau de difficulté (0-5)',
+                'attr' => [
+                    'min' => 0,
+                    'max' => 5
+                ],
                 'constraints' => new Range([
                     'min' => 0,
                     'max' => 5,
@@ -37,9 +44,13 @@ class SurveyType extends AbstractType
                 ])])
             ->add('questionTimer', IntegerType::class, [
                 'label' => 'Délai par question (s)',
+                'attr' => [
+                    'min' => 0,
+                    'max' => 250,
+                ],
                 'constraints' => new Range([
                     'min' => 0,
-                    'max' => 180,
+                    'max' => 250,
                     'notInRangeMessage' => 'Merci de saisir un chiffre entre {{ min }} et {{ max }} secondes',
                 ])
             ])
@@ -48,7 +59,7 @@ class SurveyType extends AbstractType
             ])
             ->add('detail', TextareaType::class,
                 ['attr' => [
-                    'class' => 'tinymce',
+                    'class' => 'tinymceXL',
                     'maxlength' => 1500
                 ],
                     'label' => 'Détails du questionnaire :',

@@ -32,7 +32,7 @@
                                     <p>{{ user.domain }}</p>
                                     <div class="d-flex justify-content-end">
                                         <a href="{{ path('app_user_show', {'id': user.id}) }}"
-                                           class="btn btn-primary">Voir</a>
+                                           class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -51,7 +51,7 @@
                                     <p>{{ user.domain }}</p>
                                     <div class="d-flex justify-content-end">
                                         <a href="{{ path('app_user_show', {'id': user.id}) }}"
-                                           class="btn btn-primary">Voir</a>
+                                           class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -71,7 +71,7 @@
                                 <p>{{ user.domain }}</p>
                                 <div class="d-flex justify-content-end">
                                     <a href="{{ path('app_user_show', {'id': user.id}) }}"
-                                       class="btn btn-primary">Voir</a>
+                                       class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -81,9 +81,10 @@
         </section>
 
         {% if app.request.get('_route') == 'app_search_user' %}
+        <div class="d-flex justify-content-end">
             <a class="btn btn-primary" href="{{ path('app_trainer_list') }}">Retour liste</a>
-        {% endif %}
-
+            {% endif %}
+        </div>
 
         {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path('app_user_list') }}" class="btn btn-primary">Voir tout</a>

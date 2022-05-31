@@ -1,11 +1,20 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-<div class="d-flex">
-    <a class="btn btn-primary mx-2" href="{{ path('app_survey_index') }}">Retour liste</a>
+<div class="d-flex justify-content-between">
+    <div class="col-5">
+        {{ form_row(form.ref) }}
+    </div>
+    <div class="col-5">
+        {{ form_row(form.difficulty) }}
+    </div>
+</div>
+{{ form_row(form.questionTimer) }}
+    {{ form_row(form.detail) }}
+<div class="d-flex justify-content-end">
+    <a class="btn btn-primary mx-2" href="{{ path('app_survey_index') }}"><i class="fa-solid fa-delete-left"></i></a>
     {% if survey.id %}
         {{ include('survey/_delete_form.html.twig') }}
     {% endif %}
-    <button class="btn btn-primary mx-2">{{ button_label|default('Valider') }}</button>
+    <button class="btn btn-success mx-2"><i class="fa-solid fa-check"></i></button>
 
 </div>
 {{ form_end(form) }}
