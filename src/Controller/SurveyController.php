@@ -109,7 +109,7 @@ class SurveyController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$survey->getDetail()){
+            if (!$survey->getDetail()) {
                 $this->addFlash('alert', 'Il manque le détail !');
                 return $this->renderForm('survey/new.html.twig', [
                     'survey' => $survey,
@@ -285,7 +285,7 @@ class SurveyController extends AbstractController
      * @param SurveyRepository $surveyRepository
      * @return Response
      */
-    #[Route('/hard/{id}', name: 'app_survey_hard_delete', methods: ['POST'])]
+    #[Route('/hardDelete/{id}', name: 'app_survey_hard_delete', methods: ['POST'])]
     public function delete(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
         if ($this->isCsrfTokenValid('delete' . $survey->getId(), $request->request->get('_token'))) {

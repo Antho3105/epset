@@ -10,7 +10,7 @@
 {{ form_row(form.questionTimer) }}
     {{ form_row(form.detail) }}
 <div class="d-flex justify-content-end">
-    <a class="btn btn-primary mx-2" href="{{ path('app_survey_index') }}"><i class="fa-solid fa-delete-left"></i></a>
+    <a class="btn btn-info mx-2" href="{{ path('app_survey_index') }}"><i class="fa-solid fa-backward"></i></a>
     {% if survey.id %}
         {{ include('survey/_delete_form.html.twig') }}
     {% endif %}

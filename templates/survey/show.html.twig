@@ -15,13 +15,13 @@
                 <th>Difficulté</th>
                 <td>
                     <div class="d-flex">
-                    {% for i in 1..5 %}
-                       {% if i<=survey.difficulty %}
-                            <div><i class="fa-solid fa-circle"></i></div>
-                        {% else %}
-                            <div><i class="fa-regular fa-circle"></i></div>
-                        {% endif %}
-                    {% endfor %}
+                        {% for i in 1..5 %}
+                            {% if i<=survey.difficulty %}
+                                <div><i class="fa-solid fa-circle"></i></div>
+                            {% else %}
+                                <div><i class="fa-regular fa-circle"></i></div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
 
             </tr>
@@ -39,18 +39,22 @@
                     <td>{{ survey.deleteDate ? survey.deleteDate|date('d-m-Y H:i') : '-' }}</td>
                 </tr>
             {% endif %}
-            <tr>
-                <th>Détails</th>
-                <td>{{ survey.detail| raw }}</td>
-            </tr>
 
             </tbody>
         </table>
 
-        <div class="d-flex justify-content-end">
-            <a class="btn btn-primary mx-2" href="{{ path('app_survey_index') }}" title="Retour"><i class="fa-solid fa-delete-left"></i></a>
+        <h2 class="mb-3 font-weight-normal text-center">Détails</h2>
+        <div id="surveyDetail" class="mb-3">
+            {{ survey.detail| raw }}
+        </div>
 
-            <a class="btn btn-primary mx-2" href="{{ path('app_survey_edit', {'id': survey.id}) }}" title="Modifier"><i class="fa-solid fa-file-pen"></i></a>
+
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-info mx-2" href="{{ path('app_survey_index') }}" title="Retour"><i
+                        class="fa-solid fa-backward"></i></a>
+
+            <a class="btn btn-primary mx-2" href="{{ path('app_survey_edit', {'id': survey.id}) }}" title="Modifier"><i
+                        class="fa-solid fa-file-pen"></i></a>
 
             {{ include('survey/_delete_form.html.twig') }}
 
@@ -65,18 +69,22 @@
 
         <h2 class="h2 mb-3 font-weight-normal text-center">Liste des questions</h2>
         {% if is_granted('ROLE_TRAINER') %}
-            <a class="btn btn-primary" href="{{ path('app_question_new', {'id': survey.id}) }}">Ajouter une question</a>
+            <div class="d-flex justify-content-end">
+                <a class="btn btn-primary mb-3" href="{{ path('app_question_new', {'id': survey.id}) }}">Ajouter une
+                    question</a>
+            </div>
         {% endif %}
         {% if questions %}
             <div class="d-flex justify-content-between">
                 {% for question in questions %}
                     <div class="card  mx-1">
                         <div class="d-flex card-header justify-content-between align-item-center">
-                            {{ question.question| striptags | slice(0, 50) ~ '...'  }}
+                            {{ question.question| striptags | slice(0, 50) ~ '...' }}
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-primary" href="{{ path('app_question_show', {'id': question.id}) }}">Voir</a>
+                            <a class="btn btn-primary"
+                               href="{{ path('app_question_show', {'id': question.id}) }}">Voir</a>
                         </div>
                     </div>
                 {% endfor %}

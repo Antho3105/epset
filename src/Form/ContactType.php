@@ -2,33 +2,24 @@
 
 namespace App\Form;
 
-use App\Entity\Candidate;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 
-class CandidateType extends AbstractType
+class ContactType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('lastName', TextType::class, [
-                'label' => 'Nom',
-                'attr' => ['maxlength' => 40],
+            ->add('name', TextType::class, [
+                'label' => 'Nom prénom',
+                'attr' => ['maxlength' => 80],
                 'constraints' => new Length([
                     'max' => 40,
-                    'maxMessage' => '{{ limit }} caractères maximum autorisés',
-                ])
-            ])
-            ->add('firstName', TextType::class, [
-                'label' => 'Prénom',
-                'attr' => ['maxlength' => 30],
-                'constraints' => new Length([
-                    'max' => 30,
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',
                 ])
             ])
@@ -40,20 +31,22 @@ class CandidateType extends AbstractType
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',
                 ])
             ])
-            ->add('phone', TelType::class, [
-                'label' => 'Téléphone',
-                'attr' => ['maxlength' => 25],
+            ->add('message', TextareaType::class, [
+                'label' => 'Votre message',
+                'attr' => [
+                    'rows' => 6,
+                    'maxlength' => 1500
+                ],
                 'constraints' => new Length([
-                    'max' => 25,
+                    'max' => 1500,
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',
                 ])
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Candidate::class,
         ]);
     }
 }

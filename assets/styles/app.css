@@ -95,10 +95,13 @@ HEADER
 MAIN
 ---------------------------------------------------------------- */
 
-table {
+table, #surveyDetail {
     border-radius: 10px;
     background-color: var(--bg-color1);
+}
 
+#surveyDetail {
+    padding: 10px;
 }
 
 main>section:last-child {
@@ -117,6 +120,10 @@ main>section:last-child {
     color: var(--font-color2);
 }
 
+#surveyDetails h2 {
+    color: var(--font-color1);
+}
+
 .search {
     margin: 20px 0;
 }
@@ -130,15 +137,13 @@ tr{
     cursor: pointer;
 }
 
-#userDetail tr, #surveyDetails tr {
+#userDetail tr, #surveyDetails tr, #candidateDetail tr {
     cursor: inherit;
 }
 
 input, button, a, select {
     border-radius: 15px!important;
 }
-
-
 
 /*----------------------------------------------------------------
 FOOTER

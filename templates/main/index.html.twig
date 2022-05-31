@@ -77,9 +77,6 @@
                     <div class="card-body">
                         <a href="{{ path('app_survey_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
                             Liste des questionnaires</a>
-                        {% if is_granted('ROLE_TRAINER') %}
-                            <a href="#" class="btn"><i class="fa-solid fa-arrow-right"></i> Ajouter un questionnaire</a>
-                        {% endif %}
                     </div>
                 </div>
                 {% if is_granted('ROLE_CENTER') %}
