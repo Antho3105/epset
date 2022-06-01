@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\Result;
 use App\Repository\CandidateRepository;
 use App\Repository\CourseRepository;
+use App\Repository\QuestionRepository;
 use App\Repository\ResultRepository;
 use App\Repository\SurveyRepository;
 use DateTime;
@@ -182,7 +183,7 @@ class ResultController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_result_show', methods: ['GET'])]
-    public function show(Result $result): Response
+    public function show(Result $result, QuestionRepository $questionRepository): Response
     {
         // Si l'utilisateur n'est pas administrateur gérer l'accès
         if (!$this->isGranted("ROLE_ADMIN")) {
@@ -190,8 +191,21 @@ class ResultController extends AbstractController
             if ($result->getDeleteDate() !== null | $result->getCandidate()->getUser() !== $this->getUser())
                 throw throw new AccessDeniedHttpException();
         }
+
+        // calcul de la durée théorique du test :
+        $questionNb = count($questionRepository->findBy([
+            'Survey' => $result->getSurvey(),
+            'deleteDate' => null,
+        ]));
+        $testTime = $questionNb * $result->getSurvey()->getQuestionTimer() * 1.2;
+
+        $testTime = new \DateInterval('PT'. $testTime. 'S');
+
+
+
         return $this->render('result/show.html.twig', [
             'result' => $result,
+            'testTime' => $testTime,
         ]);
     }
 

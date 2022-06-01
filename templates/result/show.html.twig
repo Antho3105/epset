@@ -3,56 +3,113 @@
 {% block title %}Résultats{% endblock %}
 
 {% block body %}
-    <h1 class="h1 mb-3 font-weight-normal text-center">Résultat de {{ result.candidate }}</h1>
+    <section id="candidateResult">
+        <h1 class="h1 mb-3 font-weight-normal text-center">Résultat de <a href="{{ path('app_candidate_show', {'id' : result.candidate.id }) }}">{{ result.candidate }}</a></h1>
 
-    <table class="table">
-        <tbody>
-
-        {% if is_granted('ROLE_ADMIN') %}
+        <table class="table">
+            <tbody>
+            {% if is_granted('ROLE_ADMIN') %}
+                <tr>
+                    <th>Id</th>
+                    <td>{{ result.id }}</td>
+                </tr>
+            {% endif %}
             <tr>
-                <th>Id</th>
-                <td>{{ result.id }}</td>
-            </tr>
-        {% endif %}
-            <tr>
+                {% if result.finalScore %}
                 <th>Date du test</th>
+             {% else %}
+                <th>Date de création de la fiche de résultat</th>
+                {% endif %}
                 <td>{{ result.testDate ? result.testDate|date('d-m-Y H:i') : '' }}</td>
             </tr>
-        <tr>
-            <th>Nom de la formation</th>
-            <td>{{ result.survey.course.title }}</td>
-        </tr>
-        <tr>
-            <th>Nombre de questions</th>
-            <td>{{ result.survey.questions.count }}</td>
-        </tr>
             <tr>
-                <th>Nombre de questions lues</th>
-                <td>{{ result.viewedQuestion }}</td>
+                <th>Nom de la formation</th>
+                <td>{{ result.survey.course.title }}</td>
             </tr>
             <tr>
-                <th>Nombre de question répondues</th>
-                <td>{{ result.answeredQuestion }}</td>
+                <th>Référence du questionnaire</th>
+                <td>{{ result.survey.ref }}</td>
             </tr>
             <tr>
-                <th>Score (%)</th>
-                <td>{{ result.score }}</td>
+                <th>Durée théorique du test</th>
+                <td>{{ testTime.format("%H:%I:%S") }}</td>
             </tr>
-        {% if is_granted('ROLE_ADMIN') %}
+            {% if result.finalScore %}
+                <tr>
+                    <th>Durée réelle</th>
+                    {% if result.isCheater %}
+                        <td style="color: red">{{ result.testDuration.format("%H:%I:%S") }} Attention triche détectée
+                            !
+                        </td>
+                    {% else %}
+                        <td>{{ result.testDuration.format("%H:%I:%S") }}</td>
+                    {% endif %}
+                </tr>
+            {% endif %}
             <tr>
-                <th>Token</th>
-                <td>{{ result.token }}</td>
+                <th>Questions du test</th>
+                <td>{{ result.survey.questions.count }}</td>
             </tr>
             <tr>
-                <th>DeleteDate</th>
-                <td>{{ result.deleteDate ? result.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
+                <th>Questions lues</th>
+                <td>{{ result.viewedQuestion  ?: '-' }}</td>
             </tr>
-        {% endif %}
-        </tbody>
-    </table>
+            <tr>
+                <th>Questions répondues</th>
+                <td>{{ result.answeredQuestion ?: '-' }}</td>
+            </tr>
+            <tr>
+                <th>Bonnes réponses</th>
+                <td>{{ result.score ?: '-' }}</td>
+            </tr>
+            {% if result.finalScore %}
+                <tr>
+                    <th>Score final (%)</th>
+                    {% if result.isCheater %}
+                        <td style="color: red">{{ result.finalScore }}</td>
+                    {% else %}
+                        <td>{{ result.finalScore }}</td>
+                    {% endif %}
+                </tr>
+            {% endif %}
+            <tr>
+                {% if result.coverLetterFilename %}
+                    <th>Lettre de motivation</th>
+                    <td>
+                        <a href="{{ asset('./coverLetters_files/'~ result.coverLetterFilename) }}">
+                            Lien <i class="fa-solid fa-file-pdf" style="font-size: 20px"></i></a>
+                    </td>
+                {% endif %}
+            </tr>
+            <tr>
+                {% if result.candidate.cvFileName %}
+                    <th>CV du candidat</th>
+                    <td>
+                        <a href="{{ asset('./cv_files/'~ result.candidate.cvFileName) }}">
+                            Lien <i class="fa-solid fa-file-pdf" style="font-size: 20px"></i></a>
+                    </td>
+                {% endif %}
+            </tr>
+            {% if is_granted('ROLE_ADMIN') %}
+                <tr>
+                    <th>Token</th>
+                    <td>{{ result.token }}</td>
+                </tr>
+                <tr>
+                    <th>DeleteDate</th>
+                    <td>{{ result.deleteDate ? result.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-primary mx-2" href="{{ path('app_result_index') }}" title="Retour"><i
+                        class="fa-solid fa-delete-left"></i></a>
+            {{ include('result/_delete_form.html.twig') }}
+        </div>
+    </section>
+    <section>
 
-    <div class="d-flex justify-content-end">
-    <a class="btn btn-primary mx-2" href="{{ path('app_result_index') }}" title="Retour"><i class="fa-solid fa-delete-left"></i></a>
-    {{ include('result/_delete_form.html.twig') }}
-    </div>
+
+    </section>
 {% endblock %}

@@ -85,7 +85,7 @@ class CandidateSurveyController extends AbstractController
                 // Récupérer l'extension du fichier
                 $fileExtension = $cv->guessExtension();
                 // Générer le non du fichier de destination.
-                $cvFileName = 'CV ' . $result->getCandidate()->getLastName() . ' ' . $result->getCandidate()->getFirstName() . '.' . $fileExtension;
+                $cvFileName = 'CV_' . $result->getCandidate()->getLastName() . '_' . $result->getCandidate()->getFirstName() . '.' . $fileExtension;
                 // Mettre a jour le nom du CV sur la fiche du candidat.
                 $candidate->setCvFileName($cvFileName);
                 // Persister la fiche du candidat pour sauvegarder le nom du fichier.
@@ -99,7 +99,7 @@ class CandidateSurveyController extends AbstractController
                 // Récupérer l'extension du fichier
                 $fileExtension = $motivationLetter->guessExtension();
                 // Générer le non du fichier de destination.
-                $coverLetterFilename = $survey->getRef() . ' Lettre de motivation ' . $result->getCandidate()->getLastName() . ' ' . $result->getCandidate()->getFirstName() . '.' . $fileExtension;
+                $coverLetterFilename = $survey->getRef() . ' Lettre_de_motivation_' . $result->getCandidate()->getLastName() . '_' . $result->getCandidate()->getFirstName() . '.' . $fileExtension;
                 // Mettre à jour le nom de la lettre de motivation sur la fiche de résultat.
                 $result->setCoverLetterFilename($coverLetterFilename);
                 // Déplacer le fichier sur le serveur.
@@ -150,6 +150,7 @@ class CandidateSurveyController extends AbstractController
     /**
      *
      *
+     * @throws \Exception
      */
     #[Route('/question/survey', name: 'app_survey_next', methods: ['GET', 'POST'])]
     public function next(Request $request, QuestionRepository $questionRepository, AnswerRepository $answerRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository): Response
@@ -212,16 +213,15 @@ class CandidateSurveyController extends AbstractController
                     'Survey' => $result->getSurvey(),
                     'deleteDate' => null,
                 ]));
-                // TODO terminer la fonction anti triche
-                // Stocker le temps passé pour répondre aux questions et si il le candidat à triché.
-                $startTime = $result->getTestDate();
+
+                // Stocker le temps passé pour répondre aux questions et si le candidat a triché.
                 $maxEndOfTest = new DateTime($result->getTestDate()->format("Y-m-d H:i:s"));
                 $testTime = $questionNb * $result->getSurvey()->getQuestionTimer() * 1.2;
                 $maxEndOfTest->add(new DateInterval('PT' . $testTime . 'S'));
 
                 $now = new DateTime();
 
-                $result->setTestDuration(date_diff($startTime, $now));
+                $result->setTestDuration(date_diff($result->getTestDate(), $now));
                 $gap = date_diff($now, $maxEndOfTest);
                 if ($gap->invert === 1) {
                     $result->setIsCheater(1);
@@ -231,7 +231,7 @@ class CandidateSurveyController extends AbstractController
 //                $interval = $testDuration->format("%H:%I:%S");
 
                 $finalScore = number_format($result->getScore() * 100 / $questionNb, 1, '.', ' ');
-                $result->setScore($finalScore);
+                $result->setFinalScore($finalScore);
                 $resultRepository->add($result, true);
 
                 return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);

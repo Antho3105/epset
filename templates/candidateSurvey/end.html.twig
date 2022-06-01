@@ -15,9 +15,15 @@
     </section>
     <section id="result">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Test terminé</h2>
-        <div>
-            <p>Vous avez obtenu un score de {{ result.score }} %</p>
-        </div>
+        {% if result.isCheater %}
+            <div style="background: red">
+                <p>Vous avez obtenu un score de {{ result.finalScore }} % Attention triche détectée </p>
+            </div>
+        {% else %}
+            <div>
+                <p>Vous avez obtenu un score de {{ result.finalScore }} %</p>
+            </div>
+        {% endif %}
     </section>
 
 

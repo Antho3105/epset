@@ -10,7 +10,7 @@
             {% if course.deleteDate is null %}
                 <div>
                 <h2 class="h2 mb-3 font-weight-normal text-center">{{ course.title }} :</h2>
-                <div class="flex">
+                <div class="flex mb-3">
                     {% for result in results %}
                         {% if result.survey.course == course %}
                             <div class="card">
@@ -19,10 +19,20 @@
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title">Formation : {{ result.survey.course }}</h5>
-                                    <p class="card-text">Score : {{ result.score }} % </p>
+                                    {% if result.score %}
+                                        {% if result.isCheater %}
+                                            <p class="card-text" style="color: red">Score : {{ result.finalScore }}
+                                                % </p>
+                                        {% else %}
+                                            <p class="card-text" style="color: green">Score : {{ result.finalScore }}
+                                                % </p>
+                                        {% endif %}
+                                    {% else %}
+                                        <p class="card-text">Test non réalisé</p>
+                                    {% endif %}
                                     <div class="d-flex justify-content-end">
                                         <a href="{{ path('app_result_show', {'id': result.id}) }}"
-                                           class="btn btn-primary">Voir</a>
+                                           class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +80,7 @@
             </table>
         {% endif %}
         <div class="d-flex justify-content-end">
-        <a class="btn btn-primary" href="{{ path('app_result_new') }}">Créer nouvelle fiche</a>
+            <a class="btn btn-primary" href="{{ path('app_result_new') }}">Créer nouvelle fiche</a>
         </div>
     </section>
 {% endblock %}

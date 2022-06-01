@@ -31,6 +31,11 @@ li a,
 .nav-item a,
 a {
     text-decoration: none;
+    color: var(--font-color1);
+}
+
+table a {
+    color: var(--font-color3);
 }
 
 img,
@@ -137,7 +142,7 @@ tr{
     cursor: pointer;
 }
 
-#userDetail tr, #surveyDetails tr, #candidateDetail tr {
+#userDetail tr, #surveyDetails tr, #candidateDetail tr, #candidateResult tr {
     cursor: inherit;
 }
 

@@ -4,7 +4,7 @@
 
 {% block body %}
     <section id="candidateDetail">
-        <h1 class="h1 mb-3 font-weight-normal text-center">Fiche de  {{ candidate }}</h1>
+        <h1 class="h1 mb-3 font-weight-normal text-center">Fiche de {{ candidate }}</h1>
 
         <table class="table">
             <tbody>
@@ -24,17 +24,58 @@
                 <th>Téléphone</th>
                 <td>{{ candidate.phone }}</td>
             </tr>
+            {% if candidate.cvFileName %}
+                <th>CV du candidat</th>
+                <td>
+                    <a href="{{ asset('./cv_files/'~ candidate.cvFileName) }}">
+                        Lien <i class="fa-solid fa-file-pdf" style="font-size: 20px"></i></a>
+                </td>
+            {% endif %}
             </tbody>
         </table>
 
-        <div class="row d-flex justify-content-end">
+        <div class="row d-flex justify-content-end mb-3">
             <div class="col-12 d-flex justify-content-end">
                 <a class="btn btn-primary mx-2" title="Retour"
                    href="{{ path('app_candidate_index') }}"><i class="fa-solid fa-delete-left"></i></a>
                 <a class="btn btn-info mx-2" title="Modifier"
-                   href="{{ path('app_candidate_edit', {'id': candidate.id}) }}"><i class="fa-solid fa-user-pen"></i></a>
+                   href="{{ path('app_candidate_edit', {'id': candidate.id}) }}"><i
+                            class="fa-solid fa-user-pen"></i></a>
                 {{ include('candidate/_delete_form.html.twig') }}
             </div>
-         </div>
+        </div>
+
+        <h2 class="h2 mb-3 font-weight-normal text-center">Résultats</h2>
+
+
+        <div class="flex mb-3">
+            {% for result in candidate.results %}
+                <div class="card">
+                    <div class="card-header">
+                        Formation : {{ result.survey.course }}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ result.survey }}</h5>
+                        {% if result.score %}
+                            {% if result.isCheater %}
+                                <p class="card-text" style="color: red">Score : {{ result.finalScore }}
+                                    % </p>
+                            {% else %}
+                                <p class="card-text" style="color: green">Score : {{ result.finalScore }}
+                                    % </p>
+                            {% endif %}
+                        {% else %}
+                            <p class="card-text">Test non réalisé</p>
+                        {% endif %}
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ path('app_result_show', {'id': result.id}) }}"
+                               class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+
     </section>
 {% endblock %}

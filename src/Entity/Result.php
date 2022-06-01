@@ -51,6 +51,9 @@ class Result
     #[ORM\Column(type: 'dateinterval', nullable: true)]
     private $testDuration;
 
+    #[ORM\Column(type: 'smallint', nullable: true)]
+    private $finalScore;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -176,8 +179,8 @@ class Result
         return $this;
     }
 
-    private function getFinalScore(): int {
-
+    public function getFinalScore(): ?int {
+        return $this->finalScore;
     }
 
     public function isIsCheater(): ?bool
@@ -200,6 +203,13 @@ class Result
     public function setTestDuration(?\DateInterval $testDuration): self
     {
         $this->testDuration = $testDuration;
+
+        return $this;
+    }
+
+    public function setFinalScore(?int $finalScore): self
+    {
+        $this->finalScore = $finalScore;
 
         return $this;
     }
