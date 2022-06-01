@@ -142,7 +142,7 @@ tr{
     cursor: pointer;
 }
 
-#userDetail tr, #surveyDetails tr, #candidateDetail tr, #candidateResult tr {
+#userDetail tr, #surveyDetails tr, #candidateDetail tr, #candidateResult tr, #courseDetail tr {
     cursor: inherit;
 }
 

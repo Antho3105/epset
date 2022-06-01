@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Answer;
-use App\Entity\Result;
 use App\Form\UploadFile;
 use App\Repository\AnswerRepository;
 use App\Repository\CandidateRepository;
@@ -14,12 +12,15 @@ use DateInterval;
 use DateTime;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CandidateSurveyController extends AbstractController
@@ -153,7 +154,7 @@ class CandidateSurveyController extends AbstractController
      * @throws \Exception
      */
     #[Route('/question/survey', name: 'app_survey_next', methods: ['GET', 'POST'])]
-    public function next(Request $request, QuestionRepository $questionRepository, AnswerRepository $answerRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository): Response
+    public function next(Request $request, QuestionRepository $questionRepository, AnswerRepository $answerRepository, ResultRepository $resultRepository, MailerInterface $mailer): Response
     {
         // Récupérer le token dans la session.
         try {
@@ -233,6 +234,18 @@ class CandidateSurveyController extends AbstractController
                 $finalScore = number_format($result->getScore() * 100 / $questionNb, 1, '.', ' ');
                 $result->setFinalScore($finalScore);
                 $resultRepository->add($result, true);
+
+                // envoyer un mail au centre pour l'informer du résultat.
+                $email = (new TemplatedEmail())
+                    ->from(new Address($_ENV['ADMIN_EMAIL'], 'epset mailer'))
+                    ->to($result->getCandidate()->getUser()->getEmail())
+                    ->subject($result->getCandidate() . ' vient de terminer le test "' . $result->getSurvey() . '".')
+                    ->htmlTemplate('mailer/email_center_end_of_test.html.twig')
+                    ->context([
+                        'result' => $result
+                    ]);
+
+                $mailer->send($email);
 
                 return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
             }

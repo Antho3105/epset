@@ -32,13 +32,13 @@
             </tr>
             <tr>
                 <th>Durée théorique du test</th>
-                <td>{{ testTime.format("%H:%I:%S") }}</td>
+                <td>{{ testTime }}</td>
             </tr>
-            {% if result.finalScore %}
+            {% if result.finalScore is not null %}
                 <tr>
                     <th>Durée réelle</th>
                     {% if result.isCheater %}
-                        <td style="color: red">{{ result.testDuration.format("%H:%I:%S") }} Attention triche détectée
+                        <td style="color: red">{{ result.testDuration.format("%H:%I:%S") }} Attention triche potentielle détectée
                             !
                         </td>
                     {% else %}
@@ -60,9 +60,9 @@
             </tr>
             <tr>
                 <th>Bonnes réponses</th>
-                <td>{{ result.score ?: '-' }}</td>
+                <td>{{ result.score is not null ? result.score :     '-' }}</td>
             </tr>
-            {% if result.finalScore %}
+            {% if result.finalScore is not null %}
                 <tr>
                     <th>Score final (%)</th>
                     {% if result.isCheater %}

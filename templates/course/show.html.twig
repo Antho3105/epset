@@ -3,40 +3,39 @@
 {% block title %}Formation{% endblock %}
 
 {% block body %}
-    <section>
-    <h1 class="h1 mb-3 font-weight-normal text-center">Détails formation</h1>
+    <section id="courseDetail">
+        <h1 class="h1 mb-3 font-weight-normal text-center">Détails formation</h1>
 
-    <table class="table table-striped table-hover">
-        <tbody>
-        <tr>
-            <th>Titre :</th>
-            <td>{{ course.title }}</td>
-        </tr>
-        <tr>
-            <th>Ref</th>
-            <td>{{ course.ref }}</td>
-        </tr>
-        <tr>
-            <th>Niveau :</th>
-            <td>{{ course.level }}</td>
-        </tr>
+        <table class="table table-striped table-hover">
+            <tbody>
+            <tr>
+                <th>Titre :</th>
+                <td>{{ course.title }}</td>
+            </tr>
+            <tr>
+                <th>Ref</th>
+                <td>{{ course.ref }}</td>
+            </tr>
+            <tr>
+                <th>Niveau :</th>
+                <td>{{ course.level }}</td>
+            </tr>
 
-        <tr>
-            <th>Détails :</th>
-            <td>{{ course.detail| raw }}</td>
-        </tr>
-        </tbody>
-    </table>
+            <tr>
+                <th>Détails :</th>
+                <td>{{ course.detail| raw }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
     {% if is_granted('ROLE_CENTER') %}
-
-        </section>
         <section>
         <h2 class="h3 mb-3 font-weight-normal text-center">Formateurs assignés</h2>
 
-        {% for user in course.visibleCourses %}
+        {% for visibleCourse in course.visibleCourses %}
             <ul>
                 <li>
-                    <p>{{ user }}</p>
+                    <p><a href="{{ path('app_user_show', {'id': visibleCourse.user.id }) }}">{{ visibleCourse.user }}</a></p>
                     {{ include('visible_course/_delete_form.html.twig') }}
 
                 </li>

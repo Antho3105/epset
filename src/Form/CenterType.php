@@ -9,38 +9,33 @@ use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
-class UserType extends AbstractType
+class CenterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('lastName', TextType::class, [
                 'label' => 'Nom',
+                'required' => false,
                 'attr' => ['maxlength' => 40],
                 'constraints' => [
                     new Length([
                         'max' => 40,
                         'maxMessage' => '{{ limit }} caractères maximum autorisés',
-                    ]),
-                    new NotBlank([
-                        "message" => "Vous devez renseigner un nom"
-                    ])],
+                    ])
+                ]
             ])
             ->add('firstName', TextType::class, [
                 'label' => 'Prénom',
+                'required' => false,
                 'attr' => ['maxlength' => 30],
                 'constraints' => [
                     new Length([
                         'max' => 30,
                         'maxMessage' => '{{ limit }} caractères maximum autorisés',
-                    ]),
-                    new NotBlank([
-                        "message" => "Vous devez renseigner un prénom"
                     ])
                 ]
             ])
@@ -59,16 +54,12 @@ class UserType extends AbstractType
             ])
             ->add('domain', TextType::class, [
                 'label' => 'Domaine d\'activité',
+                'required' => false,
                 'attr' => ['maxlength' => 100],
-                'constraints' => [
-                    new Length([
-                        'max' => 100,
-                        'maxMessage' => '{{ limit }} caractères maximum autorisés',
-                    ]),
-                    new NotBlank([
-                        "message" => "Vous devez renseigner un domaine d\'activité"
-                    ])
-                ]
+                'constraints' => new Length([
+                    'max' => 100,
+                    'maxMessage' => '{{ limit }} caractères maximum autorisés',
+                ])
             ]);
     }
 

@@ -1,0 +1,7 @@
+<h1>Bonjour,</h1>
+
+<p>{{ result.candidate.firstName }} {{ result.candidate.LastName }} vient de terminer le test {{ result.survey }}</p>
+
+<p>Vous pouvez consulter le résultat ici : <a href="{{ url('app_result_show', {'id': result.id}) }}">Lien</a></p>
+
+<p>Cordialement</p>

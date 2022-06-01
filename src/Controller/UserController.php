@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\CenterType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -153,13 +154,16 @@ class UserController extends AbstractController
             }
         }
 
-        $form = $this->createForm(UserType::class, $user);
+        if ($user->getRoles()[0] == "ROLE_CENTER")
+        $form = $this->createForm(CenterType::class, $user);
+        else
+            $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $userRepository->add($user, true);
             $this->addFlash('success', 'Fiche modifiée !');
-            return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
 
 

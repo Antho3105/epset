@@ -9,6 +9,7 @@ use App\Repository\CourseRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\ResultRepository;
 use App\Repository\SurveyRepository;
+use DateInterval;
 use DateTime;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -182,6 +183,9 @@ class ResultController extends AbstractController
     }
 
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/{id}', name: 'app_result_show', methods: ['GET'])]
     public function show(Result $result, QuestionRepository $questionRepository): Response
     {
@@ -198,8 +202,7 @@ class ResultController extends AbstractController
             'deleteDate' => null,
         ]));
         $testTime = $questionNb * $result->getSurvey()->getQuestionTimer() * 1.2;
-
-        $testTime = new \DateInterval('PT'. $testTime. 'S');
+        $testTime = date('H:i:s', $testTime);
 
 
 
@@ -288,6 +291,4 @@ class ResultController extends AbstractController
 
         return $this->redirectToRoute('app_survey_index', [], Response::HTTP_SEE_OTHER);
     }
-
-
 }

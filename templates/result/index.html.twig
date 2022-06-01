@@ -19,7 +19,7 @@
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title">Formation : {{ result.survey.course }}</h5>
-                                    {% if result.score %}
+                                    {% if result.score is not null %}
                                         {% if result.isCheater %}
                                             <p class="card-text" style="color: red">Score : {{ result.finalScore }}
                                                 % </p>

@@ -102,6 +102,7 @@ class CourseController extends AbstractController
                 if ($user !== $course->getUser() | $course->getDeleteDate() !== null)
                     throw new AccessDeniedHttpException();
             }
+
             // Si la formation n'est pas affectée au formateur générer une erreur.
             // Si la formation est supprimée le lien avec le formateur est supprimé automatiquement.
             if ($this->isGranted("ROLE_TRAINER")) {
