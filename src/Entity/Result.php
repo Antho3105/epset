@@ -45,6 +45,12 @@ class Result
     #[ORM\Column(type: 'json', nullable: true)]
     private $questionList = [];
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private $isCheater;
+
+    #[ORM\Column(type: 'dateinterval', nullable: true)]
+    private $testDuration;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -172,5 +178,29 @@ class Result
 
     private function getFinalScore(): int {
 
+    }
+
+    public function isIsCheater(): ?bool
+    {
+        return $this->isCheater;
+    }
+
+    public function setIsCheater(?bool $isCheater): self
+    {
+        $this->isCheater = $isCheater;
+
+        return $this;
+    }
+
+    public function getTestDuration(): ?\DateInterval
+    {
+        return $this->testDuration;
+    }
+
+    public function setTestDuration(?\DateInterval $testDuration): self
+    {
+        $this->testDuration = $testDuration;
+
+        return $this;
     }
 }

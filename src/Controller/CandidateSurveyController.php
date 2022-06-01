@@ -10,6 +10,7 @@ use App\Repository\CandidateRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\ResultRepository;
 use App\Repository\SurveyRepository;
+use DateInterval;
 use DateTime;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -64,7 +65,7 @@ class CandidateSurveyController extends AbstractController
 
         // Si le Questionnaire a déjà été commencé rediriger vers la fonction "question suivante".
         if ($result->getViewedQuestion() !== null)
-            return $this->redirectToRoute('app_survey_next', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
 
 
         // Récupérer le questionnaire à partir de la fiche de résultat.
@@ -127,9 +128,13 @@ class CandidateSurveyController extends AbstractController
                 if (!$survey->isOrdered())
                     shuffle($questionList);
 
+                // Mettre à jour la date du test pour contrôle du temps passé à la fin du questionnaire
+                $result->setTestDate(new DateTime());
+
                 $result->setQuestionList($questionList);
                 $resultRepository->add($result, true);
             }
+
 
             // Rediriger vers la page de question.
             return $this->redirectToRoute('app_survey_next');
@@ -156,7 +161,6 @@ class CandidateSurveyController extends AbstractController
             throw $this->createNotFoundException();
         } catch (ContainerExceptionInterface $e) {
             throw throw new AccessDeniedHttpException();
-
         }
         // S'il n'y a pas de token en session générer une erreur.
         if ($token === null) {
@@ -208,6 +212,24 @@ class CandidateSurveyController extends AbstractController
                     'Survey' => $result->getSurvey(),
                     'deleteDate' => null,
                 ]));
+                // TODO terminer la fonction anti triche
+                // Stocker le temps passé pour répondre aux questions et si il le candidat à triché.
+                $startTime = $result->getTestDate();
+                $maxEndOfTest = new DateTime($result->getTestDate()->format("Y-m-d H:i:s"));
+                $testTime = $questionNb * $result->getSurvey()->getQuestionTimer() * 1.2;
+                $maxEndOfTest->add(new DateInterval('PT' . $testTime . 'S'));
+
+                $now = new DateTime();
+
+                $result->setTestDuration(date_diff($startTime, $now));
+                $gap = date_diff($now, $maxEndOfTest);
+                if ($gap->invert === 1) {
+                    $result->setIsCheater(1);
+                } else {
+                    $result->setIsCheater(0);
+                }
+//                $interval = $testDuration->format("%H:%I:%S");
+
                 $finalScore = number_format($result->getScore() * 100 / $questionNb, 1, '.', ' ');
                 $result->setScore($finalScore);
                 $resultRepository->add($result, true);
@@ -231,9 +253,8 @@ class CandidateSurveyController extends AbstractController
         $candidate = $result->getCandidate();
         $survey = $result->getSurvey();
 
-        // Mettre à jour le nombre de questions vues et la date du test.
+        // Mettre à jour le nombre de questions vues.
         $result->setViewedQuestion($result->getViewedQuestion() + 1);
-        $result->setTestDate(new DateTime());
         $resultRepository->add($result, true);
 
         // Rediriger vers la premiere question du questionnaire.
