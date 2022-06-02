@@ -3,47 +3,47 @@
 {% block title %}Question{% endblock %}
 
 {% block body %}
-    <section>
-        <h1 class="h1 mb-3 font-weight-normal text-center">Question</h1>
 
-        <table class="table">
-            <tbody>
-            {% if is_granted('ROLE_ADMIN') %}
-                <tr>
-                    <th>Id</th>
-                    <td>{{ question.id }}</td>
-                </tr>
-            {% endif %}
-            <tr>
-                <th>Question :</th>
-                <td>{{ question.question|raw }}</td>
-            </tr>
-            {% for answer in answers %}
-                <tr>
-                    {% if answer.isRightAnswer %}
-                        <th>Bonne réponse</th>
-                    {% else %}
-                        <th>Autre choix de réponse :</th>
-                    {% endif %}
-                    <td>{{ answer.value|raw }}</td>
-                </tr>
-            {% endfor %}
-            {% if is_granted('ROLE_ADMIN') %}
-                <tr>
-                    <th>DeleteDate</th>
-                    <td>{{ question.deleteDate ? question.deleteDate|date('Y-m-d H:i:s') : '' }}</td>
-                </tr>
-
-            {% endif %}
-            </tbody>
-        </table>
+        <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Question :</h2>
         {% if question.imgFileName %}
-            <img class="preview" src="{{ asset('./surveyQuestion_img/'~question.imgFileName) }}" alt="">
-        {% endif %}
-
-        <div class="d-flex pt-2">
+        <div id="question" class="flex">
+            <div>
+                {{ question.question | raw }}
+            </div>
+            <div class="questionImg">
+                <img src="{{ asset('./surveyQuestion_img/'~question.imgFileName) }}" alt="test">
+            </div>
+        </div>
+        {% else %}
+        <div id="question">
+            <p>{{ question.question| raw }}</p>
+            {% endif %}
+        </div>
+        <div class="d-flex justify-content-end">
             <a class="btn btn-primary mx-2" href="{{ path('app_question_edit', {'id': question.id}) }}">Modifier</a>
-            {{ include('question/_delete_form.html.twig') }}
         </div>
     </section>
+
+
+    <section id="answer">
+        <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Réponses :</h2>
+
+        <div class="flex">
+            {% for answer in answers %}
+                <div>
+                    <div id="{{ answer.id }}" class="card flex answers">
+                        {{ answer.value| raw }}
+                    </div>
+                    <a class="btn btn-primary mx-2"
+                       href="{{ path('app_answer_edit', {'id': answer.id}) }}">Modifier</a>
+                </div>
+            {% endfor %}
+
+
+        </div>
+
+
+    </section>
+
+
 {% endblock %}

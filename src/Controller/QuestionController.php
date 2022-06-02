@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Answer;
 use App\Entity\Question;
 use App\Entity\Survey;
+use App\Form\AnswerType;
 use App\Form\QuestionAnswerType;
+use App\Form\QuestionType;
 use App\Repository\AnswerRepository;
 use App\Repository\QuestionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -58,17 +60,17 @@ class QuestionController extends AbstractController
             $errorMsg = null;
             // TODO passer les messages en constante de l'appli.
             if (!$question->getQuestion()) {
-                $errorMsg = 'Merci de renseigner la question !';
+                $errorMsg = 'Merci de renseigner la question.';
             } elseif (!$rightAnswer = $form->get('answer')->getData()) {
-                $errorMsg = 'Merci de renseigner la bonne réponse !';
+                $errorMsg = 'Merci de renseigner la bonne réponse!';
             } elseif (!$answerChoice2 = $form->get('choice2')->getData()) {
-                $errorMsg = 'Merci de renseigner le 2e choix de réponse !';
+                $errorMsg = 'Merci de renseigner le 2e choix de réponse.';
             } elseif (!$answerChoice3 = $form->get('choice3')->getData()) {
                 $errorMsg = 'Merci de renseigner le 3e choix de réponse !';
             } elseif (!$answerChoice4 = $form->get('choice4')->getData()) {
                 $errorMsg = 'Merci de renseigner le 4e choix de réponse !';
             } elseif (!$answerChoice5 = $form->get('choice5')->getData()) {
-                $errorMsg = 'Merci de renseigner le 5e choix de réponse !';
+                $errorMsg = 'Merci de renseigner le 5e choix de réponse.';
             }
 
             if ($errorMsg) {
@@ -167,41 +169,38 @@ class QuestionController extends AbstractController
 
 
     #[Route('/{id}/edit', name: 'app_question_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Question $question, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
+    public function questionEdit(Request $request, Question $question, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
     {
-        $form = $this->createForm(QuestionAnswerType::class, $question);
-        $answers = $answerRepository->findBy([
-            'question' => $question,
-            'deleteDate' => null
-        ], [
-            'id' => 'ASC'
-        ]);
 
+        $form = $this->createForm(QuestionType::class, $question);
 
-        $answer = $answers[0];
-        $choice2 = $answers[1];
-        $choice3 = $answers[2];
-        $choice4 = $answers[3];
-        $choice5 = $answers[4];
-
-        // TODO débugger l'éditeur de réponse.
-        dd($answers);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if (($form->isSubmitted() && $form->isValid())) {
             $questionRepository->add($question, true);
 
             return $this->redirectToRoute('app_survey_show', ['id' => $question->getSurvey()->getId()], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('question/edit.html.twig', [
-            'question' => $question,
-            'answer' => $answer,
-            'choice2' => $choice2,
-            'choice3' => $choice3,
-            'choice4' => $choice4,
-            'choice5' => $choice5,
+        return $this->renderForm('question/editQuestion.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}/edit/answer', name: 'app_answer_edit', methods: ['GET', 'POST'])]
+    public function answerEdit(Request $request, Answer $answer, AnswerRepository $answerRepository): Response
+    {
+        $form = $this->createForm(AnswerType::class, $answer);
+        $form->handleRequest($request);
+
+        if (($form->isSubmitted() && $form->isValid())) {
+            $answerRepository->add($answer, true);
+
+            return $this->redirectToRoute('app_survey_show', ['id' => $answer->getQuestion()->getSurvey()->getId()], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('question/editAnswer.html.twig', [
             'form' => $form,
         ]);
     }
@@ -238,7 +237,7 @@ class QuestionController extends AbstractController
      * @param $answerRepository
      * @return void
      */
-    private function persistAnswer($candidateAnswer, $status, $question, $answerRepository): void
+    private function persistAnswer(string $candidateAnswer, bool $status, Question $question, AnswerRepository $answerRepository): void
     {
         $answer = new Answer();
         $answer->setQuestion($question);
