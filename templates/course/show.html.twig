@@ -28,23 +28,8 @@
             </tbody>
         </table>
     </section>
-    {% if is_granted('ROLE_CENTER') %}
-        <section>
-        <h2 class="h3 mb-3 font-weight-normal text-center">Formateurs assignés</h2>
-
-        {% for visibleCourse in course.visibleCourses %}
-            <ul>
-                <li>
-                    <p><a href="{{ path('app_user_show', {'id': visibleCourse.user.id }) }}">{{ visibleCourse.user }}</a></p>
-                    {{ include('visible_course/_delete_form.html.twig') }}
-
-                </li>
-            </ul>
-        {% endfor %}
-    {% endif %}
-    </section>
     <section>
-        <div class="d-flex justify-content-between mt-5">
+        <div class="d-flex justify-content-end mt-5">
             <div class="d-flex">
                 <a class="btn btn-primary mx-2" href="{{ path('app_course_index') }}">Retour liste</a>
                 {% if is_granted('ROLE_CENTER') %}
@@ -64,4 +49,20 @@
             {% endif %}
         </div>
     </section>
+    {% if is_granted('ROLE_CENTER') %}
+        <section>
+        <h2 class="h3 mb-3 font-weight-normal text-center">Formateurs assignés</h2>
+
+        {% for visibleCourse in course.visibleCourses %}
+            <ul>
+                <li>
+                    <p><a href="{{ path('app_user_show', {'id': visibleCourse.user.id }) }}">{{ visibleCourse.user }}</a></p>
+                    {{ include('visible_course/_delete_form.html.twig') }}
+
+                </li>
+            </ul>
+        {% endfor %}
+    {% endif %}
+    </section>
+
 {% endblock %}

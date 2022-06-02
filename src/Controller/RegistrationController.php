@@ -114,7 +114,7 @@ class RegistrationController extends AbstractController
     {
         // S'il y a au moins un utilisateur enregistré générer une erreur.
         $users = $userRepository->findAll();
-        if (count($users) !== 0 ) {
+        if (count($users) !== 0) {
             throw throw new AccessDeniedHttpException();
         }
         // sinon créer le formulaire de création d'un utilisateur et rendre la vue.
@@ -122,14 +122,29 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/verify/email', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request, TranslatorInterface $translator): Response
+    public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        // Mise à jour pour verification email san être connecté
+//        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $id = $request->get('id'); // retrieve the user id from the url
+        // Verify the user id exists and is not null
+        if (null === $id) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        $user = $userRepository->find($id);
+
+        // Ensure the user exists in persistence
+        if (null === $user) {
+            return $this->redirectToRoute('app_home');
+        }
+
 
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
-            $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
-            $this->addFlash('success', 'Votre compte à été validé !');
+            $this->emailVerifier->handleEmailConfirmation($request, $user);
+            $this->addFlash('success', 'Votre compte à été validé, vous pouvez vous connecter.');
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
             return $this->redirectToRoute('app_home');

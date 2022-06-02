@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +25,13 @@ class MainController extends AbstractController
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
-        // si connecté mettre a jour la date de dernière connexion.
+
+        // Déconnecter l'utilisateur si le mail n'est pas vérifié.
+        if (!$this->getUser()->isVerified()) {
+            $this->addFlash('alert', 'Veuillez valider votre compte avec le lien envoyé par email.');
+            return $this->redirectToRoute('app_logout');
+        }
+        // si connecté mettre à jour la date de dernière connexion.
         $date = new DateTime();
         $user = $this->getUser()->setLastConnection($date);
         $userRepository->add($user, true);
@@ -36,6 +43,7 @@ class MainController extends AbstractController
      *
      *
      * @param Request $request
+     * @param MailerInterface $mailer
      * @return Response
      */
     #[Route('/contact', name: 'app_contact')]
@@ -53,7 +61,11 @@ class MainController extends AbstractController
                 ->text('Sender : ' . $contactFormData['email'] . \PHP_EOL .
                     $contactFormData['message'],
                     'text/plain');
-            $mailer->send($message);
+            try {
+                $mailer->send($message);
+            } catch (TransportExceptionInterface $e) {
+                $this->addFlash("alert", 'votre message n\'a pas pu être envoyé, veuillez recommencer');
+            }
 
             $this->addFlash('success', 'Votre message a été envoyé !');
 
