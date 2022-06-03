@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Course;
@@ -32,11 +34,11 @@ class CourseController extends AbstractController
             ]);
         }
         // Si formateur n'afficher que les formations qui lui sont rattachées
-        // (si les formations sont supprimée le lien avec le formateur l'est aussi automatiquement)
+        // (si les formations sont supprimées le lien avec le formateur l'est aussi automatiquement)
         if ($this->isGranted("ROLE_TRAINER")) {
-            $courses = $visibleCourseRepository->findBy(
-                ['user' => $user,
-                    ]);
+            $courses = $visibleCourseRepository->findBy([
+                'user' => $user,
+            ]);
             $visibleCourses = [];
             foreach ($courses as $course) {
                 $visibleCourses[] = $courseRepository->findOneBy(['id' => $course->getCourse()]);
@@ -71,8 +73,8 @@ class CourseController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$course->getDetail()){
-                $this->addFlash('alert', 'Il manque le détail !');
+            if (!$course->getDetail()) {
+                $this->addFlash('alert', 'Il manque le détail de la formation.');
                 return $this->renderForm('course/new.html.twig', [
                     'course' => $course,
                     'form' => $form,
@@ -81,7 +83,7 @@ class CourseController extends AbstractController
             $user = $this->getUser();
             $course->setUser($user);
             $courseRepository->add($course, true);
-            $this->addFlash('success', 'formation ajoutée !');
+            $this->addFlash('success', 'formation ajoutée.');
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -138,7 +140,7 @@ class CourseController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $courseRepository->add($course, true);
-            $this->addFlash('success', 'Formation modifiée !');
+            $this->addFlash('success', 'Formation modifiée.');
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -165,14 +167,14 @@ class CourseController extends AbstractController
             }
             // supprimer la formation (écrire la date de suppression dans la propriété deleteDate)
             $courseRepository->softRemove($course, true);
-            $this->addFlash('alert', 'Formation supprimée !');
+            $this->addFlash('alert', 'Formation supprimée.');
         }
 
         return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
     }
 
     /**
-     * Seuls les administrateurs peuvent annuler la suppression d'une formation.
+     * Seuls les administrateurs peuvent restaurer une formation.
      * @IsGranted("ROLE_ADMIN")
      *
      */
@@ -182,7 +184,7 @@ class CourseController extends AbstractController
         if ($this->isCsrfTokenValid('_tokenReset' . $course->getId(), $request->request->get('_tokenReset'))) {
             // appeler la fonction qui permet de remettre à null la propriété delete date.
             $courseRepository->cancelRemove($course, true);
-            $this->addFlash('alert', 'Formation restaurée !');
+            $this->addFlash('alert', 'Formation restaurée.');
         }
         return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\User;
@@ -115,7 +117,7 @@ class RegistrationController extends AbstractController
         // S'il y a au moins un utilisateur enregistré générer une erreur.
         $users = $userRepository->findAll();
         if (count($users) !== 0) {
-            throw throw new AccessDeniedHttpException();
+            throw new AccessDeniedHttpException();
         }
         // sinon créer le formulaire de création d'un utilisateur et rendre la vue.
         return $this->registerFormRequest($request, $userPasswordHasher, $entityManager);
@@ -124,7 +126,7 @@ class RegistrationController extends AbstractController
     #[Route('/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
-        // Mise à jour pour verification email san être connecté
+        // Mise à jour pour verification email sans être connecté
 //        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $id = $request->get('id'); // retrieve the user id from the url
@@ -132,14 +134,12 @@ class RegistrationController extends AbstractController
         if (null === $id) {
             return $this->redirectToRoute('app_home');
         }
-
         $user = $userRepository->find($id);
 
         // Ensure the user exists in persistence
         if (null === $user) {
             return $this->redirectToRoute('app_home');
         }
-
 
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
@@ -150,9 +150,6 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
-        // Change the redirect on success and handle or remove the flash message in your templates
-
-        // change app_register to app_home
         return $this->redirectToRoute('app_home');
     }
 
@@ -191,7 +188,7 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
             // do anything else you need here, like send an email
-            $this->addFlash('success', $user->getUserName() . ' ajouté !');
+            $this->addFlash('success', $user->getUserName() . ' ajouté.');
             return $this->redirectToRoute('app_home');
         }
 

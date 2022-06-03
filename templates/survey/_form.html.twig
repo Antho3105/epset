@@ -1,13 +1,17 @@
 {{ form_start(form) }}
-<div class="d-flex justify-content-between">
-    <div class="col-5">
+<div class="d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-10 col-md-4">
         {{ form_row(form.ref) }}
     </div>
-    <div class="col-5">
+    <div class="col-10 col-md-4">
         {{ form_row(form.difficulty) }}
     </div>
+    <div class="col-10 col-md-3">
+    {{ form_row(form.questionTimer) }}
+    </div>
 </div>
-{{ form_row(form.questionTimer) }}
+{{ form_row(form.ordered) }}
+
     {{ form_row(form.detail) }}
 <div class="d-flex justify-content-end">
     <a class="btn btn-info mx-2" href="{{ path('app_survey_index') }}"><i class="fa-solid fa-backward"></i></a>

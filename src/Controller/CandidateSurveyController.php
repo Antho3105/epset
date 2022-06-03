@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Form\UploadFile;
@@ -19,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,15 +36,13 @@ class CandidateSurveyController extends AbstractController
      * @param QuestionRepository $questionRepository
      * @param ResultRepository $resultRepository
      * @param CandidateRepository $candidateRepository
-     * @param AnswerRepository $answerRepository
-     * @param SurveyRepository $surveyRepository
      * @param string|null $token
      * @return Response
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
     #[Route('init/survey/{token}', name: 'app_survey_init', methods: ['GET', 'POST'])]
-    public function begin(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, CandidateRepository $candidateRepository, AnswerRepository $answerRepository, SurveyRepository $surveyRepository, string $token = null): Response
+    public function begin(Request $request, QuestionRepository $questionRepository, ResultRepository $resultRepository, CandidateRepository $candidateRepository, string $token = null): Response
     {
         // Récupérer le token passé en GET et le stocker dans la session.
         if ($token) {
@@ -49,14 +50,14 @@ class CandidateSurveyController extends AbstractController
             $this->storeTokenInSession($token);
             // Rediriger vers la route sans le token pour ne pas le laisser visible.
             return $this->redirectToRoute('app_survey_init');
-        };
+        }
 
         // Récupérer le token dans la session.
         $token = $this->getTokenFromSession();
 
         // S'il n'y a pas de token en session générer une erreur.
         if ($token === null) {
-            throw throw new AccessDeniedHttpException();
+            throw new AccessDeniedHttpException();
         }
 
         // Récupérer la fiche de résultat à partir du token.
@@ -73,7 +74,7 @@ class CandidateSurveyController extends AbstractController
         $survey = $result->getSurvey();
 
         // Créer le formulaire pour l'upload des fichiers (CV et lettre de motivation).
-        $form = $this->createForm(UploadFile::class,);
+        $form = $this->createForm(UploadFile::class);
         $form->handleRequest($request);
 
         // Si le formulaire est valide uploader les fichiers sur le serveur et mettre à jour les entités sur la DB et démarrer le questionnaire.
@@ -150,8 +151,6 @@ class CandidateSurveyController extends AbstractController
 
     /**
      *
-     *
-     * @throws \Exception
      */
     #[Route('/question/survey', name: 'app_survey_next', methods: ['GET', 'POST'])]
     public function next(Request $request, QuestionRepository $questionRepository, AnswerRepository $answerRepository, ResultRepository $resultRepository, MailerInterface $mailer): Response
@@ -159,14 +158,14 @@ class CandidateSurveyController extends AbstractController
         // Récupérer le token dans la session.
         try {
             $token = $this->getTokenFromSession();
-        } catch (NotFoundExceptionInterface $e) {
+        } catch (NotFoundExceptionInterface) {
             throw $this->createNotFoundException();
-        } catch (ContainerExceptionInterface $e) {
-            throw throw new AccessDeniedHttpException();
+        } catch (ContainerExceptionInterface) {
+            throw new AccessDeniedHttpException();
         }
         // S'il n'y a pas de token en session générer une erreur.
         if ($token === null) {
-            throw throw new AccessDeniedHttpException();
+            throw new AccessDeniedHttpException();
         }
         // Récupérer la fiche de résultat à partir du token.
         $result = $resultRepository->findOneBy([
@@ -184,7 +183,8 @@ class CandidateSurveyController extends AbstractController
             else
                 $result->setAnsweredQuestion($result->getAnsweredQuestion() + 0);
 
-            // Si la liste de question est vide (en cas de nouveau clic sur le lien unique après la fin du test)
+            // Si la liste de question est vide (en cas de nouveau clic sur le lien unique après la fin du test),
+            // rediriger vers la fin du test.
             if (count($questionList) === 0) {
                 return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
             }
@@ -203,7 +203,6 @@ class CandidateSurveyController extends AbstractController
                 $result->setScore($result->getScore() + 0);
 
             // Supprimer la première question.
-            // TODO update repo pour Test
             array_shift($questionList);
             $result->setQuestionList($questionList);
             $resultRepository->add($result, true);
@@ -225,13 +224,12 @@ class CandidateSurveyController extends AbstractController
                 $result->setTestDuration(date_diff($result->getTestDate(), $now));
                 $gap = date_diff($now, $maxEndOfTest);
                 if ($gap->invert === 1) {
-                    $result->setIsCheater(1);
+                    $result->setIsCheater(true);
                 } else {
-                    $result->setIsCheater(0);
+                    $result->setIsCheater(false);
                 }
-//                $interval = $testDuration->format("%H:%I:%S");
 
-                $finalScore = number_format($result->getScore() * 100 / $questionNb, 1, '.', ' ');
+                $finalScore = (int)number_format($result->getScore() * 100 / $questionNb, 1, '.', ' ');
                 $result->setFinalScore($finalScore);
                 $resultRepository->add($result, true);
 
@@ -245,13 +243,17 @@ class CandidateSurveyController extends AbstractController
                         'result' => $result
                     ]);
 
-                $mailer->send($email);
+                try {
+                    $mailer->send($email);
+                } catch (TransportExceptionInterface) {
+                    $this->addFlash('alert', 'Erreur d\'envoi du mail de confirmation veuillez contacter le centre');
+                }
 
                 return $this->redirectToRoute('app_survey_end', [], Response::HTTP_SEE_OTHER);
             }
         }
 
-        // Récupérer la première question.
+        // Récupérer la première question de la liste.
         $currentQuestion = $questionRepository->find($questionList[0]);
 
         // Récupérer la liste des réponses.
@@ -270,7 +272,7 @@ class CandidateSurveyController extends AbstractController
         $result->setViewedQuestion($result->getViewedQuestion() + 1);
         $resultRepository->add($result, true);
 
-        // Rediriger vers la premiere question du questionnaire.
+        // Rediriger vers la page de question.
         return $this->render('candidateSurvey/question.html.twig', [
             'candidate' => $candidate,
             'survey' => $survey,
@@ -281,7 +283,6 @@ class CandidateSurveyController extends AbstractController
 
 
     /**
-     * Stocke le token dans la session.
      *
      * @return SessionInterface
      * @throws ContainerExceptionInterface
@@ -291,25 +292,23 @@ class CandidateSurveyController extends AbstractController
     {
         /** @var Request $request */
         $request = $this->container->get('request_stack')->getCurrentRequest();
-
         return $request->getSession();
     }
 
     #[Route('/end/survey', name: 'app_survey_end', methods: ['GET'])]
-    public function end(Request $request, QuestionRepository $questionRepository, AnswerRepository $answerRepository, ResultRepository $resultRepository, SurveyRepository $surveyRepository): Response
+    public function end(ResultRepository $resultRepository): Response
     {
         // Récupérer le token dans la session.
         try {
             $token = $this->getTokenFromSession();
-        } catch (NotFoundExceptionInterface $e) {
+        } catch (NotFoundExceptionInterface) {
             throw $this->createNotFoundException();
-        } catch (ContainerExceptionInterface $e) {
-            throw throw new AccessDeniedHttpException();
-
+        } catch (ContainerExceptionInterface) {
+            throw new AccessDeniedHttpException();
         }
         // S'il n'y a pas de token en session générer une erreur.
         if ($token === null) {
-            throw throw new AccessDeniedHttpException();
+            throw new AccessDeniedHttpException();
         }
         // Récupérer la fiche de résultat à partir du token.
         $result = $resultRepository->findOneBy([

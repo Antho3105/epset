@@ -20,7 +20,7 @@ class AnswerType extends AbstractType
                     'class' => 'tinymceXS',
                     'maxlength' => 110
                 ],
-                'label' => 'Bonne réponse :',
+                'label' => false,
                 'required' => false,
                 'constraints' => new Length([
                     'max' => 200,

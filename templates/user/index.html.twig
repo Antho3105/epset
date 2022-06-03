@@ -87,6 +87,25 @@
                         <p>Pas de résultats</p>
                     {% endfor %}
                 </div>
+            {% elseif type == 'centres' %}
+                <div class="row cardHolder d-flex justify-content-between">
+                    {% for user in users %}
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>{{ user.userName }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <p>{{ user.lastName }} {{ user.firstName }}</p>
+                                <p>{{ user.domain }}</p>
+                                <p>{{ user.phone }}</p>
+                                <div class="d-flex justify-content-end">
+                                    <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                       class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             {% else %}
                 <div class="row cardHolder d-flex justify-content-between">
                     {% for user in users %}
@@ -104,6 +123,8 @@
                         </div>
                     {% endfor %}
                 </div>
+
+
             {% endif %}
         </section>
 

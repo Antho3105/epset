@@ -3,23 +3,26 @@
 {% block title %}Question{% endblock %}
 
 {% block body %}
-
+    <section>
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Question :</h2>
         {% if question.imgFileName %}
-        <div id="question" class="flex">
-            <div>
-                {{ question.question | raw }}
+            <div id="question" class="flex mb-2">
+                <div>
+                    {{ question.question | raw }}
+                </div>
+                <div class="questionImg">
+                    <img src="{{ asset('./surveyQuestion_img/'~question.imgFileName) }}" alt="test">
+                </div>
             </div>
-            <div class="questionImg">
-                <img src="{{ asset('./surveyQuestion_img/'~question.imgFileName) }}" alt="test">
-            </div>
-        </div>
         {% else %}
-        <div id="question">
-            <p>{{ question.question| raw }}</p>
-            {% endif %}
-        </div>
+            <div id="question" class="mb-2">
+                <p>{{ question.question| raw }}</p>
+            </div>
+        {% endif %}
+
         <div class="d-flex justify-content-end">
+            <a class="btn btn-info mx-2" href="{{ path('app_survey_show', {'id': question.survey.id}) }}" title="Retour"><i class="fa-solid fa-arrow-left"></i></a>
+            {{ include('question/_delete_form.html.twig') }}
             <a class="btn btn-primary mx-2" href="{{ path('app_question_edit', {'id': question.id}) }}">Modifier</a>
         </div>
     </section>

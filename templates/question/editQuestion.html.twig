@@ -4,7 +4,7 @@
 
 {% block body %}
     <section>
-        <h1 class="h1 mb-3 font-weight-normal text-center">Ajouter une question</h1>
+        <h1 class="h1 mb-3 font-weight-normal text-center">Modifier question</h1>
 
         <div class="form pb-5">
             {{ form_start(form) }}
@@ -23,6 +23,7 @@
             </div>
 
             <div class="d-flex justify-content-end">
+                <a class="btn btn-info mx-2" href="{{ path('app_question_show', {'id': question.id}) }}" title="Retour"><i class="fa-solid fa-arrow-left"></i></a>
                 <button class="btn btn-success"><i class="fa-solid fa-check"></i></button>
             </div>
             {{ form_end(form) }}

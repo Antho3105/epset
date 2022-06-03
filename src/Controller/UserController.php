@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\User;
@@ -116,23 +118,22 @@ class UserController extends AbstractController
      * Un formateur ne peut pas accéder au pages de details.
      *
      * @IsGranted("ROLE_USER")
-     * @param UserRepository $userRepository
      * @param User $user
      * @return Response
      */
     #[Route('/user/{id}', name: 'app_user_show')]
-    public function showUser(UserRepository $userRepository, User $user): Response
+    public function showUser(User $user): Response
     {
         // si l'utilisateur n'est pas admin gerer l'acces
         if (!$this->isGranted("ROLE_ADMIN")) {
             // Si l'utilisateur est un formateur interdire l'accès aux detail des utilisateurs
             if ($this->isGranted("ROLE_TRAINER")) {
-                throw throw new AccessDeniedHttpException();
+                throw new AccessDeniedHttpException();
             }
             // Si l'utilisateur en un centre générer une erreur s'il veut voir une autre fiche que celle d'un formateur..
             if ($this->isGranted("ROLE_CENTER")) {
                 if ($user->getRoles()[0] !== "ROLE_TRAINER") {
-                    throw throw new AccessDeniedHttpException();
+                    throw new AccessDeniedHttpException();
                 }
             }
         }
@@ -150,7 +151,7 @@ class UserController extends AbstractController
         if (!$this->isGranted("ROLE_ADMIN")) {
             // Interdire l'accès a une autre page que celle de l'utilisateur en cours
             if ($this->getUser() !== $user) {
-                throw throw new AccessDeniedHttpException();
+                throw new AccessDeniedHttpException();
             }
         }
 

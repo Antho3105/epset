@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller;
+declare(strict_types=1);
 
+namespace App\Controller;
 
 use App\Entity\Result;
 use App\Repository\CandidateRepository;
@@ -9,7 +10,6 @@ use App\Repository\CourseRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\ResultRepository;
 use App\Repository\SurveyRepository;
-use DateInterval;
 use DateTime;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,7 +55,7 @@ class ResultController extends AbstractController
                     'candidate' => $candidate,
                     'deleteDate' => null
                 ]);
-                  // Pour chaque résultat d'un candidat ajouter l'ajouter à la liste à afficher.
+                // Pour chaque résultat d'un candidat ajouter l'ajouter à la liste à afficher.
                 foreach ($resultsByCandidate as $resultByCandidate) {
                     $results[] = $resultByCandidate;
                 }
@@ -69,39 +69,61 @@ class ResultController extends AbstractController
 
     /**
      *
-     * Methode permettant d'afficher la page de choix candidat / formation.
+     * Methode permettant d'afficher la page d'ajout d'une fiche de résultat.
      *
-     * @param Request $request
-     * @param ResultRepository $resultRepository
      * @param CandidateRepository $candidateRepository
      * @param CourseRepository $courseRepository
      * @return Response
      */
     #[Route('/new', name: 'app_result_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, ResultRepository $resultRepository, CandidateRepository $candidateRepository, CourseRepository $courseRepository): Response
+    public function new(CandidateRepository $candidateRepository, CourseRepository $courseRepository): Response
     {
         $user = $this->getUser();
-        // Récupérer tous les candidats (non supprimés) du centre.
-        $candidates = $candidateRepository->findBy([
-            'user' => $user,
-            'deleteDate' => null
-        ]);
-        // Initialiser le tableau de tous les questionnaires du centre.
-        $surveys = [];
-        // Récupérer toutes les formations (non supprimées) du centre
-        $courses = $courseRepository->findBy([
-            'user' => $user,
-            'deleteDate' => null
-        ]);
-        // Pour chaque formation, ajouter tous les questionnaires liés et non supprimés au tableau.
-        foreach ($courses as $course) {
-            $courseSurveys = $course->getSurveys();
-            foreach ($courseSurveys as $courseSurvey) {
-                if ($courseSurvey->getDeleteDate() === null)
-                    $surveys[] = $courseSurvey;
+        // si l'utilisateur n'est pas admin filtrer les candidats et les questionnaires.
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            // Récupérer tous les candidats (non supprimés) du centre.
+            $candidates = $candidateRepository->findBy([
+                'user' => $user,
+                'deleteDate' => null
+            ]);
+            // Initialiser le tableau de tous les questionnaires du centre.
+            $surveys = [];
+            // Récupérer toutes les formations (non supprimées) du centre
+            $courses = $courseRepository->findBy([
+                'user' => $user,
+                'deleteDate' => null
+            ]);
+            // Pour chaque formation, ajouter tous les questionnaires liés et non supprimés au tableau.
+            foreach ($courses as $course) {
+                $courseSurveys = $course->getSurveys();
+                foreach ($courseSurveys as $courseSurvey) {
+                    if ($courseSurvey->getDeleteDate() === null)
+                        $surveys[] = $courseSurvey;
+                }
             }
         }
 
+        // Si l'utilisateur est admin afficher tous les candidats et tous les questionnaires.
+        if ($this->isGranted('ROLE_ADMIN')) {
+            // Récupérer tous les candidats non supprimés.
+            $candidates = $candidateRepository->findBy([
+                'deleteDate' => null
+            ]);
+            // Initialiser le tableau des questionnaires.
+            $surveys = [];
+            // Récupérer toutes les formations (non supprimées).
+            $courses = $courseRepository->findBy([
+                'deleteDate' => null
+            ]);
+            // Pour chaque formation, ajouter tous les questionnaires liés et non supprimés au tableau.
+            foreach ($courses as $course) {
+                $courseSurveys = $course->getSurveys();
+                foreach ($courseSurveys as $courseSurvey) {
+                    if ($courseSurvey->getDeleteDate() === null)
+                        $surveys[] = $courseSurvey;
+                }
+            }
+        }
         // rendre la vue avec les tableaux.
         return $this->render('result/new.html.twig', [
             'candidates' => $candidates,
@@ -120,7 +142,6 @@ class ResultController extends AbstractController
      * @param SurveyRepository $surveyRepository
      * @param CourseRepository $courseRepository
      * @return Response
-     * @throws TransportExceptionInterface
      */
     #[Route('/add', name: 'app_result_add', methods: ['GET', 'POST'])]
     public function add(MailerInterface $mailer, Request $request, ResultRepository $resultRepository, CandidateRepository $candidateRepository, SurveyRepository $surveyRepository, CourseRepository $courseRepository): Response
@@ -128,55 +149,63 @@ class ResultController extends AbstractController
         $candidate = $candidateRepository->find((int)$request->get('candidate'));
         $survey = $surveyRepository->find((int)$request->get('survey'));
 
-        // Verifier que les entités passés en get appartiennent au centre.
-        $user = $this->getUser();
-        // Récupérer tous les candidats (non supprimés) du centre.
-        $candidates = $candidateRepository->findBy([
-            'user' => $user,
-            'deleteDate' => null
-        ]);
-        // Initialiser le tableau de tous les questionnaires du centre.
-        $surveys = [];
-        // Récupérer toutes les formations (non supprimées) du centre
-        $courses = $courseRepository->findBy([
-            'user' => $user,
-            'deleteDate' => null
-        ]);
-        // Pour chaque formation, ajouter tous les questionnaires liés et non supprimés au tableau.
-        foreach ($courses as $course) {
-            $courseSurveys = $course->getSurveys();
-            foreach ($courseSurveys as $courseSurvey) {
-                if ($courseSurvey->getDeleteDate() === null)
-                    $surveys[] = $courseSurvey;
+        // si l'utilisateur n'est pas admin gérer l'accès.
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            // Vérifier que les entités passées en get appartiennent au centre.
+            $user = $this->getUser();
+            // Récupérer tous les candidats (non supprimés) du centre.
+            $candidates = $candidateRepository->findBy([
+                'user' => $user,
+                'deleteDate' => null
+            ]);
+            // Initialiser le tableau de tous les questionnaires du centre.
+            $surveys = [];
+            // Récupérer toutes les formations (non supprimées) du centre
+            $courses = $courseRepository->findBy([
+                'user' => $user,
+                'deleteDate' => null
+            ]);
+            // Pour chaque formation, ajouter tous les questionnaires liés et non supprimés au tableau.
+            foreach ($courses as $course) {
+                $courseSurveys = $course->getSurveys();
+                foreach ($courseSurveys as $courseSurvey) {
+                    if ($courseSurvey->getDeleteDate() === null)
+                        $surveys[] = $courseSurvey;
+                }
             }
+            // Si le candidat n'appartient pas au centre ou que le questionnaire n'appartient pas à une formation du centre, générer une erreur.
+            if (!in_array($candidate, $candidates) | !in_array($survey, $surveys))
+                throw new AccessDeniedHttpException();
         }
-        // Si le candidat n'appartient pas au centre ou que le questionnaire n'appartient pas à une formation du centre, générer une erreur.
-        if (!in_array($candidate, $candidates) | !in_array($survey, $surveys))
-            throw throw new AccessDeniedHttpException();
-        // Sinon créer l'entité résultat.
+
+
+        // Sinon créer la fiche de résultat.
         $result = new Result();
         $result->setCandidate($candidate);
         $result->setSurvey($survey);
         $result->setTestDate(new DateTime());
 
-        // Créer un token de validation
+        // Créer un token de validation et le stocker dans la fiche de résultat.
         $token = uniqid('', true) . rtrim(strtr(base64_encode(random_bytes(12)), '+/', '-_'), '=');
-
         $result->setToken($token);
-        // Envoyer le mail avec le lien au candidat.
 
+        // Envoyer le mail avec le lien au candidat.
         $email = (new TemplatedEmail())
             ->from(new Address($_ENV['ADMIN_EMAIL'], 'epset mailer'))
             ->to($candidate->getEmail())
             ->subject('QCM formation ' . $survey->getCourse()->getTitle())
             ->htmlTemplate('mailer/email_candidate.html.twig')
             ->context([
+                'survey' => $survey,
                 'token' => $token,
                 'candidate' => $candidate
             ]);
 
-              $mailer->send($email);
-
+        try {
+            $mailer->send($email);
+        } catch (TransportExceptionInterface) {
+            $this->addFlash('alert', 'Erreur lors de l\'envoi du mail veuillez recommencer.');
+        }
         $resultRepository->add($result, true);
 
         return $this->render('main/index.html.twig');
@@ -184,7 +213,7 @@ class ResultController extends AbstractController
 
 
     /**
-     * @throws \Exception
+     *
      */
     #[Route('/{id}', name: 'app_result_show', methods: ['GET'])]
     public function show(Result $result, QuestionRepository $questionRepository): Response
@@ -193,18 +222,16 @@ class ResultController extends AbstractController
         if (!$this->isGranted("ROLE_ADMIN")) {
             // Si la fiche de résultats passée en GET est supprimée ou n'appartient pas à un candidat lié au centre, générer une erreur
             if ($result->getDeleteDate() !== null | $result->getCandidate()->getUser() !== $this->getUser())
-                throw throw new AccessDeniedHttpException();
+                throw new AccessDeniedHttpException();
         }
 
-        // calcul de la durée théorique du test :
+        // Calcul de la durée théorique du test :
         $questionNb = count($questionRepository->findBy([
             'Survey' => $result->getSurvey(),
             'deleteDate' => null,
         ]));
-        $testTime = $questionNb * $result->getSurvey()->getQuestionTimer() * 1.2;
+        $testTime = intval($questionNb * $result->getSurvey()->getQuestionTimer() * 1.2);
         $testTime = date('H:i:s', $testTime);
-
-
 
         return $this->render('result/show.html.twig', [
             'result' => $result,
@@ -221,7 +248,7 @@ class ResultController extends AbstractController
 //        if (!$this->isGranted("ROLE_ADMIN")) {
 //            // Si la fiche de résultats passée en GET est supprimée ou n'appartient pas à un candidat lié au centre, générer une erreur
 //            if ($result->getDeleteDate() !== null | $result->getCandidate()->getUser() !== $this->getUser())
-//                throw throw new AccessDeniedHttpException();
+//                throw new AccessDeniedHttpException();
 //        }
 //
 //        $form = $this->createForm(ResultType::class, $result);
@@ -251,6 +278,13 @@ class ResultController extends AbstractController
     #[Route('/{id}', name: 'app_result_delete', methods: ['POST'])]
     public function softDelete(Request $request, Result $result, ResultRepository $resultRepository): Response
     {
+        // Si l'utilisateur n'est pas admin gérer l'accès
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            // Si la fiche de résultats passée en GET est supprimée ou n'appartient pas à un candidat lié au centre, générer une erreur
+            if ($result->getDeleteDate() !== null | $result->getCandidate()->getUser() !== $this->getUser())
+                throw new AccessDeniedHttpException();
+        }
+
         if ($this->isCsrfTokenValid('delete' . $result->getId(), $request->request->get('_token'))) {
             $resultRepository->softDelete($result, true);
         }
@@ -259,7 +293,7 @@ class ResultController extends AbstractController
 
 
     /**
-     * Seuls les administrateurs peuvent annuler la suppression d'un résultat.
+     * Seuls les administrateurs peuvent restaurer un résultat.
      * @IsGranted("ROLE_ADMIN")
      *
      */

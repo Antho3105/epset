@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Answer;
@@ -24,14 +26,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 #[Route('/question')]
 class QuestionController extends AbstractController
 {
-//    #[Route('/', name: 'app_question_index', methods: ['GET'])]
-//    public function index(QuestionRepository $questionRepository): Response
-//    {
-//        return $this->render('question/index.html.twig', [
-//            'questions' => $questionRepository->findAll(),
-//        ]);
-//    }
-
     /**
      * Seuls les formateurs ont les droits pour créer une nouvelle question.
      * @IsGranted("ROLE_TRAINER")
@@ -49,16 +43,15 @@ class QuestionController extends AbstractController
         if (!$this->isGranted("ROLE_ADMIN")) {
             // Si le questionnaire passé en GET n'a pas été créé par le formateur générer une erreur
             if ($survey->getUser() !== $this->getUser())
-                throw throw new AccessDeniedHttpException();
+                throw new AccessDeniedHttpException();
         }
 
         $question = new Question();
         $form = $this->createForm(QuestionAnswerType::class, $question);
         $form->handleRequest($request);
 
+        $errorMsg = null;
         if ($form->isSubmitted() && $form->isValid()) {
-            $errorMsg = null;
-            // TODO passer les messages en constante de l'appli.
             if (!$question->getQuestion()) {
                 $errorMsg = 'Merci de renseigner la question.';
             } elseif (!$rightAnswer = $form->get('answer')->getData()) {
@@ -66,9 +59,9 @@ class QuestionController extends AbstractController
             } elseif (!$answerChoice2 = $form->get('choice2')->getData()) {
                 $errorMsg = 'Merci de renseigner le 2e choix de réponse.';
             } elseif (!$answerChoice3 = $form->get('choice3')->getData()) {
-                $errorMsg = 'Merci de renseigner le 3e choix de réponse !';
+                $errorMsg = 'Merci de renseigner le 3e choix de réponse.';
             } elseif (!$answerChoice4 = $form->get('choice4')->getData()) {
-                $errorMsg = 'Merci de renseigner le 4e choix de réponse !';
+                $errorMsg = 'Merci de renseigner le 4e choix de réponse.';
             } elseif (!$answerChoice5 = $form->get('choice5')->getData()) {
                 $errorMsg = 'Merci de renseigner le 5e choix de réponse.';
             }
@@ -87,11 +80,9 @@ class QuestionController extends AbstractController
             // Récupérer l'image liée à la question si elle existe
             $questionImg = $form->get("imgFileName")->getData();
             if ($questionImg) {
-                // Récupérer l'extension du fichier
-                $fileExtension = $questionImg->guessExtension();
                 // Générer le nom du fichier de destination.
-                $imgFileName = 'img_question_' . $question->getId() . '.' . $fileExtension;
-                // Mettre à jour la question avec le nom du fichier image..
+                $imgFileName = 'img_question_' . $question->getId() . '.' . $questionImg->guessExtension();
+                // Mettre à jour la question avec le nom du fichier image.
                 $question->setImgFileName($imgFileName);
                 // Persister la question pour sauvegarder le nom du fichier.
                 $questionRepository->add($question, true);
@@ -108,51 +99,30 @@ class QuestionController extends AbstractController
             return $this->redirectToRoute('app_survey_show', ['id' => $survey->getId()], Response::HTTP_SEE_OTHER);
         }
         return $this->renderForm('question/newQuestion.html.twig', [
+            'survey' => $survey,
             'question' => $question,
             'form' => $form,
         ]);
     }
 
-
-//-------------------- Ancien version de conception --------------------------------------------//
-
-//    #[Route('/new/{id}', name: 'app_question_new', methods: ['GET', 'POST'])]
-//    public function new(Request $request, Survey $survey, QuestionRepository $questionRepository): Response
-//    {
-//        // Si l'utilisateur n'est pas administrateur gérer l'accès.
-//        if (!$this->isGranted("ROLE_ADMIN")) {
-//            // Si le questionnaire passé en GET n'a pas été créé par le formateur générer une erreur
-//            if ($survey->getUser() !== $this->getUser())
-//                throw throw new AccessDeniedHttpException();
-//        }
-//        $question = new Question();
-//        $form = $this->createForm(QuestionType::class, $question);
-//        $form->handleRequest($request);
-//
-//        if ($form->isSubmitted() && $form->isValid()) {
-//
-//
-//            $question->setSurvey($survey);
-//            $questionRepository->add($question, true);
-//
-//            return $this->redirectToRoute('app_survey_show', ['id' => $survey->getId()], Response::HTTP_SEE_OTHER);
-//        }
-//
-//        return $this->renderForm('question/new.html.twig', [
-//            'question' => $question,
-//            'form' => $form,
-//        ]);
-//    }
-//
-
     #[Route('/{id}', name: 'app_question_show', methods: ['GET'])]
     public function show(Question $question, AnswerRepository $answerRepository): Response
     {
-        // TODO Sécuriser l'accès aux page de detail de question
-
+        // Si l'utilisateur n'est pas administrateur gérer l'accès.
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            if ($this->isGranted("ROLE_CENTER")) {
+                // Si la question passée en GET n'est pas lié à une formation du centre générer une erreur
+                if ($question->getSurvey()->getCourse()->getUser() !== $this->getUser())
+                    throw new AccessDeniedHttpException();
+            }
+            // Si la question passée en GET n'a pas été créée par le formateur générer une erreur
+            if ($this->isGranted("ROLE_TRAINER")) {
+                if ($question->getSurvey()->getUser() !== $this->getUser())
+                    throw new AccessDeniedHttpException();
+            }
+        }
         if ($question->getDeleteDate())
-            throw throw new AccessDeniedHttpException();
-
+            throw new AccessDeniedHttpException();
 
         // Récupérer les réponses.
         $answers = $answerRepository->findBy([
@@ -169,21 +139,34 @@ class QuestionController extends AbstractController
 
 
     #[Route('/{id}/edit', name: 'app_question_edit', methods: ['GET', 'POST'])]
-    public function questionEdit(Request $request, Question $question, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
+    public function questionEdit(Request $request, Question $question, QuestionRepository $questionRepository): Response
     {
+        // Si l'utilisateur n'est pas administrateur gérer l'accès.
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            if ($this->isGranted("ROLE_CENTER")) {
+                // Si la question passée en GET n'est pas lié à une formation du centre générer une erreur
+                if ($question->getSurvey()->getCourse()->getUser() !== $this->getUser())
+                    throw new AccessDeniedHttpException();
+            }
+            // Si la question passée en GET n'a pas été créée par le formateur générer une erreur
+            if ($this->isGranted("ROLE_TRAINER")) {
+                if ($question->getSurvey()->getUser() !== $this->getUser())
+                    throw new AccessDeniedHttpException();
+            }
+        }
+        if ($question->getDeleteDate())
+            throw new AccessDeniedHttpException();
+
 
         $form = $this->createForm(QuestionType::class, $question);
-
-
         $form->handleRequest($request);
-
         if (($form->isSubmitted() && $form->isValid())) {
             $questionRepository->add($question, true);
-
             return $this->redirectToRoute('app_survey_show', ['id' => $question->getSurvey()->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('question/editQuestion.html.twig', [
+            'question' => $question,
             'form' => $form,
         ]);
     }
@@ -191,6 +174,22 @@ class QuestionController extends AbstractController
     #[Route('/{id}/edit/answer', name: 'app_answer_edit', methods: ['GET', 'POST'])]
     public function answerEdit(Request $request, Answer $answer, AnswerRepository $answerRepository): Response
     {
+        // Si l'utilisateur n'est pas administrateur gérer l'accès.
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            if ($this->isGranted("ROLE_CENTER")) {
+                // Si la réponse passée en GET n'est pas lié à une formation du centre générer une erreur
+                if ($answer->getQuestion()->getSurvey()->getCourse()->getUser() !== $this->getUser())
+                    throw new AccessDeniedHttpException();
+            }
+            // Si la réponse passée en GET n'a pas été créée par le formateur générer une erreur
+            if ($this->isGranted("ROLE_TRAINER")) {
+                if ($answer->getQuestion()->getSurvey()->getUser() !== $this->getUser())
+                    throw new AccessDeniedHttpException();
+            }
+        }
+        if ($answer->getQuestion()->getDeleteDate())
+            throw new AccessDeniedHttpException();
+
         $form = $this->createForm(AnswerType::class, $answer);
         $form->handleRequest($request);
 
@@ -217,6 +216,19 @@ class QuestionController extends AbstractController
     #[Route('/{id}', name: 'app_question_delete', methods: ['POST'])]
     public function delete(Request $request, Question $question, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
     {
+        // Si l'utilisateur n'est pas administrateur gérer l'accès.
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            if ($this->isGranted("ROLE_CENTER")) {
+                // Les centres n'ont pas le droit de supprimer une question.
+                throw new AccessDeniedHttpException();
+            }
+            // Si la question passée en GET n'a pas été créée par le formateur générer une erreur
+            if ($this->isGranted("ROLE_TRAINER")) {
+                if ($question->getSurvey()->getUser() !== $this->getUser())
+                    throw new AccessDeniedHttpException();
+            }
+        }
+
         if ($this->isCsrfTokenValid('delete' . $question->getId(), $request->request->get('_token'))) {
             $answers = $question->getAnswers();
             foreach ($answers as $answer) {
@@ -228,13 +240,14 @@ class QuestionController extends AbstractController
         return $this->redirectToRoute('app_survey_show', ['id' => $question->getSurvey()->getId()], Response::HTTP_SEE_OTHER);
     }
 
+
     /**
      *
      *
-     * @param $candidateAnswer
-     * @param $status
-     * @param $question
-     * @param $answerRepository
+     * @param string $candidateAnswer
+     * @param bool $status
+     * @param Question $question
+     * @param AnswerRepository $answerRepository
      * @return void
      */
     private function persistAnswer(string $candidateAnswer, bool $status, Question $question, AnswerRepository $answerRepository): void

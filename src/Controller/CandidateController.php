@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Candidate;
@@ -31,10 +33,10 @@ class CandidateController extends AbstractController
         }
         // Sinon n'afficher que les candidats rattachés au centre et non supprimés.
         return $this->render('candidate/index.html.twig', [
-            'candidates' => $candidateRepository->findBy(
-                ['user' => $user,
-                    'deleteDate' => null]
-            ),
+            'candidates' => $candidateRepository->findBy([
+                'user' => $user,
+                'deleteDate' => null
+            ]),
         ]);
     }
 
@@ -67,7 +69,7 @@ class CandidateController extends AbstractController
         if (!$this->isGranted("ROLE_ADMIN")) {
             // Si la fiche du candidat n'appartient pas au centre ou que la fiche a été supprimée générer une erreur 403.
             if ($this->getUser() !== $candidate->getUser() | $candidate->getDeleteDate() !== null)
-            throw new AccessDeniedHttpException();
+                throw new AccessDeniedHttpException();
         }
         return $this->render('candidate/show.html.twig', [
             'candidate' => $candidate,
@@ -81,7 +83,7 @@ class CandidateController extends AbstractController
         // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
             // Si la fiche du candidat n'appartient pas au centre ou que la fiche a été supprimée générer une erreur 403.
-            if ($candidate->getUser() !== $this->getUser()  | $candidate->getDeleteDate() !== null)
+            if ($candidate->getUser() !== $this->getUser() | $candidate->getDeleteDate() !== null)
                 throw new AccessDeniedHttpException();
         }
         $form = $this->createForm(CandidateType::class, $candidate);
@@ -90,7 +92,7 @@ class CandidateController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $candidateRepository->add($candidate, true);
-            $this->addFlash('success', 'Fiche de '  . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' modifiée !');
+            $this->addFlash('success', 'Fiche de ' . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' modifiée !');
 
             return $this->redirectToRoute('app_candidate_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -106,14 +108,14 @@ class CandidateController extends AbstractController
     {
         // Si l'utilisateur n'est pas administrateur, gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
-            // Si la fiche du candidat n'appartient pas au centre  ou que la fiche a déjà été supprimée générer une erreur 403.
-            if ($this->getUser() !== $candidate->getUser()  | $candidate->getDeleteDate() !== null)
+            // Si la fiche du candidat n'appartient pas au centre ou que la fiche a déjà été supprimée générer une erreur 403.
+            if ($this->getUser() !== $candidate->getUser() | $candidate->getDeleteDate() !== null)
                 throw new AccessDeniedHttpException();
         }
         if ($this->isCsrfTokenValid('delete' . $candidate->getId(), $request->request->get('_token'))) {
             $candidateRepository->softDelete($candidate, true);
         }
-        $this->addFlash('alert', 'Fiche de '  . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' supprimée !');
+        $this->addFlash('alert', 'Fiche de ' . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' supprimée !');
 
         return $this->redirectToRoute('app_candidate_index', [], Response::HTTP_SEE_OTHER);
     }

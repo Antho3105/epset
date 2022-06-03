@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\VisibleCourse;
@@ -33,7 +35,6 @@ class VisibleCourseController extends AbstractController
     #[Route('/new', name: 'app_visible_course_new', methods: ['GET', 'POST'])]
     public function new(Request $request, VisibleCourseRepository $visibleCourseRepository): Response
     {
-        $user = $this->getUser();
         $visibleCourse = new VisibleCourse();
         // Si administrateur ouvrir le formulaire avec toutes les formations.
         if ($this->isGranted("ROLE_ADMIN")) {
@@ -93,7 +94,7 @@ class VisibleCourseController extends AbstractController
     {
         // Si la formation associée n'appartient pas au centre générer une erreur.
         if ($visibleCourse->getCourse()->getUser() !== $this->getUser())
-            throw throw new AccessDeniedHttpException();
+            throw new AccessDeniedHttpException();
 
         if ($this->isCsrfTokenValid('delete' . $visibleCourse->getId(), $request->request->get('_token'))) {
             $visibleCourseRepository->remove($visibleCourse, true);
