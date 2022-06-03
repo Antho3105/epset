@@ -1,0 +1,12 @@
+body {
+    --bg-color1: #ffffff;
+    --font-color1 : white;
+    --font-color2 : black;
+    --font-color3: #000085;
+}
+
+
+.btn-primary {
+    border:  var(--font-color3);
+    background: var(--font-color3);
+}

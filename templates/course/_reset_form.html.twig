@@ -1,0 +1,5 @@
+<form method="post" action="{{ path('app_course_reset', {'id': course.id}) }}"
+      onsubmit="return confirm('Voulez vous annuler la suppression de cet élément ?');">
+    <input type="hidden" name="_tokenReset" value="{{ csrf_token('_tokenReset' ~ course.id) }}">
+    <button class="btn btn-primary mx-2">Reset</button>
+</form>

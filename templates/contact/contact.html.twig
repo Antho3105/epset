@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Question{% endblock %}
+
+{% block body %}
+    <section>
+        <div class="p-5 contact-form">
+            <div class="form-group">
+                {{ form_start(form) }}
+                {{ form_row(form.name, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.email, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.message, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group d-flex justify-content-end">
+                <input type="submit" value="Envoyer" class="btn btn-success mx-2">
+            </div>
+            {{ form_end(form) }}
+        </div>
+
+   </section>
+{% endblock %}

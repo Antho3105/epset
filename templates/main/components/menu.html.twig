@@ -1,0 +1,13 @@
+<div>
+    <div class="container flex header">
+        <a class="btn btn-primary" href="{{ path('app_home') }}">Accueil</a>
+        <div class="flex">
+            {% if app.user %}
+                <p class="mx-2">{{ app.user.userName }}</p>
+                <a class="btn btn-primary" href="{{ path('app_logout') }}">Déconnexion</a>
+            {% endif %}
+        </div>
+
+
+    </div>
+</div>

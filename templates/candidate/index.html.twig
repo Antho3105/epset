@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des candidats{% endblock %}
+
+{% block body %}
+    <h1 class="h1 mb-3 font-weight-normal text-center">Liste des candidats</h1>
+
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for candidate in candidates %}
+            <tr onclick="location.href='{{ path('app_candidate_show', {'id': candidate.id}) }}'">
+                <td>{{ candidate.lastName }}</td>
+                <td>{{ candidate.firstName }}</td>
+                <td>{{ candidate.email }}</td>
+                <td>{{ candidate.phone }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">Pas de candidats</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-end">
+        <a class="btn btn-primary" href="{{ path('app_candidate_new') }}">Créer une fiche candidat</a>
+    </div>
+{% endblock %}

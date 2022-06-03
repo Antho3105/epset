@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle fiche de résultat{% endblock %}
+
+{% block body %}
+    <h1 class="h1 mb-3 font-weight-normal text-center">Créer une nouvelle fiche de résultat</h1>
+    <section>
+        <div class="d-flex">
+            <form action="{{ path('app_result_add') }}" method="POST">
+            <select name="candidate" id="candidate" class="form-select" aria-label="Default select example">
+                {% for candidate in candidates %}
+                    <option value="{{ candidate.id }}">{{ candidate }}</option>
+                {% endfor %}
+            </select>
+
+            <select id="survey" name="survey" class="form-select" aria-label="Default select example">
+                {% for survey in surveys %}
+                    <option value="{{ survey.id }}">{{ survey }}</option>
+                {% endfor %}
+            </select>
+
+            <button class="btn btn-primary">Valider</button>
+            </form>
+        </div>
+
+
+    </section>
+
+
+
+
+{% endblock %}

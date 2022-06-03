@@ -1,0 +1,5 @@
+<form method="post" action="{{ path('app_visible_course_delete', {'id': visibleCourse.user.id}) }}"
+      onsubmit="return confirm('Êtes vous sur de vouloir supprimer cette assignation ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ visibleCourse.user.id) }}">
+    <button class="btn btn-primary mx-2">Retirer</button>
+</form>

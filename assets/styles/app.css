@@ -1,3 +1,171 @@
+/*----------------------------------------------------------------
+GLOBAL
+---------------------------------------------------------------- */
+
+* {
+    box-sizing: border-box;
+}
+
+.clear {
+    clear: both;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: "";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+nav ul,
+ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+li a,
+.nav-item a,
+a {
+    text-decoration: none;
+    color: var(--font-color1);
+}
+
+table a {
+    color: var(--font-color3);
+}
+
+img,
+iframe,
+video {
+    max-width: 100%;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.flexStart {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+    margin: 0 auto;
+}
+
 body {
-    background-color: lightgray;
+    background: url("../img/background.jpg") no-repeat center fixed;
+    box-shadow: inset 1500px 1500px rgb(0 0 0 / 42%);
+    background-size: cover;
+    color: var(--font-color1);
+    /*background-color: lightgray;*/
+    font-family: 'Lato', sans-serif;
+    position: relative;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 95%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+html {
+    height: 100%;
+}
+
+
+/*----------------------------------------------------------------
+HEADER
+---------------------------------------------------------------- */
+
+
+
+/*----------------------------------------------------------------
+MAIN
+---------------------------------------------------------------- */
+
+table, #surveyDetail {
+    border-radius: 10px;
+    background-color: var(--bg-color1);
+}
+
+#surveyDetail {
+    padding: 10px;
+}
+
+main>section:last-child {
+    padding-bottom: 80px;
+}
+
+.flashMessage {
+    border-radius: 15px;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+}
+
+#surveyInfo, #surveyDetails, #surveyDetails, #result>div, #detail>div, #question{
+    color: var(--font-color2);
+}
+
+#surveyDetails h2 {
+    color: var(--font-color1);
+}
+
+.search {
+    margin: 20px 0;
+}
+
+
+/*----------------------------------------------------------------
+TABLES
+---------------------------------------------------------------- */
+
+tr{
+    cursor: pointer;
+}
+
+#userDetail tr, #surveyDetails tr, #candidateDetail tr, #candidateResult tr, #courseDetail tr {
+    cursor: inherit;
+}
+
+input, button, a, select {
+    border-radius: 15px!important;
+}
+
+/*----------------------------------------------------------------
+FOOTER
+---------------------------------------------------------------- */
+
+.footer, .header {
+    min-height: 80px;
+}
+
+footer a {
+    color: var(--font-color1);
+    padding: 5px 10px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0
 }

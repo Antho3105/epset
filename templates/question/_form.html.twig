@@ -1,0 +1,25 @@
+<div class="form pb-5">
+    {{ form_start(form) }}
+    <div>
+        {{ form_row(form.question) }}
+    </div>
+
+    <label>
+        <input onclick="toggleImgInput()" type="checkbox"> Ajouter une image
+    </label>
+    <div class="addImg">
+        {{ form_row(form.imgFileName) }}
+        <img class="preview" src="" alt="">
+    </div>
+
+    <div class="form">
+        {{ form_row(form.answer) }}
+        {{ form_row(form.choice2) }}
+        {{ form_row(form.choice3) }}
+        {{ form_row(form.choice4) }}
+        {{ form_row(form.choice5) }}
+    </div>
+
+    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+    {{ form_end(form) }}
+</div>

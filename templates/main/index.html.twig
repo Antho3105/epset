@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil fonctions{% endblock %}
+
+{% block body %}
+    <section>
+        <h1 class="h1 mb-3 font-weight-normal text-center">EPSET : Education Pre-SElection Tool</h1>
+
+        <section id="homePage">
+            <div class="row d-flex cardHolder justify-content-center justify-content-sm-between">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="card mx-1">
+                        <div class="d-flex card-header justify-content-between align-item-center">
+                            <h4><strong>/ ADMIN \</strong></h4>
+                            <i class="fa-solid fa-users" style="font-size: 26px"></i>
+                        </div>
+                        <div class="card-body">
+                            <a href="{{ path('app_user_list') }}" class="btn">-> Liste des utilisateurs</a>
+                            <a href="{{ path('app_register_admin') }}" class="btn">-> Ajouter un utilisateur</a>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if is_granted('ROLE_CENTER') %}
+                    <div class="card mx-1">
+                        <div class="d-flex card-header justify-content-between align-item-center">
+                            <h4><strong>Formateurs</strong></h4>
+                            <i class="fa-solid fa-person-chalkboard" style="font-size: 26px"></i>
+                        </div>
+                        <div class="card-body">
+
+                            <a href="{{ path('app_trainer_list') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                                Liste des formateurs</a>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            {% else %}
+                                <a href="{{ path('app_register_trainer') }}" class="btn"><i
+                                            class="fa-solid fa-arrow-right"></i> Ajouter un formateur</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if is_granted('ROLE_CENTER') %}
+                    <div class="card mx-1">
+                        <div class="d-flex card-header justify-content-between align-item-center">
+                            <h4><strong>Candidats</strong></h4>
+                            <i class="fa-solid fa-graduation-cap" style="font-size: 26px"></i>
+                        </div>
+                        <div class="card-body">
+                            <a href="{{ path('app_candidate_index') }}" class="btn"><i
+                                        class="fa-solid fa-arrow-right"></i> Liste des candidats</a>
+                            <a href="{{ path('app_candidate_new') }}" class="btn"><i
+                                        class="fa-solid fa-arrow-right"></i> Ajouter un candidat</a>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="card mx-1">
+                    <div class="d-flex card-header justify-content-between align-item-center">
+                        <h4><strong>Formations</strong></h4>
+                        <i class="fa-solid fa-book-open" style="font-size: 26px"></i>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ path('app_course_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                            Liste des formations</a>
+                        {% if is_granted('ROLE_CENTER') %}
+                            <a href="{{ path('app_course_new') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                                Ajouter une formation</a>
+                            <a href="{{ path('app_visible_course_new') }}" class="btn"><i
+                                        class="fa-solid fa-arrow-right"></i> Affecter une formation</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card  mx-1">
+                    <div class="d-flex card-header justify-content-between align-item-center">
+                        <h4><strong>Questionnaires</strong></h4>
+                        <i class="fa-solid fa-question" style="font-size: 26px"></i>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ path('app_survey_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                            Liste des questionnaires</a>
+                    </div>
+                </div>
+                {% if is_granted('ROLE_CENTER') %}
+                    <div class="card  mx-1">
+                        <div class="d-flex card-header justify-content-between align-item-center">
+                            <h4><strong>Résultats</strong></h4>
+                            <i class="fa-solid fa-square-poll-horizontal" style="font-size: 26px"></i>
+                        </div>
+                        <div class="card-body">
+                            <a href="{{ path('app_result_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                                Liste des résultats</a>
+                            <a href="{{ path('app_result_new') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
+                                Créer une fiche de résultat</a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card mx-1">
+                    <div class="d-flex card-header justify-content-between align-item-center">
+                        <h4><strong>Gestion profil</strong></h4>
+                        <i class="fa-solid fa-address-card" style="font-size: 26px"></i>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ path('app_user_edit', {'id': app.user.id}) }}" class="btn"><i
+                                    class="fa-solid fa-arrow-right"></i> Editer son profil</a>
+                        <a href="{{ path('app_forgot_password_request')}}" class="btn"><i
+                                    class="fa-solid fa-arrow-right"></i> Modifier mot de passe</a>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+    </section>
+
+{% endblock %}

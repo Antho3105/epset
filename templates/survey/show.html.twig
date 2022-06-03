@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Questionnaire{% endblock %}
+
+{% block body %}
+    <h1 class="h1 mb-3 font-weight-normal text-center">Questionnaire</h1>
+    <section id="surveyDetails">
+        <table class="table">
+            <tbody>
+            <tr>
+                <th>Référence</th>
+                <td>{{ survey.ref }}</td>
+            </tr>
+            <tr>
+                <th>Difficulté</th>
+                <td>
+                    <div class="d-flex">
+                        {% for i in 1..5 %}
+                            {% if i<=survey.difficulty %}
+                                <div><i class="fa-solid fa-circle"></i></div>
+                            {% else %}
+                                <div><i class="fa-regular fa-circle"></i></div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+            </tr>
+            <tr>
+                <th>Temps par question</th>
+                <td>{{ survey.questionTimer }}</td>
+            </tr>
+            <tr>
+                <th>Affichage questions</th>
+                <td>{{ survey.ordered ? 'Dans l\'ordre' : 'Aléatoire' }}</td>
+            </tr>
+            {% if is_granted('ROLE_ADMIN') %}
+                <tr>
+                    <th>Date de suppression</th>
+                    <td>{{ survey.deleteDate ? survey.deleteDate|date('d-m-Y H:i') : '-' }}</td>
+                </tr>
+            {% endif %}
+
+            </tbody>
+        </table>
+
+        <h2 class="mb-3 font-weight-normal text-center">Détails</h2>
+        <div id="surveyDetail" class="mb-3">
+            {{ survey.detail| raw }}
+        </div>
+
+
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-info mx-2" href="{{ path('app_survey_index') }}" title="Retour"><i class="fa-solid fa-arrow-left"></i></a>
+
+            <a class="btn btn-primary mx-2" href="{{ path('app_survey_edit', {'id': survey.id}) }}" title="Modifier"><i
+                        class="fa-solid fa-file-pen"></i></a>
+
+            {{ include('survey/_delete_form.html.twig') }}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                {{ include('survey/_reset_form.html.twig') }}
+            {% endif %}
+
+        </div>
+    </section>
+
+    <section id="questionList" class=" pt-2">
+
+        <h2 class="h2 mb-3 font-weight-normal text-center">Liste des questions</h2>
+        {% if is_granted('ROLE_TRAINER') %}
+            <div class="d-flex justify-content-end">
+                <a class="btn btn-primary mb-3" href="{{ path('app_question_new', {'id': survey.id}) }}">Ajouter une
+                    question</a>
+            </div>
+        {% endif %}
+        {% if questions %}
+            <div class="d-flex justify-content-between">
+                {% for question in questions %}
+                    <div class="card  mx-1">
+                        <div class="d-flex card-header justify-content-between align-item-center">
+                            {{ question.question| striptags | slice(0, 50) ~ '...' }}
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <a class="btn btn-primary"
+                               href="{{ path('app_question_show', {'id': question.id}) }}">Voir</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h3 class="h3 mb-3 font-weight-normal text-center">Pas de question créée pour ce questionnaire</h3>
+        {% endif %}
+
+    </section>
+{% endblock %}

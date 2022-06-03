@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des {{ type }}{% endblock %}
+
+{% block body %}
+    <section id="users">
+        <h1 class="h1 mb-3 font-weight-normal text-center">Liste des {{ type }}</h1>
+        <div class="search">
+
+            <form action="{{ path('app_search_user') }}" method="post">
+                <label>
+                    <input name='lastName' type="text" placeholder="Nom">
+                </label>
+                <label>
+                    <input name='firstName' type="text" placeholder="Prénom">
+                </label>
+                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_user_list') }}" class="btn btn-primary mx-2">Voir tout</a>
+                <a href="{{ path('app_center_list') }}" class="btn btn-primary mx-2">Voir les centres</a>
+                <a href="{{ path('app_trainer_list') }}" class="btn btn-primary mx-2">Voir les formateurs</a>
+            {% endif %}
+        </div>
+
+        <section>
+            {% if type == 'utilisateurs' %}
+                <h2 class="h2 mb-3 font-weight-normal text-center">Administrateurs</h2>
+                <div class="row cardHolder d-flex justify-content-between">
+                    {% for user in users %}
+                        {% if user.roles[0] == "ROLE_ADMIN" %}
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>{{ user.lastName }} {{ user.firstName }}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p>{{ user.domain }}</p>
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                           class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <h2 class="h2 mb-3 font-weight-normal text-center">Formateurs</h2>
+                <div class="row cardHolder d-flex justify-content-between">
+                    {% for user in users %}
+                        {% if user.roles[0] == "ROLE_TRAINER" %}
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>{{ user.lastName }} {{ user.firstName }}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p>{{ user.domain }}</p>
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                           class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <h2 class="h2 mb-3 font-weight-normal text-center">Centres</h2>
+                <div class="cardHolder d-flex justify-content-between">
+                    {% for user in users %}
+                        {% if user.roles[0] == "ROLE_CENTER" %}
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>{{ user.userName }}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p>{{ user.domain }}</p>
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                           class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p>Pas de résultats</p>
+                    {% endfor %}
+                </div>
+            {% elseif type == 'centres' %}
+                <div class="row cardHolder d-flex justify-content-between">
+                    {% for user in users %}
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>{{ user.userName }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <p>{{ user.lastName }} {{ user.firstName }}</p>
+                                <p>{{ user.domain }}</p>
+                                <p>{{ user.phone }}</p>
+                                <div class="d-flex justify-content-end">
+                                    <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                       class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="row cardHolder d-flex justify-content-between">
+                    {% for user in users %}
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>{{ user.lastName }} {{ user.firstName }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <p>{{ user.domain }}</p>
+                                <div class="d-flex justify-content-end">
+                                    <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                       class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+
+            {% endif %}
+        </section>
+
+        <div class="d-flex justify-content-end">
+            {% if app.request.get('_route') == 'app_search_user' %}
+                <a class="btn btn-primary" href="{{ path('app_trainer_list') }}">Retour liste</a>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

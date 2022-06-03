@@ -1,0 +1,9 @@
+{{ form_start(form) }}
+<div class="d-flex justify-content-around">
+    {{ form_row(form.CV_file) }}
+    {{ form_row(form.coverLetter) }}
+</div>
+<div class="d-flex justify-content-end">
+    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+</div>
+{{ form_end(form) }}

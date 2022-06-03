@@ -5,8 +5,17 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
+import './styles/normalize.css';
+
 // any CSS you import will output into a single css file (app.css in this case)
+
 import './styles/app.css';
+import './styles/colors.css';
+import './styles/search.css';
+import './styles/card.css';
+import './styles/form.css';
+import './styles/candidateQuestion.css'
 
 // start the Stimulus application
 import './bootstrap';
+import './tinymce';

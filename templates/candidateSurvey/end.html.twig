@@ -1,0 +1,30 @@
+{% extends './candidateSurvey/index.html.twig' %}
+
+{% block title %}Résultat du test{% endblock %}
+
+{% block body %}
+    <section id="header">
+        <h1 class="h1 mb-3 font-weight-normal text-center pt-2">Test de recrutement</h1>
+        <div id="surveyInfo" class="d-flex justify-content-between align-items-center">
+            <div class="detail">
+                <p>Centre : {{ survey.course.user.userName }}</p>
+                <p>Formation : {{ survey.course.title }}</p>
+                <p>Candidat : {{ candidate.lastName }} {{ candidate.firstName }} </p>
+            </div>
+        </div>
+    </section>
+    <section id="result">
+        <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Test terminé</h2>
+        {% if result.isCheater %}
+            <div style="background: red">
+                <p>Vous avez obtenu un score de {{ result.finalScore }} % Attention triche détectée </p>
+            </div>
+        {% else %}
+            <div>
+                <p>Vous avez obtenu un score de {{ result.finalScore }} %</p>
+            </div>
+        {% endif %}
+    </section>
+
+
+{% endblock %}

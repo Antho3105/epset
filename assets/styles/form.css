@@ -1,0 +1,26 @@
+.form{
+    margin: 0 auto;
+}
+
+.login {
+    max-width: 400px;
+}
+
+.addImg {
+    transform: scale(0);
+    height: 0;
+    transition: all .3s;
+}
+
+.preview {
+    max-width: 450px;
+    max-height: 350px;
+}
+
+.show {
+    transform: scale(1)!important;
+    height: auto;
+}
+.center {
+    justify-content: center;
+}
