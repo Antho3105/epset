@@ -56,8 +56,9 @@ class MainController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $contactFormData = $form->getData();
             $message = (new Email())
-                ->from($contactFormData['email'])
+                ->from(new Address($_ENV['ADMIN_EMAIL']))
                 ->to(new Address($_ENV['ADMIN_EMAIL']))
+                ->replyTo($contactFormData['email'])
                 ->subject('vous avez reçu unn email')
                 ->text('Sender : ' . $contactFormData['email'] . PHP_EOL .
                     $contactFormData['message'],
