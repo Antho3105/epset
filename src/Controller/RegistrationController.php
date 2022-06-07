@@ -176,8 +176,15 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            try {
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }catch (\Exception $e) {
+                $this->addFlash('alert', 'Un compte avec ce mail existe déjà, merci de modifier.');
+                return $this->render('registration/registerAdmin.html.twig', [
+                    'registrationForm' => $form->createView(),
+                ]);
+            }
 
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
