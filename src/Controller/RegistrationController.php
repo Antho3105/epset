@@ -176,10 +176,11 @@ class RegistrationController extends AbstractController
                 )
             );
 
+            // tente de persister un nouvel utilisateur, en cas d'échec (email deja existant) rendre le formulaire avec un flash d'erreur.
             try {
                 $entityManager->persist($user);
                 $entityManager->flush();
-            }catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $this->addFlash('alert', 'Un compte avec ce mail existe déjà, merci de modifier.');
                 return $this->render('registration/registerAdmin.html.twig', [
                     'registrationForm' => $form->createView(),
