@@ -1,26 +1,14 @@
 
-#surveyInfo, #result>div, #detail>div, #question {
+#surveyInfo, #result > div, #detail > div, #question {
     border-radius: 10px;
     padding: 10px 10px;
     background-color: var(--bg-color1);
 }
 
-
 #timer {
     font-size: 30px;
 }
 
-#answer .card {
-    cursor: pointer;
-    transition: all .3s;
-    padding: 5px;
-    border-radius: 10px;
-    flex-direction: row;
-    width: 200px;
-    min-height: 150px !important;
-    margin: 5px !important;
-    align-items: center;
-}
 
 #question div {
     width: 45%;
@@ -30,24 +18,34 @@
     width: 50%;
 }
 
-#result div
+#answerContainer .card {
+    cursor: pointer;
+    transition: all .3s;
+    padding: 5px;
+    border-radius: 10px;
+    flex-direction: row;
+    width: 45%;
+    min-height: 100px !important;
+    margin: 5px !important;
+    align-items: center;
+}
 
-
-
-@media screen and (max-width: 1000px) {
-    #question div {
-        width: 55%;
-    }
-
-    #question .questionImg {
-        width: 40%;
-    }
+#answers {
+    justify-content: center;
 }
 
 
 @media screen and (max-width: 1000px) {
     #question div {
         width: 55%;
+    }
+
+    #question .questionImg {
+        width: 40%;
+    }
+
+    #question div {
+        width: 55%;
         font-size: 14px;
     }
 
@@ -55,9 +53,8 @@
         width: 40%;
     }
 
-    #answer .card {
+    #answerContainer .card {
         font-size: 14px;
-        width: 180px;
     }
 }
 
@@ -71,5 +68,17 @@
     #question .questionImg {
         width: 100%;
     }
+
+    #answerContainer .card {
+        width: 90%;
+    }
+
+}
+
+@media screen and (orientation: portrait) {
+    #answerContainer .card {
+        width: 90%;
+    }
+
 
 }

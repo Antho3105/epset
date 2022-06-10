@@ -35,10 +35,10 @@
 
     </section>
 
-    <section id="answer">
+    <section id="answerContainer">
         <h2 class="h2 mb-3 font-weight-normal text-center pt-2">Réponses :</h2>
 
-        <div class="flex">
+        <div id="answers" class="flex">
             {% for answer in answers %}
                 <div id="{{ answer.id }}" class="card flex answers">
                     {{ answer.value| raw }}
@@ -48,8 +48,10 @@
 
         </div>
         <form action="{{ path('app_survey_next') }}" name="formSurvey" method="post">
-            <button class="btn btn-primary">Valider</button>
-            <input name="candidateAnswer" type="text" style="display:none">
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary">Valider</button>
+                <input name="candidateAnswer" type="text" style="display:none">
+            </div>
         </form>
     </section>
 
