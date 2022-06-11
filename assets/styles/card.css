@@ -1,4 +1,4 @@
-.card{
+.card {
     color: black;
     padding: 0;
     width: 300px;
@@ -17,17 +17,18 @@
 }
 
 @media screen and (max-width: 970px) {
-    .card{
+    .card {
         width: 40%;
         margin: 10px 20px;
     }
-    .card-body{
-        padding: 0;
+
+    .card-body {
+        padding: 5px;
     }
 }
 
 @media screen and (max-width: 500px) {
-    .card{
+    .card {
         width: 90%;
         margin: 10px 20px;
     }

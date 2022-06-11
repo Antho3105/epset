@@ -31,11 +31,15 @@
 }
 
 #answers {
-    justify-content: center;
+    justify-content: space-between;
 }
 
 
 @media screen and (max-width: 1000px) {
+    #answers {
+        justify-content: center;
+    }
+
     #question div {
         width: 55%;
     }

@@ -71,7 +71,6 @@ body {
     box-shadow: inset 1500px 1500px rgb(0 0 0 / 42%);
     background-size: cover;
     color: var(--font-color1);
-    /*background-color: lightgray;*/
     font-family: 'Lato', sans-serif;
     position: relative;
     min-height: 100%;

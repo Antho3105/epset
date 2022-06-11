@@ -14,7 +14,7 @@
                             <h4><strong>/ ADMIN \</strong></h4>
                             <i class="fa-solid fa-users" style="font-size: 26px"></i>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column align-items-start">
                             <a href="{{ path('app_user_list') }}" class="btn">-> Liste des utilisateurs</a>
                             <a href="{{ path('app_register_admin') }}" class="btn">-> Ajouter un utilisateur</a>
                         </div>
@@ -26,8 +26,7 @@
                             <h4><strong>Formateurs</strong></h4>
                             <i class="fa-solid fa-person-chalkboard" style="font-size: 26px"></i>
                         </div>
-                        <div class="card-body">
-
+                        <div class="card-body d-flex flex-column align-items-start">
                             <a href="{{ path('app_trainer_list') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
                                 Liste des formateurs</a>
                             {% if is_granted('ROLE_ADMIN') %}
@@ -44,7 +43,7 @@
                             <h4><strong>Candidats</strong></h4>
                             <i class="fa-solid fa-graduation-cap" style="font-size: 26px"></i>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column align-items-start">
                             <a href="{{ path('app_candidate_index') }}" class="btn"><i
                                         class="fa-solid fa-arrow-right"></i> Liste des candidats</a>
                             <a href="{{ path('app_candidate_new') }}" class="btn"><i
@@ -57,7 +56,7 @@
                         <h4><strong>Formations</strong></h4>
                         <i class="fa-solid fa-book-open" style="font-size: 26px"></i>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column align-items-start">
                         <a href="{{ path('app_course_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
                             Liste des formations</a>
                         {% if is_granted('ROLE_CENTER') %}
@@ -74,7 +73,7 @@
                         <h4><strong>Questionnaires</strong></h4>
                         <i class="fa-solid fa-question" style="font-size: 26px"></i>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column align-items-start">
                         <a href="{{ path('app_survey_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
                             Liste des questionnaires</a>
                     </div>
@@ -85,7 +84,7 @@
                             <h4><strong>Résultats</strong></h4>
                             <i class="fa-solid fa-square-poll-horizontal" style="font-size: 26px"></i>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column align-items-start">
                             <a href="{{ path('app_result_index') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
                                 Liste des résultats</a>
                             <a href="{{ path('app_result_new') }}" class="btn"><i class="fa-solid fa-arrow-right"></i>
@@ -99,7 +98,7 @@
                         <h4><strong>Gestion profil</strong></h4>
                         <i class="fa-solid fa-address-card" style="font-size: 26px"></i>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column align-items-start">
                         <a href="{{ path('app_user_edit', {'id': app.user.id}) }}" class="btn"><i
                                     class="fa-solid fa-arrow-right"></i> Editer son profil</a>
                         <a href="{{ path('app_forgot_password_request')}}" class="btn"><i

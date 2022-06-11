@@ -200,7 +200,7 @@ class SurveyController extends AbstractController
      * @param SurveyRepository $surveyRepository
      * @return Response
      */
-    #[Route('/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
+    #[Route('/edit/{id}', name: 'app_survey_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
         // Si l'utilisateur n'est pas administrateur gérer l'accès.
@@ -214,13 +214,12 @@ class SurveyController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // TODO debugger l'édition de questionnaire.
             $surveyRepository->add($survey, true);
             $this->addFlash('success', 'Questionnaire modifié.');
             return $this->redirectToRoute('app_survey_show', ['id' => $survey->getId()], Response::HTTP_SEE_OTHER);
         }
-
         return $this->renderForm('survey/edit.html.twig', [
-            'survey' => $survey,
             'form' => $form,
         ]);
     }
