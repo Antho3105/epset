@@ -117,7 +117,6 @@ class SurveyController extends AbstractController
                     'course' => $course,
                 ]);
             }
-
             // Attribuer le questionnaire au formateur.
             $survey->setUser($user);
             // Attribuer le questionnaire à la formation.

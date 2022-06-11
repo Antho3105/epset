@@ -23,7 +23,14 @@
         <div class="d-flex justify-content-end">
             <a class="btn btn-info mx-2" href="{{ path('app_survey_show', {'id': question.survey.id}) }}"
                title="Retour"><i class="fa-solid fa-arrow-left"></i></a>
-            {{ include('question/_delete_form.html.twig') }}
+            {% if is_granted('ROLE_ADMIN') %}
+                {{ include('question/_hardDelete_form.html.twig') }}
+            {% endif %}
+            {% if question.deleteDate %}
+                {{ include('question/_reset_form.html.twig') }}
+            {% else %}
+                {{ include('question/_delete_form.html.twig') }}
+            {% endif %}
             <a class="btn btn-primary mx-2" href="{{ path('app_question_edit', {'id': question.id}) }}">Modifier</a>
         </div>
     </section>
@@ -34,7 +41,7 @@
 
         <div id="answers" class="flex">
             {% for answer in answers %}
-                <div id="{{ answer.id }}" class="card answers">
+                <div id="{{ answer.id }}" class="card answers justify-content-between">
                     {{ answer.value| raw }}
                     <a class="btn btn-primary mx-2"
                        href="{{ path('app_answer_edit', {'id': answer.id}) }}">Modifier</a>

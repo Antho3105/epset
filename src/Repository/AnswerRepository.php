@@ -51,6 +51,16 @@ class AnswerRepository extends ServiceEntityRepository
         }
     }
 
+    public function reset(Answer $entity, bool $flush = false): void
+    {
+        $entity->setDeleteDate(null);
+        $this->getEntityManager()->persist($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
 //    /**
 //     * @return Answer[] Returns an array of Answer objects
 //     */

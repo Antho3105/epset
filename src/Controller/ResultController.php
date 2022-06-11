@@ -31,6 +31,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 #[Route('/result')]
 class ResultController extends AbstractController
 {
+    /**
+     * Methode d'affichage des résultats.
+     * @param ResultRepository $resultRepository
+     * @param CandidateRepository $candidateRepository
+     * @return Response
+     */
     #[Route('/', name: 'app_result_index', methods: ['GET'])]
     public function index(ResultRepository $resultRepository, CandidateRepository $candidateRepository): Response
     {
@@ -49,7 +55,7 @@ class ResultController extends AbstractController
             ]);
             // initialiser le tableau des résultats
             $results = [];
-            // Rechercher les résultats de chaque candidat.
+            // Pour chaque candidat récupérer tous ses résultats.
             foreach ($candidates as $candidate) {
                 $resultsByCandidate = $resultRepository->findBy([
                     'candidate' => $candidate,
@@ -79,15 +85,17 @@ class ResultController extends AbstractController
     public function new(CandidateRepository $candidateRepository, CourseRepository $courseRepository): Response
     {
         $user = $this->getUser();
-        // si l'utilisateur n'est pas admin filtrer les candidats et les questionnaires.
+        // Initialiser les tableaux de questionnaires et de candidats.
+        $surveys = [];
+        $candidates = [];
+        // Si l'utilisateur n'est pas admin filtrer les candidats et les questionnaires.
         if (!$this->isGranted('ROLE_ADMIN')) {
             // Récupérer tous les candidats (non supprimés) du centre.
             $candidates = $candidateRepository->findBy([
                 'user' => $user,
                 'deleteDate' => null
             ]);
-            // Initialiser le tableau de tous les questionnaires du centre.
-            $surveys = [];
+
             // Récupérer toutes les formations (non supprimées) du centre
             $courses = $courseRepository->findBy([
                 'user' => $user,
@@ -178,7 +186,6 @@ class ResultController extends AbstractController
                 throw new AccessDeniedHttpException();
         }
 
-
         // Sinon créer la fiche de résultat.
         $result = new Result();
         $result->setCandidate($candidate);
@@ -186,7 +193,11 @@ class ResultController extends AbstractController
         $result->setTestDate(new DateTime());
 
         // Créer un token de validation et le stocker dans la fiche de résultat.
-        $token = uniqid('', true) . rtrim(strtr(base64_encode(random_bytes(12)), '+/', '-_'), '=');
+        try {
+            $token = uniqid('', true) . rtrim(strtr(base64_encode(random_bytes(12)), '+/', '-_'), '=');
+        } catch (\Exception $e) {
+            $this->addFlash("alert", "Erreur lors de la création du code d'accès unique, veuillez réessayer.");
+        }
         $result->setToken($token);
 
         // Envoyer le mail avec le lien au candidat.
@@ -207,13 +218,12 @@ class ResultController extends AbstractController
             $this->addFlash('alert', 'Erreur lors de l\'envoi du mail veuillez recommencer.');
         }
         $resultRepository->add($result, true);
-
         return $this->render('main/index.html.twig');
     }
 
 
     /**
-     *
+     * Méthode d'affichage d'un résultat.
      */
     #[Route('/{id}', name: 'app_result_show', methods: ['GET'])]
     public function show(Result $result, QuestionRepository $questionRepository): Response
@@ -225,7 +235,7 @@ class ResultController extends AbstractController
                 throw new AccessDeniedHttpException();
         }
 
-        // Calcul de la durée théorique du test :
+        // Calcul de la durée théorique du test pour affichage :
         $questionNb = count($questionRepository->findBy([
             'Survey' => $result->getSurvey(),
             'deleteDate' => null,
@@ -268,7 +278,7 @@ class ResultController extends AbstractController
 
 
     /**
-     * Soft delete (seul l'administrateur peux supprimer définitivement l'élément
+     * Soft delete (seul l'administrateur peut supprimer définitivement l'élément
      *
      * @param Request $request
      * @param Result $result
