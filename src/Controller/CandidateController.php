@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Candidate;
 use App\Form\CandidateType;
 use App\Repository\CandidateRepository;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,6 +41,27 @@ class CandidateController extends AbstractController
         ]);
     }
 
+    #[Route('/oldEntries', name: 'app_candidate_old_entries', methods: ['GET'])]
+    public function indexOldEntries(CandidateRepository $candidateRepository): Response
+    {
+        $user = $this->getUser();
+        // Si administrateur afficher tous les candidats
+        if ($this->isGranted("ROLE_ADMIN")) {
+            return $this->render('candidate/index.html.twig', [
+                'candidates' => $candidateRepository->findAll(),
+            ]);
+        }
+
+        // Sinon n'afficher que les candidats rattachés au centre et non supprimés.
+        return $this->render('candidate/indexOldEntries.html.twig', [
+            'candidates' => $candidateRepository->findBy([
+                'user' => $user,
+                'deleteDate' => null
+            ]),
+        ]);
+    }
+
+
     #[Route('/new', name: 'app_candidate_new', methods: ['GET', 'POST'])]
     public function new(Request $request, CandidateRepository $candidateRepository): Response
     {
@@ -48,10 +70,10 @@ class CandidateController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getUser();
             // Affecter le nouveau candidat à l'utilisateur actuel.
             // TODO ajouter une fonction admin pour affecter un candidat a un centre.
-            $candidate->setUser($user);
+            $candidate->setUser($this->getUser());
+            $candidate->setLastUpdate(new DateTime());
             $candidateRepository->add($candidate, true);
             $this->addFlash('success', 'Candidat' . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' ajouté !');
             return $this->redirectToRoute('app_candidate_index', [], Response::HTTP_SEE_OTHER);

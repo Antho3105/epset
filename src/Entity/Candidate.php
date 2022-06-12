@@ -40,6 +40,9 @@ class Candidate
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private $cvFileName;
 
+    #[ORM\Column(type: 'datetime')]
+    private $lastUpdate;
+
     public function __construct()
     {
         $this->results = new ArrayCollection();
@@ -165,6 +168,18 @@ class Candidate
     public function setCvFileName(?string $cvFileName): self
     {
         $this->cvFileName = $cvFileName;
+
+        return $this;
+    }
+
+    public function getLastUpdate(): ?\DateTimeInterface
+    {
+        return $this->lastUpdate;
+    }
+
+    public function setLastUpdate(\DateTimeInterface $lastUpdate): self
+    {
+        $this->lastUpdate = $lastUpdate;
 
         return $this;
     }

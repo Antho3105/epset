@@ -221,6 +221,7 @@ class CandidateSurveyController extends AbstractController
 
                 $now = new DateTime();
 
+                $result->getCandidate()->setLastUpdate($now);
                 $result->setTestDuration(date_diff($result->getTestDate(), $now));
                 $gap = date_diff($now, $maxEndOfTest);
                 if ($gap->invert === 1) {
