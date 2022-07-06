@@ -214,7 +214,6 @@ class SurveyController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // TODO debugger l'édition de questionnaire.
             $surveyRepository->add($survey, true);
             $this->addFlash('success', 'Questionnaire modifié.');
             return $this->redirectToRoute('app_survey_show', ['id' => $survey->getId()], Response::HTTP_SEE_OTHER);
@@ -251,6 +250,7 @@ class SurveyController extends AbstractController
             }
         }
         // Sinon appeler la fonction de softDelete
+        // TODO ajouter la suppression des questions et réponses liées avant de supprimer le questionnaire
         if ($this->isCsrfTokenValid('delete' . $survey->getId(), $request->request->get('_token'))) {
             $surveyRepository->softRemove($survey, true);
             $this->addFlash('alert', 'Questionnaire supprimé !');
@@ -266,6 +266,7 @@ class SurveyController extends AbstractController
     #[Route('/reset/{id}', name: 'app_survey_reset', methods: ['POST'])]
     public function reset(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
+        // TODO ajouter la restauration des questions et réponses liées avant de restaurer le questionnaire
         if ($this->isCsrfTokenValid('_tokenReset' . $survey->getId(), $request->request->get('_tokenReset'))) {
             $surveyRepository->cancelRemove($survey, true);
             $this->addFlash('alert', 'Questionnaire restauré !');
@@ -286,6 +287,7 @@ class SurveyController extends AbstractController
     #[Route('/hardDelete/{id}', name: 'app_survey_hard_delete', methods: ['POST'])]
     public function delete(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
+        // TODO ajouter la suppression définitive des questions et réponses liées avant de supprimer le questionnaire
         if ($this->isCsrfTokenValid('delete' . $survey->getId(), $request->request->get('_token'))) {
             $surveyRepository->remove($survey, true);
         }

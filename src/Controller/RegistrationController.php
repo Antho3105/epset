@@ -65,7 +65,7 @@ class RegistrationController extends AbstractController
      * @return Response
      */
     #[Route('/register/trainer', name: 'app_register_trainer')]
-    public function registerCenter(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function registerTrainer(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormCenter::class, $user);

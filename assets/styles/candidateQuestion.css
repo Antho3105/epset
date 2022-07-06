@@ -24,8 +24,7 @@
     padding: 5px;
     border-radius: 10px;
     flex-direction: row;
-    width: 45%;
-    min-height: 100px !important;
+    min-height: 60px !important;
     margin: 5px !important;
     align-items: center;
 }

@@ -117,7 +117,7 @@ class UserController extends AbstractController
      * Un centre ne peut voir que les formateurs
      * Un formateur ne peut pas accéder au pages de details.
      *
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("ROLE_CENTER")
      * @param User $user
      * @return Response
      */
@@ -126,11 +126,7 @@ class UserController extends AbstractController
     {
         // si l'utilisateur n'est pas admin gerer l'acces
         if (!$this->isGranted("ROLE_ADMIN")) {
-            // Si l'utilisateur est un formateur interdire l'accès aux detail des utilisateurs
-            if ($this->isGranted("ROLE_TRAINER")) {
-                throw new AccessDeniedHttpException();
-            }
-            // Si l'utilisateur en un centre générer une erreur s'il veut voir une autre fiche que celle d'un formateur..
+            // Si l'utilisateur en un centre générer une erreur s'il veut voir une autre fiche que celle d'un formateur.
             if ($this->isGranted("ROLE_CENTER")) {
                 if ($user->getRoles()[0] !== "ROLE_TRAINER") {
                     throw new AccessDeniedHttpException();
@@ -156,7 +152,7 @@ class UserController extends AbstractController
         }
 
         if ($user->getRoles()[0] == "ROLE_CENTER")
-        $form = $this->createForm(CenterType::class, $user);
+            $form = $this->createForm(CenterType::class, $user);
         else
             $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);

@@ -326,7 +326,7 @@ class ResultController extends AbstractController
      * @param ResultRepository $resultRepository
      * @return Response
      */
-    #[Route('/hard/{id}', name: 'app_result_hard_delete', methods: ['POST'])]
+    #[Route('/hardDelete/{id}', name: 'app_result_hard_delete', methods: ['POST'])]
     public function hardDelete(Request $request, Result $result, ResultRepository $resultRepository): Response
     {
         if ($this->isCsrfTokenValid('hardDelete' . $result->getId(), $request->request->get('_token'))) {

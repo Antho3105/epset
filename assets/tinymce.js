@@ -18,7 +18,7 @@ tinymce.init({
 tinymce.init({
     selector: '.tinymceXS',
     menubar: false,
-    height: 350,
+    height: 150,
     plugins: 'codesample wordcount',
     toolbar: 'codesample fontfamily fontsize forecolor backcolor',
     language: 'fr_FR',

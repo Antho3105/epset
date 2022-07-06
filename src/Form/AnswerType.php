@@ -26,8 +26,10 @@ class AnswerType extends AbstractType
                     'max' => 200,
                     'maxMessage' => 'Réponse trop longue !'
                 ])
-            ])
-        ->add('isRightAnswer', HiddenType::class);
+            ]);
+//        ->add('isRightAnswer', HiddenType::class, [
+//            'required' => false
+//        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -214,7 +214,7 @@ class QuestionController extends AbstractController
 
         if (($form->isSubmitted() && $form->isValid())) {
             $answerRepository->add($answer, true);
-            return $this->redirectToRoute('app_survey_show', ['id' => $answer->getQuestion()->getSurvey()->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_question_show', ['id' => $answer->getQuestion()->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('question/editAnswer.html.twig', [
@@ -308,7 +308,7 @@ class QuestionController extends AbstractController
 
 
     /**
-     * Methode de sauvegarde des réponses.
+     * Methode privée de sauvegarde des réponses.
      *
      * @param string $candidateAnswer
      * @param bool $status
