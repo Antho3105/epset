@@ -59,10 +59,11 @@ class SurveyType extends AbstractType
                 'required' => false
             ])
             ->add('detail', TextareaType::class,
-                ['attr' => [
-                    'class' => 'tinymceXL',
-                    'maxlength' => 1500
-                ],
+                ['required' => false,
+                    'attr' => [
+                        'class' => 'tinymceXL',
+                        'maxlength' => 1500
+                    ],
                     'label' => 'Détails du questionnaire :',
                     'constraints' => new Length([
                         'max' => 1500,
