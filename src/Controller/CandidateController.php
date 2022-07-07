@@ -75,7 +75,7 @@ class CandidateController extends AbstractController
             $candidate->setUser($this->getUser());
             $candidate->setLastUpdate(new DateTime());
             $candidateRepository->add($candidate, true);
-            $this->addFlash('success', 'Candidat' . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' ajouté !');
+            $this->addFlash('success', 'Candidat : ' . $candidate->getFirstName() . ' ' . $candidate->getLastName() . ' ajouté !');
             return $this->redirectToRoute('app_candidate_index', [], Response::HTTP_SEE_OTHER);
         }
         return $this->renderForm('candidate/new.html.twig', [
