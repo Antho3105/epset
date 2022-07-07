@@ -4,7 +4,9 @@
 
 {% block body %}
     <section id="candidateResult">
-        <h1 class="h1 mb-3 font-weight-normal text-center">Résultat de <a href="{{ path('app_candidate_show', {'id' : result.candidate.id }) }}">{{ result.candidate }}</a></h1>
+        <h1 class="h1 mb-3 font-weight-normal text-center">Résultat de <a
+                    href="{{ path('app_candidate_show', {'id' : result.candidate.id }) }}">{{ result.candidate }}</a>
+        </h1>
 
         <table class="table">
             <tbody>
@@ -16,9 +18,9 @@
             {% endif %}
             <tr>
                 {% if result.finalScore %}
-                <th>Date du test</th>
-             {% else %}
-                <th>Date de création de la fiche de résultat</th>
+                    <th>Date du test</th>
+                {% else %}
+                    <th>Date de création de la fiche de résultat</th>
                 {% endif %}
                 <td>{{ result.testDate ? result.testDate|date('d-m-Y H:i') : '' }}</td>
             </tr>
@@ -38,7 +40,8 @@
                 <tr>
                     <th>Durée réelle</th>
                     {% if result.isCheater %}
-                        <td style="color: red">{{ result.testDuration.format("%H:%I:%S") }} Attention triche potentielle détectée
+                        <td style="color: red">{{ result.testDuration.format("%H:%I:%S") }} Attention triche potentielle
+                            détectée
                             !
                         </td>
                     {% else %}
@@ -76,8 +79,9 @@
                 {% if result.coverLetterFilename %}
                     <th>Lettre de motivation</th>
                     <td>
-                        <a href="{{ asset('./coverLetters_files/'~ result.coverLetterFilename) }}">
-                            Lien <i class="fa-solid fa-file-pdf" style="font-size: 20px"></i></a>
+                        <a download href="{{ asset('./coverLetters_files/'~ result.coverLetterFilename) }}">
+                            Lien <i class="fa-solid fa-file-pdf" style="font-size: 20px"></i>
+                        </a>
                     </td>
                 {% endif %}
             </tr>
@@ -85,8 +89,9 @@
                 {% if result.candidate.cvFileName %}
                     <th>CV du candidat</th>
                     <td>
-                        <a href="{{ asset('./cv_files/'~ result.candidate.cvFileName) }}">
-                            Lien <i class="fa-solid fa-file-pdf" style="font-size: 20px"></i></a>
+                        <a download href="{{ asset('./cv_files/'~ result.candidate.cvFileName) }}">
+                            Lien <i class="fa-solid fa-file-pdf" style="font-size: 20px"></i>
+                        </a>
                     </td>
                 {% endif %}
             </tr>

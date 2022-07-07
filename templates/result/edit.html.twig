@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Result{% endblock %}
+{% block title %}Modifier résultat{% endblock %}
 
 {% block body %}
-    <h1 class="h1 mb-3 font-weight-normal text-center">Edit Result</h1>
+    <h1 class="h1 mb-3 font-weight-normal text-center">Modifier résultat</h1>
 
     {{ include('result/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_result_index') }}">back to list</a>
+    <a href="{{ path('app_result_index') }}">Retour liste</a>
 
     {{ include('result/_delete_form.html.twig') }}
 {% endblock %}

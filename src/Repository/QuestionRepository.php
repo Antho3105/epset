@@ -39,12 +39,22 @@ class QuestionRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
     public function softDelete(Question $entity, bool $flush = false): void
     {
         $date = new DateTime();
         $entity->setDeleteDate($date);
         $this->getEntityManager()->persist($entity);
 
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function reset(Question $entity, bool $flush = false): void
+    {
+        $entity->setDeleteDate(null);
+        $this->getEntityManager()->persist($entity);
         if ($flush) {
             $this->getEntityManager()->flush();
         }

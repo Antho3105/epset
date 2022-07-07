@@ -5,21 +5,33 @@
 {% block body %}
     <h1 class="h1 mb-3 font-weight-normal text-center">Créer une nouvelle fiche de résultat</h1>
     <section>
-        <div class="d-flex">
+        <div class="details">
+        <p class="text-center">
+            Sélectionnez le candidat et le questionnaire que vous voulez lui attribuer.
+        </p>
+        <p class="text-center">
+            Le candidat recevra automatiquement un mail contenant un lien à usage unique pour répondre au questionnaire
+        </p>
+        <p class="text-center">
+            Vous serez averti par mail dès que le candidat aura terminé.
+        </p>
+        </div>
+        <div class="d-flex justify-content-center">
             <form action="{{ path('app_result_add') }}" method="POST">
-            <select name="candidate" id="candidate" class="form-select" aria-label="Default select example">
-                {% for candidate in candidates %}
-                    <option value="{{ candidate.id }}">{{ candidate }}</option>
-                {% endfor %}
-            </select>
+                <select name="candidate" id="candidate" class="form-select my-2" aria-label="Default select example">
+                    {% for candidate in candidates %}
+                        <option value="{{ candidate.id }}">{{ candidate }}</option>
+                    {% endfor %}
+                </select>
 
-            <select id="survey" name="survey" class="form-select" aria-label="Default select example">
-                {% for survey in surveys %}
-                    <option value="{{ survey.id }}">{{ survey }}</option>
-                {% endfor %}
-            </select>
-
-            <button class="btn btn-primary">Valider</button>
+                <select id="survey" name="survey" class="form-select my-2" aria-label="Default select example">
+                    {% for survey in surveys %}
+                        <option value="{{ survey.id }}">{{ survey.course }} : {{ survey }}</option>
+                    {% endfor %}
+                </select>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-success my-2"><i class="fa-solid fa-check"></i></button>
+                </div>
             </form>
         </div>
 

@@ -55,7 +55,8 @@ class SurveyType extends AbstractType
                 ])
             ])
             ->add('ordered', CheckboxType::class, [
-                'label' => 'Affichage des questions dans l\'ordre de création'
+                'label' => 'Affichage des questions dans l\'ordre de création',
+                'required' => false
             ])
             ->add('detail', TextareaType::class,
                 ['attr' => [
@@ -63,7 +64,6 @@ class SurveyType extends AbstractType
                     'maxlength' => 1500
                 ],
                     'label' => 'Détails du questionnaire :',
-                    'required' => false,
                     'constraints' => new Length([
                         'max' => 1500,
                         'maxMessage' => 'Détails trop long'

@@ -5,7 +5,9 @@
 {% block body %}
     <section>
         <h1 class="h1 mb-3 font-weight-normal text-center">Liste des résultats par formation</h1>
-
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-primary" href="{{ path('app_result_new') }}">Créer nouvelle fiche</a>
+        </div>
         {% for course in app.user.courses %}
             {% if course.deleteDate is null %}
                 <div>
@@ -14,11 +16,11 @@
                     {% for result in results %}
                         {% if result.survey.course == course %}
                             <div class="card">
-                                <div class="card-header">
+                                <div class="card-header" >
                                     {{ result.candidate }}
                                 </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">Formation : {{ result.survey.course }}</h5>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">Questionnaire : {{ result.survey }}</h5>
                                     {% if result.score is not null %}
                                         {% if result.isCheater %}
                                             <p class="card-text" style="color: red">Score : {{ result.finalScore }}
@@ -48,28 +50,20 @@
                 <thead>
                 <tr>
                     <th>Id</th>
+                    <th>Centre</th>
+                    <th>Candidat</th>
                     <th>Date du test</th>
-                    <th>Nombre de questions lues</th>
-                    <th>Nombre de réponses</th>
-                    <th>Score</th>
-                    <th>Token</th>
                     <th>DeleteDate</th>
-                    <th>actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for result in results %}
-                    <tr>
+                    <tr onclick="location.href='{{ path('app_result_show', {'id': result.id}) }}'">
                         <td>{{ result.id }}</td>
+                        <td>{{ result.survey.course.user }}</td>
+                        <td>{{ result.candidate }}</td>
                         <td>{{ result.testDate ? result.testDate|date('d-m-Y H:i') : '-' }}</td>
-                        <td>{{ result.viewedQuestion is null ? '-' : result.viewedQuestion }}</td>
-                        <td>{{ result.answeredQuestion is null ? '-': result.answeredQuestion }}</td>
-                        <td>{{ result.score ?: '-' }}</td>
-                        <td>{{ result.token }}</td>
                         <td>{{ result.deleteDate ? result.deleteDate|date('Y-m-d H:i:s') : '-' }}</td>
-                        <td>
-                            <a href="{{ path('app_result_show', {'id': result.id}) }}">Voir</a>
-                        </td>
                     </tr>
                 {% else %}
                     <tr>
@@ -79,8 +73,6 @@
                 </tbody>
             </table>
         {% endif %}
-        <div class="d-flex justify-content-end">
-            <a class="btn btn-primary" href="{{ path('app_result_new') }}">Créer nouvelle fiche</a>
-        </div>
+
     </section>
 {% endblock %}

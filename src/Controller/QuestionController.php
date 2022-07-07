@@ -105,11 +105,20 @@ class QuestionController extends AbstractController
         ]);
     }
 
+    /**
+     * Methode d'affichage d'une question.
+     * @param Question $question
+     * @param AnswerRepository $answerRepository
+     * @return Response
+     */
     #[Route('/{id}', name: 'app_question_show', methods: ['GET'])]
     public function show(Question $question, AnswerRepository $answerRepository): Response
     {
         // Si l'utilisateur n'est pas administrateur gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
+            // si la question a été supprimée, générer une erreur.
+            if ($question->getDeleteDate())
+                throw new AccessDeniedHttpException();
             if ($this->isGranted("ROLE_CENTER")) {
                 // Si la question passée en GET n'est pas lié à une formation du centre générer une erreur
                 if ($question->getSurvey()->getCourse()->getUser() !== $this->getUser())
@@ -121,42 +130,46 @@ class QuestionController extends AbstractController
                     throw new AccessDeniedHttpException();
             }
         }
-        if ($question->getDeleteDate())
-            throw new AccessDeniedHttpException();
-
         // Récupérer les réponses.
-        $answers = $answerRepository->findBy([
-            'question' => $question,
-            'deleteDate' => null
-        ]);
+        // Si admin les afficher meme si elles ont été supprimées.
+        if ($this->isGranted("ROLE_ADMIN")) {
+            $answers = $answerRepository->findBy([
+                'question' => $question,
+            ]);
+        } else
+            $answers = $answerRepository->findBy([
+                'question' => $question,
+                'deleteDate' => null
+            ]);
 
         return $this->render('question/show.html.twig', [
             'question' => $question,
             'answers' => $answers
-
         ]);
     }
 
-
+    /**
+     * Méthode de modification d'une question.
+     * Seuls les formateurs sont autorisés à modifier les questions.
+     * @IsGranted("ROLE_TRAINER")
+     *
+     * @param Request $request
+     * @param Question $question
+     * @param QuestionRepository $questionRepository
+     * @return Response
+     */
     #[Route('/{id}/edit', name: 'app_question_edit', methods: ['GET', 'POST'])]
     public function questionEdit(Request $request, Question $question, QuestionRepository $questionRepository): Response
     {
         // Si l'utilisateur n'est pas administrateur gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
-            if ($this->isGranted("ROLE_CENTER")) {
-                // Si la question passée en GET n'est pas lié à une formation du centre générer une erreur
-                if ($question->getSurvey()->getCourse()->getUser() !== $this->getUser())
-                    throw new AccessDeniedHttpException();
-            }
-            // Si la question passée en GET n'a pas été créée par le formateur générer une erreur
-            if ($this->isGranted("ROLE_TRAINER")) {
-                if ($question->getSurvey()->getUser() !== $this->getUser())
-                    throw new AccessDeniedHttpException();
-            }
+            // Si la question a été supprimée, générer une erreur.
+            if ($question->getDeleteDate())
+                throw new AccessDeniedHttpException();
+            // Si la question passée en GET n'a pas été créée par le formateur, générer une erreur
+            if ($question->getSurvey()->getUser() !== $this->getUser())
+                throw new AccessDeniedHttpException();
         }
-        if ($question->getDeleteDate())
-            throw new AccessDeniedHttpException();
-
 
         $form = $this->createForm(QuestionType::class, $question);
         $form->handleRequest($request);
@@ -171,32 +184,37 @@ class QuestionController extends AbstractController
         ]);
     }
 
+    /**
+     * Méthode de modification d'une réponse
+     * Seuls les formateurs sont autorisés à modifier les questions.
+     * @IsGranted("ROLE_TRAINER")
+     *
+     * @param Request $request
+     * @param Answer $answer
+     * @param AnswerRepository $answerRepository
+     * @return Response
+     */
     #[Route('/{id}/edit/answer', name: 'app_answer_edit', methods: ['GET', 'POST'])]
     public function answerEdit(Request $request, Answer $answer, AnswerRepository $answerRepository): Response
     {
         // Si l'utilisateur n'est pas administrateur gérer l'accès.
         if (!$this->isGranted("ROLE_ADMIN")) {
-            if ($this->isGranted("ROLE_CENTER")) {
-                // Si la réponse passée en GET n'est pas lié à une formation du centre générer une erreur
-                if ($answer->getQuestion()->getSurvey()->getCourse()->getUser() !== $this->getUser())
-                    throw new AccessDeniedHttpException();
-            }
+            // Si la réponse a été supprimée, générer une erreur.
+            if ($answer->getDeleteDate())
+                throw new AccessDeniedHttpException();
             // Si la réponse passée en GET n'a pas été créée par le formateur générer une erreur
             if ($this->isGranted("ROLE_TRAINER")) {
                 if ($answer->getQuestion()->getSurvey()->getUser() !== $this->getUser())
                     throw new AccessDeniedHttpException();
             }
         }
-        if ($answer->getQuestion()->getDeleteDate())
-            throw new AccessDeniedHttpException();
 
         $form = $this->createForm(AnswerType::class, $answer);
         $form->handleRequest($request);
 
         if (($form->isSubmitted() && $form->isValid())) {
             $answerRepository->add($answer, true);
-
-            return $this->redirectToRoute('app_survey_show', ['id' => $answer->getQuestion()->getSurvey()->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_question_show', ['id' => $answer->getQuestion()->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('question/editAnswer.html.twig', [
@@ -205,7 +223,7 @@ class QuestionController extends AbstractController
     }
 
     /**
-     * Soft delete (seul l'administrateur peux supprimer définitivement l'élément
+     * Soft delete (seul l'administrateur peut supprimer définitivement l'élément).
      *
      * @param Request $request
      * @param Question $question
@@ -228,7 +246,6 @@ class QuestionController extends AbstractController
                     throw new AccessDeniedHttpException();
             }
         }
-
         if ($this->isCsrfTokenValid('delete' . $question->getId(), $request->request->get('_token'))) {
             $answers = $question->getAnswers();
             foreach ($answers as $answer) {
@@ -236,13 +253,62 @@ class QuestionController extends AbstractController
             }
             $questionRepository->softDelete($question, true);
         }
+        $this->addFlash('alert', 'Question et réponses supprimées.');
+        return $this->redirectToRoute('app_survey_show', ['id' => $question->getSurvey()->getId()], Response::HTTP_SEE_OTHER);
+    }
 
+    /**
+     * Suppression complete d'une question et de ses réponses.
+     * Seuls les administrateurs ont accès.
+     * @IsGranted("ROLE_ADMIN")
+     *
+     * @param Request $request
+     * @param Question $question
+     * @param QuestionRepository $questionRepository
+     * @param AnswerRepository $answerRepository
+     * @return Response
+     */
+    #[Route('/{id}/hardDelete', name: 'app_question_hard_delete', methods: ['POST'])]
+    public function hardDelete(Request $request, Question $question, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
+    {
+        if ($this->isCsrfTokenValid('_tokenHardDelete' . $question->getId(), $request->request->get('_tokenHardDelete'))) {
+            $answers = $question->getAnswers();
+            foreach ($answers as $answer) {
+                $answerRepository->remove($answer, true);
+            }
+            $questionRepository->remove($question, true);
+        }
+        $this->addFlash('alert', 'Question et réponses définitivement supprimées.');
         return $this->redirectToRoute('app_survey_show', ['id' => $question->getSurvey()->getId()], Response::HTTP_SEE_OTHER);
     }
 
 
     /**
+     * Methode pour restaurer une question et ses réponses.
+     * Seuls les administrateurs ont accès.
+     * @IsGranted("ROLE_ADMIN")
      *
+     */
+    #[Route('/{id}/reset', name: 'app_question_reset', methods: ['POST'])]
+    public function reset(Request $request, Question $question, QuestionRepository $questionRepository, AnswerRepository $answerRepository): Response
+    {
+        if ($this->isCsrfTokenValid('_tokenResetQuestion' . $question->getId(), $request->request->get('_tokenResetQuestion'))) {
+            $answers = $question->getAnswers();
+
+            foreach ($answers as $answer) {
+                $answerRepository->reset($answer, true);
+            }
+
+            $questionRepository->reset($question, true);
+            $this->addFlash('alert', 'Question et réponses restaurées !');
+
+        }
+        return $this->redirectToRoute('app_survey_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+
+    /**
+     * Methode privée de sauvegarde des réponses.
      *
      * @param string $candidateAnswer
      * @param bool $status
@@ -258,6 +324,4 @@ class QuestionController extends AbstractController
         $answer->setIsRightAnswer($status);
         $answerRepository->add($answer, true);
     }
-
-
 }

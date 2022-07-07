@@ -117,7 +117,6 @@ class SurveyController extends AbstractController
                     'course' => $course,
                 ]);
             }
-
             // Attribuer le questionnaire au formateur.
             $survey->setUser($user);
             // Attribuer le questionnaire à la formation.
@@ -201,7 +200,7 @@ class SurveyController extends AbstractController
      * @param SurveyRepository $surveyRepository
      * @return Response
      */
-    #[Route('/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
+    #[Route('/edit/{id}', name: 'app_survey_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
         // Si l'utilisateur n'est pas administrateur gérer l'accès.
@@ -219,9 +218,7 @@ class SurveyController extends AbstractController
             $this->addFlash('success', 'Questionnaire modifié.');
             return $this->redirectToRoute('app_survey_show', ['id' => $survey->getId()], Response::HTTP_SEE_OTHER);
         }
-
         return $this->renderForm('survey/edit.html.twig', [
-            'survey' => $survey,
             'form' => $form,
         ]);
     }
@@ -253,6 +250,7 @@ class SurveyController extends AbstractController
             }
         }
         // Sinon appeler la fonction de softDelete
+        // TODO ajouter la suppression des questions et réponses liées avant de supprimer le questionnaire
         if ($this->isCsrfTokenValid('delete' . $survey->getId(), $request->request->get('_token'))) {
             $surveyRepository->softRemove($survey, true);
             $this->addFlash('alert', 'Questionnaire supprimé !');
@@ -268,6 +266,7 @@ class SurveyController extends AbstractController
     #[Route('/reset/{id}', name: 'app_survey_reset', methods: ['POST'])]
     public function reset(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
+        // TODO ajouter la restauration des questions et réponses liées avant de restaurer le questionnaire
         if ($this->isCsrfTokenValid('_tokenReset' . $survey->getId(), $request->request->get('_tokenReset'))) {
             $surveyRepository->cancelRemove($survey, true);
             $this->addFlash('alert', 'Questionnaire restauré !');
@@ -288,6 +287,7 @@ class SurveyController extends AbstractController
     #[Route('/hardDelete/{id}', name: 'app_survey_hard_delete', methods: ['POST'])]
     public function delete(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
+        // TODO ajouter la suppression définitive des questions et réponses liées avant de supprimer le questionnaire
         if ($this->isCsrfTokenValid('delete' . $survey->getId(), $request->request->get('_token'))) {
             $surveyRepository->remove($survey, true);
         }
