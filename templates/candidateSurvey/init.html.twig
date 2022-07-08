@@ -18,12 +18,12 @@
         <div>
             <div class="d-flex">
                 <div><p>Difficulté du questionnaire :</p></div>
-                <div class="d-flex">
+                <div class="d-flex align-items-center">
                     {% for i in 1..5 %}
-                        {% if i<=survey.difficulty %}
-                            <div><i class="fa-solid fa-circle"></i></div>
+                        {% if i <= survey.difficulty %}
+                            <i class="fa-solid fa-circle mx-1"></i>
                         {% else %}
-                            <div><i class="fa-regular fa-circle"></i></div>
+                            <i class="fa-regular fa-circle mx-1"></i>
                         {% endif %}
                     {% endfor %}
                 </div>
@@ -34,7 +34,7 @@
 
         <h3 class="h3 mb-3 font-weight-normal text-center pt-2">Consignes :</h3>
         <div>
-            <p>{{ survey.detail }}</p>
+            <p>{{ survey.detail|raw }}</p>
         </div>
     </section>
 
