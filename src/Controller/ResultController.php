@@ -194,7 +194,7 @@ class ResultController extends AbstractController
 
         // Créer un token de validation et le stocker dans la fiche de résultat.
         try {
-            $token = uniqid('', true) . rtrim(strtr(base64_encode(random_bytes(12)), '+/', '-_'), '=');
+            $token = uniqid('', true);
         } catch (\Exception $e) {
             $this->addFlash("alert", "Erreur lors de la création du code d'accès unique, veuillez réessayer.");
         }
