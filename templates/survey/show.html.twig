@@ -74,11 +74,11 @@
             </div>
         {% endif %}
         {% if questions %}
-            <div class="d-flex justify-content-between">
+            <div class="d-flex cardHolder justify-content-between">
                 {% for question in questions %}
                     <div class="card  mx-1">
                         <div class="d-flex card-header justify-content-between align-item-center">
-                            {{ question.question| striptags | slice(0, 50) ~ '...' }}
+                            {{ question.question | raw | striptags | slice(0, 50) ~ '...' }}
                         </div>
 
                         <div class="d-flex justify-content-end">
