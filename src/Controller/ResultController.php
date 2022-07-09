@@ -11,6 +11,7 @@ use App\Repository\QuestionRepository;
 use App\Repository\ResultRepository;
 use App\Repository\SurveyRepository;
 use DateTime;
+use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  *
@@ -31,6 +33,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 #[Route('/result')]
 class ResultController extends AbstractController
 {
+
+    private UrlGeneratorInterface $router;
+
+    public function __construct(UrlGeneratorInterface $router)
+    {
+        $this->router = $router;
+    }
+
     /**
      * Methode d'affichage des résultats.
      * @param ResultRepository $resultRepository
@@ -195,10 +205,12 @@ class ResultController extends AbstractController
         // Créer un token de validation et le stocker dans la fiche de résultat.
         try {
             $token = uniqid('', true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash("alert", "Erreur lors de la création du code d'accès unique, veuillez réessayer.");
         }
         $result->setToken($token);
+
+        $url = $this->router->generate('app_survey_init', [], urlGeneratorInterface::ABSOLUTE_URL);
 
         // Envoyer le mail avec le lien au candidat.
         $email = (new TemplatedEmail())
@@ -207,20 +219,20 @@ class ResultController extends AbstractController
             ->subject('QCM formation ' . $survey->getCourse()->getTitle())
             ->htmlTemplate('mailer/email_candidate.html.twig')
             ->context([
-                'survey' => $survey,
-                'token' => $token,
+                'link' => $url . '/' . $token,
                 'candidate' => $candidate
             ]);
 
         try {
             $mailer->send($email);
+            $this->addFlash('success', 'Un mail à été envoyé au candidat');
+
         } catch (TransportExceptionInterface) {
             $this->addFlash('alert', 'Erreur lors de l\'envoi du mail veuillez recommencer.');
         }
         $resultRepository->add($result, true);
         return $this->render('main/index.html.twig');
     }
-
 
     /**
      * Méthode d'affichage d'un résultat.

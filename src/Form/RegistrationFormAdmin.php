@@ -45,6 +45,7 @@ class RegistrationFormAdmin extends AbstractType
             ])
             ->add('lastName', TextType::class, [
                 'label' => false,
+                'required' => false,
                 'attr' => [
                     'placeholder' => 'Nom',
                     'maxlength' => 40
@@ -56,6 +57,7 @@ class RegistrationFormAdmin extends AbstractType
             ])
             ->add('domain', TextType::class, [
                 'label' => false,
+                'required' => false,
                 'attr' => [
                     'placeholder' => 'Domaines d\'activité',
                     'maxlength' => 100
@@ -67,6 +69,7 @@ class RegistrationFormAdmin extends AbstractType
             ])
             ->add('firstName', TextType::class, [
                 'label' => false,
+                'required' => false,
                 'attr' => [
                     'placeholder' => 'Prénom',
                     'maxlength' => 30
@@ -97,15 +100,6 @@ class RegistrationFormAdmin extends AbstractType
                     'max' => 25,
                     'maxMessage' => '{{ limit }} caractères maximum autorisés',
                 ])
-            ])
-            ->add('agreeTerms', CheckboxType::class, [
-                'label' => 'J\'accepte les conditions d\'utilisations',
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'Vous devez accepter nos conditions d\'utilisation.',
-                    ]),
-                ],
             ])
             ->add('plainPassword', PasswordType::class, [
                 'label' => false,

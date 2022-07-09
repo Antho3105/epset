@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Course;
 use App\Form\CourseType;
 use App\Repository\CourseRepository;
+use App\Repository\SurveyRepository;
 use App\Repository\VisibleCourseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,7 +95,7 @@ class CourseController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_course_show', methods: ['GET'])]
-    public function show(Course $course, VisibleCourseRepository $visibleCourseRepository): Response
+    public function show(Course $course, VisibleCourseRepository $visibleCourseRepository, SurveyRepository $surveyRepository): Response
     {
         $user = $this->getUser();
         // Si l'utilisateur n'est pas administrateur, gérer l'accès.
@@ -116,8 +117,19 @@ class CourseController extends AbstractController
                     throw new AccessDeniedHttpException();
             }
         }
+
+        $surveys = [];
+        if ($this->isGranted("ROLE_CENTER")){
+            $surveys = $surveyRepository->findBy([
+                'course' => $course,
+                'deleteDate' => null
+            ]);
+        }
+
+
         return $this->render('course/show.html.twig', [
             'course' => $course,
+            'surveys' => $surveys
         ]);
     }
 

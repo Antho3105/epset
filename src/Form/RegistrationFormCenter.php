@@ -88,15 +88,6 @@ class RegistrationFormCenter extends AbstractType
                     'maxMessage' => '{{ limit }} caractères maximum',
                 ])
             ])
-            ->add('agreeTerms', CheckboxType::class, [
-                'label' => 'J\'accepte les conditions d\'utilisations',
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'Vous devez accepter nos conditions d\'utilisation.',
-                    ]),
-                ],
-            ])
             ->add('plainPassword', PasswordType::class, [
                 'label' => false,
                 // instead of being set onto the object directly,
