@@ -42,7 +42,20 @@ class VisibleCourseController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $visibleCourseRepository->add($visibleCourse, true);
+
+                // Vérifier que ce formateur n'est pas deja affecté à cette formation
+                $trainer = $form->get('user')->getData();
+                $course = $form->get('course')->getData();
+                $visibleCourseExists = $visibleCourseRepository->findOneBy([
+                    'user' => $trainer,
+                    'Course' => $course,
+                ]);
+                if ($visibleCourseExists) {
+                    $this->addFlash('alert', $trainer . ' est deja assigné sur cette formation');
+                } else {
+                    $visibleCourseRepository->add($visibleCourse, true);
+                    $this->addFlash('success', $trainer . ' a été assigné à cette formation.');
+                }
                 return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
             }
             return $this->renderForm('visible_course/new.html.twig', [
@@ -54,7 +67,19 @@ class VisibleCourseController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $visibleCourseRepository->add($visibleCourse, true);
+            // Vérifier que ce formateur n'est pas deja affecté à cette formation
+            $trainer = $form->get('user')->getData();
+            $course = $form->get('course')->getData();
+            $visibleCourseExists = $visibleCourseRepository->findOneBy([
+                'user' => $trainer,
+                'Course' => $course,
+            ]);
+            if ($visibleCourseExists) {
+                $this->addFlash('alert', $trainer . ' est deja assigné à la formation ' . $course);
+            } else {
+                $visibleCourseRepository->add($visibleCourse, true);
+                $this->addFlash('success', $trainer . ' a été assigné à la formation ' . $course);
+            }
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
         }
         return $this->renderForm('visible_course/new.html.twig', [
@@ -93,12 +118,13 @@ class VisibleCourseController extends AbstractController
     public function delete(Request $request, VisibleCourse $visibleCourse, VisibleCourseRepository $visibleCourseRepository): Response
     {
         // Si la formation associée n'appartient pas au centre générer une erreur.
-        if ($visibleCourse->getCourse()->getUser() !== $this->getUser())
+        if (!$visibleCourse->getCourse()->getUser() == $this->getUser())
             throw new AccessDeniedHttpException();
 
         if ($this->isCsrfTokenValid('delete' . $visibleCourse->getId(), $request->request->get('_token'))) {
             $visibleCourseRepository->remove($visibleCourse, true);
         }
+
         return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
     }
 }

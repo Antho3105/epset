@@ -49,8 +49,9 @@
             {% endif %}
         </div>
     </section>
-    {% if is_granted('ROLE_CENTER') %}
-        <section>
+    <section>
+
+        {% if is_granted('ROLE_CENTER') %}
             <h2 class="h3 mb-3 font-weight-normal text-center">Formateurs assignés</h2>
 
             <div class="row cardHolder d-flex justify-content-between">
@@ -70,29 +71,30 @@
                     </div>
                 {% endfor %}
             </div>
-            <h2 class="h3 mb-3 font-weight-normal text-center">Questionnaires liés</h2>
+        {% endif %}
+        <h2 class="h3 mb-3 font-weight-normal text-center">Questionnaires liés</h2>
 
-            <div class="row cardHolder d-flex justify-content-between">
-                {% for survey in surveys %}
-                    <div class="card">
-                        <div class="card-header">
-                            <strong>{{ survey.ref }}</strong>
-                        </div>
-                        <div class="card-body">
-                            <p>Créé par : {{ survey.user }}</p>
-                            <p>Difficulté : {{ survey.difficulty }}</p>
-                            <div class="d-flex justify-content-end">
-                                <a href="{{ path('app_survey_show', {'id': survey.id}) }}"
-                                   class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
-                            </div>
+        <div class="row cardHolder d-flex justify-content-between">
+            {% for survey in surveys %}
+                <div class="card">
+                    <div class="card-header">
+                        <strong>{{ survey.ref }}</strong>
+                    </div>
+                    <div class="card-body">
+                        <p>Créé par : {{ survey.user }}</p>
+                        <p>Difficulté : {{ survey.difficulty }}</p>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ path('app_survey_show', {'id': survey.id}) }}"
+                               class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
                         </div>
                     </div>
+                </div>
 
-                {% endfor %}
-            </div>
+            {% endfor %}
+        </div>
 
-        </section>
-    {% endif %}
+    </section>
+
 
 
 {% endblock %}

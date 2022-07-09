@@ -84,7 +84,7 @@ class CourseController extends AbstractController
             $user = $this->getUser();
             $course->setUser($user);
             $courseRepository->add($course, true);
-            $this->addFlash('success', 'formation ajoutée.');
+            $this->addFlash('success', 'Formation ajoutée.');
             return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -124,8 +124,13 @@ class CourseController extends AbstractController
                 'course' => $course,
                 'deleteDate' => null
             ]);
+        }else if ($this->isGranted("ROLE_TRAINER")){
+            $surveys = $surveyRepository->findBy([
+                'course' => $course,
+                'deleteDate' => null,
+                'user' => $user
+            ]);
         }
-
 
         return $this->render('course/show.html.twig', [
             'course' => $course,
