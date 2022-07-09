@@ -29,7 +29,7 @@
         <section>
             {% if type == 'utilisateurs' %}
                 <h2 class="h2 mb-3 font-weight-normal text-center">Administrateurs</h2>
-                <div class="row cardHolder d-flex justify-content-between">
+                <div class="cardHolder d-flex justify-content-between">
                     {% for user in users %}
                         {% if user.roles[0] == "ROLE_ADMIN" %}
                             <div class="card">
@@ -48,7 +48,7 @@
                     {% endfor %}
                 </div>
                 <h2 class="h2 mb-3 font-weight-normal text-center">Formateurs</h2>
-                <div class="row cardHolder d-flex justify-content-between">
+                <div class="cardHolder d-flex justify-content-between">
                     {% for user in users %}
                         {% if user.roles[0] == "ROLE_TRAINER" %}
                             <div class="card">
