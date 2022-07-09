@@ -25,10 +25,16 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CandidateSurveyController extends AbstractController
 {
+    private UrlGeneratorInterface $router;
 
+    public function __construct(UrlGeneratorInterface $router)
+    {
+        $this->router = $router;
+    }
     /**
      * Methode d'initialisation d'un questionnaire :
      *
@@ -234,6 +240,8 @@ class CandidateSurveyController extends AbstractController
                 $result->setFinalScore($finalScore);
                 $resultRepository->add($result, true);
 
+                $url = $this->router->generate('app_result_index', [], urlGeneratorInterface::ABSOLUTE_URL);
+
                 // envoyer un mail au centre pour l'informer du résultat.
                 $email = (new TemplatedEmail())
                     ->from(new Address($_ENV['ADMIN_EMAIL'], 'epset mailer'))
@@ -241,7 +249,8 @@ class CandidateSurveyController extends AbstractController
                     ->subject($result->getCandidate() . ' vient de terminer le test "' . $result->getSurvey() . '".')
                     ->htmlTemplate('mailer/email_center_end_of_test.html.twig')
                     ->context([
-                        'result' => $result
+                        'link' => $url . $result->getId(),
+                        'result' => $result,
                     ]);
 
                 try {
