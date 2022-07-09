@@ -9,8 +9,8 @@
         <thead>
         <tr>
             <th>Référence</th>
+            <th>Formation liée</th>
             <th>Difficulté</th>
-            <th>Temps par question</th>
             <th>Ordre des questions</th>
             {% if is_granted('ROLE_ADMIN') %}
                 <th>Date de suppression</th>
@@ -21,8 +21,8 @@
         {% for survey in surveys %}
             <tr onclick="location.href='{{ path('app_survey_show', {'id': survey.id}) }}'">
                 <td>{{ survey.ref }}</td>
+                <td>{{ survey.course.title }}</td>
                 <td>{{ survey.difficulty }}</td>
-                <td>{{ survey.questionTimer }}</td>
                 <td>{{ survey.ordered ? 'Ordoné' : 'Aléatoire' }}</td>
                 {% if is_granted('ROLE_ADMIN') %}
                     <td>{{ survey.deleteDate ? survey.deleteDate|date('d-m-Y H:i') : '-' }}</td>

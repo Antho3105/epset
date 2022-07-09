@@ -6,7 +6,7 @@ answers.forEach(element => {
                 element.style.backgroundColor = "white"
                 element.style.color = "black"
             });
-            element.style.backgroundColor = "green";
+            element.style.backgroundColor = "#0e3fc9";
             element.style.color = "white";
             input.value = element.id
         }
