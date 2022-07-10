@@ -15,20 +15,20 @@
                 <th>Prénom</th>
                 <td>{{ user.firstName }}</td>
             </tr>
+            <tr>
+                <th>Nom d'utilisateur</th>
+                <td>{{ user.userName }}</td>
+            </tr>
             {% if is_granted('ROLE_ADMIN') %}
                 <tr>
                     <th>Dernière connexion</th>
-                    <td>{{ user.userName }}</td>
+                    <td>{{ user.lastConnection ? user.lastConnection|date('d-m-Y H:i') : "Jamais connecté" }}</td>
                 </tr>
                 <tr>
                     <th>Rôle</th>
                     <td>{{ user.roles[0] }}</td>
                 </tr>
             {% endif %}
-            <tr>
-                <th>Nom d'utilisateur</th>
-                <td>{{ user.userName }}</td>
-            </tr>
             <tr>
                 <th>Email</th>
                 <td>{{ user.email }}</td>

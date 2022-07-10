@@ -50,15 +50,22 @@
 
 
         <div class="d-flex justify-content-end">
-            <a class="btn btn-info mx-2" href="{{ path('app_survey_index') }}" title="Retour"><i class="fa-solid fa-arrow-left"></i></a>
+            <a class="btn btn-info mx-2" href="{{ path('app_survey_index') }}" title="Retour"><i
+                        class="fa-solid fa-arrow-left"></i></a>
 
             <a class="btn btn-primary mx-2" href="{{ path('app_survey_edit', {'id': survey.id}) }}" title="Modifier"><i
                         class="fa-solid fa-file-pen"></i></a>
 
-            {{ include('survey/_delete_form.html.twig') }}
-
             {% if is_granted('ROLE_ADMIN') %}
-                {{ include('survey/_reset_form.html.twig') }}
+                {% if survey.deleteDate != null %}
+                    {{ include('survey/_reset_form.html.twig') }}
+                {% else %}
+                    {{ include('survey/_delete_form.html.twig') }}
+                {% endif %}
+            {% else %}
+                {% if survey.deleteDate == null %}
+                    {{ include('survey/_delete_form.html.twig') }}
+                {% endif %}
             {% endif %}
 
         </div>
@@ -68,10 +75,12 @@
 
         <h2 class="h2 mb-3 font-weight-normal text-center">Liste des questions</h2>
         {% if is_granted('ROLE_TRAINER') %}
-            <div class="d-flex justify-content-end">
-                <a class="btn btn-primary mb-3" href="{{ path('app_question_new', {'id': survey.id}) }}">Ajouter une
-                    question</a>
-            </div>
+            {% if survey.deleteDate == null %}
+                <div class="d-flex justify-content-end">
+                    <a class="btn btn-primary mb-3" href="{{ path('app_question_new', {'id': survey.id}) }}">Ajouter une
+                        question</a>
+                </div>
+            {% endif %}
         {% endif %}
         {% if questions %}
             <div class="d-flex cardHolder justify-content-between">
