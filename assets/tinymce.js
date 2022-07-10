@@ -3,7 +3,7 @@ tinymce.init({
     menubar: false,
     height: 350,
     plugins: 'wordcount',
-    toolbar: 'fontfamily fontsize bold italic forecolor backcolor outdent indent',
+    toolbar: 'fontfamily fontsize bold italic forecolor backcolor indent',
     language: 'fr_FR',
 });
 tinymce.init({
@@ -12,14 +12,14 @@ tinymce.init({
     width: 550,
     height: 300,
     plugins: 'codesample wordcount',
-    toolbar: 'codesample fontfamily fontsize bold italic forecolor backcolor outdent indent',
+    toolbar: 'codesample fontfamily fontsize bold italic forecolor backcolor indent',
     language: 'fr_FR',
 });
 tinymce.init({
     selector: '.tinymceXS',
     menubar: false,
-    height: 150,
+    height: 200,
     plugins: 'codesample wordcount',
-    toolbar: 'codesample fontfamily fontsize bold italic forecolor backcolor outdent indent',
+    toolbar: 'codesample fontfamily fontsize bold italic forecolor backcolor indent',
     language: 'fr_FR',
 });
