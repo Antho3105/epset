@@ -35,16 +35,27 @@
                 {% if is_granted('ROLE_CENTER') %}
                     <a class="btn btn-primary mx-2 "
                        href="{{ path('app_course_edit', {'id': course.id}) }}">Modifier</a>
-                    {{ include('course/_delete_form.html.twig') }}
                 {% endif %}
+
+
                 {% if is_granted('ROLE_ADMIN') %}
-                    {{ include('course/_reset_form.html.twig') }}
+                    {% if course.deleteDate != null %}
+                        {{ include('course/_reset_form.html.twig') }}
+                    {% else %}
+                        {{ include('course/_delete_form.html.twig') }}
+                    {% endif %}
+                {% else %}
+                    {% if course.deleteDate == null %}
+                        {{ include('course/_delete_form.html.twig') }}
+                    {% endif %}
                 {% endif %}
             </div>
             {% if is_granted('ROLE_TRAINER') %}
                 <div>
-                    <a class="btn btn-primary mx-2" href="{{ path('app_survey_new', {'id': course.id}) }}">Créer
-                        questionnaire</a>
+                    {% if course.deleteDate == null %}
+                        <a class="btn btn-primary mx-2" href="{{ path('app_survey_new', {'id': course.id}) }}">Créer
+                            questionnaire</a>
+                    {% endif %}
                 </div>
             {% endif %}
         </div>

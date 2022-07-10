@@ -142,12 +142,11 @@ class SurveyController extends AbstractController
      * Affiche le questionnaire et les questions qui lui sont liées.
      *
      * @param Survey $survey
-     * @param VisibleCourseRepository $visibleCourseRepository
      * @param QuestionRepository $questionRepository
      * @return Response
      */
     #[Route('/{id}', name: 'app_survey_show', methods: ['GET'])]
-    public function show(Survey $survey, VisibleCourseRepository $visibleCourseRepository, QuestionRepository $questionRepository): Response
+    public function show(Survey $survey, SurveyRepository $surveyRepository, QuestionRepository $questionRepository): Response
     {
         $user = $this->getUser();
         // Si l'utilisateur n'est pas administrateur gérer les accès.
@@ -155,23 +154,35 @@ class SurveyController extends AbstractController
             // Si le questionnaire passé en GET a été supprimé générer une erreur.
             if ($survey->getDeleteDate() !== null)
                 throw new AccessDeniedHttpException();
-            // Si FORMATEUR n'autoriser l'accès que si le questionnaire est lié à une formation dont il a accès.
+
+
+            // Modif code pour que le formateur puisse voir tous les questionnaires qu'il a créé même si le centre lui a retiré l'assignation.
             if ($this->isGranted("ROLE_TRAINER")) {
-                // Récupérer la formation sur laquelle est lié le questionnaire
-                $course = $survey->getCourse();
-                // Récupérer la liste des formations accessibles.
-                $visibleCourses = $visibleCourseRepository->findBy([
-                    'user' => $user
+                // Nouveau code
+                $surveys = $surveyRepository->findBy([
+                    'user' => $user,
+                    'deleteDate' => null
                 ]);
-                // initialiser le tableau des formations accessibles.
-                $courses = [];
-                foreach ($visibleCourses as $visibleCourse)
-                    $courses[] = $visibleCourse->getCourse();
-                // Si la formation recue en GET n'est pas dans le tableau générer ue erreur.
-                if (!in_array($course, $courses))
+                if (!in_array($survey, $surveys))
                     throw new AccessDeniedHttpException();
 
+                // Ancien code :
+                // Si FORMATEUR n'autoriser l'accès que si le questionnaire est lié à une formation dont il a accès.
+//                // Récupérer la formation sur laquelle est lié le questionnaire
+//                $course = $survey->getCourse();
+//                // Récupérer la liste des formations accessibles.
+//                $visibleCourses = $visibleCourseRepository->findBy([
+//                    'user' => $user
+//                ]);
+//                // initialiser le tableau des formations accessibles.
+//                $courses = [];
+//                foreach ($visibleCourses as $visibleCourse)
+//                    $courses[] = $visibleCourse->getCourse();
+//                // Si la formation recue en GET n'est pas dans le tableau générer ue erreur.
+//                if (!in_array($course, $courses))
+//                    throw new AccessDeniedHttpException();
             }
+
             // Si CENTRE n'autoriser l'accès que si le questionnaire appartient à une de ses formations.
             if ($this->isGranted("ROLE_CENTRE")) {
                 if ($survey->getCourse()->getUser() !== $user)
