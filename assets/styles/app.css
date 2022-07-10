@@ -68,7 +68,7 @@ p {
 
 body {
     background: url("../img/background.jpg") no-repeat center fixed;
-    box-shadow: inset 1500px 1500px rgb(0 0 0 / 42%);
+    box-shadow: inset 100vw 100vh rgb(0 0 0 / 42%);
     background-size: cover;
     color: var(--font-color1);
     font-family: 'Lato', sans-serif;
